@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
 
@@ -17,45 +15,36 @@ export default async function BlogPage() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-8">Blog</h1>
+    <div className="max-w-[880px] mx-auto px-5 sm:px-8 py-12">
+      <div className="flex items-center gap-2.5 mb-8">
+        <span className="text-sm text-primary opacity-50">&gt;</span>
+        <h1 className="text-xl sm:text-2xl font-bold">Blog</h1>
+      </div>
 
       {posts.length === 0 ? (
-        <p className="text-muted-foreground">아직 글이 없습니다.</p>
+        <p className="text-sm text-muted-foreground">아직 글이 없습니다.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="resume-card rounded-lg overflow-hidden divide-y divide-border">
           {posts.map((post) => (
-            <Link key={post.id} href={`/blog/${post.slug}`}>
-              <Card className="hover:border-primary/50 transition-colors group">
-                <CardContent className="py-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="text-lg font-semibold group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h2>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {post.summary}
-                      </p>
-                      {post.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-3">
-                          {post.tags.map((t) => (
-                            <Badge
-                              key={t}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {t}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <time className="text-xs text-muted-foreground whitespace-nowrap pt-1">
-                      {new Date(post.createdAt).toLocaleDateString("ko-KR")}
-                    </time>
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="flex items-start justify-between gap-4 px-5 py-4 hover:bg-[rgba(167,139,250,0.04)] transition-colors"
+            >
+              <div className="min-w-0">
+                <h2 className="text-sm font-semibold mb-1 truncate">{post.title}</h2>
+                <p className="text-xs text-muted-foreground truncate">{post.summary}</p>
+                {post.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {post.tags.map((t) => (
+                      <span key={t} className="tech-badge">{t}</span>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                )}
+              </div>
+              <time className="text-[11px] font-mono text-muted-foreground/60 shrink-0 pt-0.5">
+                {new Date(post.createdAt).toLocaleDateString("ko-KR")}
+              </time>
             </Link>
           ))}
         </div>

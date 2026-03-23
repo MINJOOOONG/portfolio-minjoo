@@ -13,3 +13,13 @@ export async function getSetting(key: string): Promise<string | null> {
   const setting = await prisma.siteSetting.findUnique({ where: { key } });
   return setting?.value ?? null;
 }
+
+export function parseJsonSetting<T>(settings: Record<string, string>, key: string, fallback: T): T {
+  try {
+    const raw = settings[key];
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}

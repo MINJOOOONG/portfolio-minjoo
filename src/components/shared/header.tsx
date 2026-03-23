@@ -18,12 +18,12 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/60 backdrop-blur-xl">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="text-lg font-bold tracking-tight hover:text-primary transition-colors"
+            className="text-lg font-bold tracking-tight gradient-text"
           >
             MJ.dev
           </Link>
@@ -35,13 +35,16 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "px-3 py-2 text-sm rounded-md transition-colors",
+                  "relative px-3 py-2 text-sm rounded-md transition-colors",
                   pathname === item.href
-                    ? "text-foreground font-medium"
+                    ? "text-primary font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.label}
+                {pathname === item.href && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-primary" />
+                )}
               </Link>
             ))}
           </nav>
@@ -86,7 +89,7 @@ export function Header() {
                 className={cn(
                   "block px-3 py-2 text-sm rounded-md transition-colors",
                   pathname === item.href
-                    ? "text-foreground font-medium bg-accent"
+                    ? "text-primary font-medium bg-accent"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 )}
               >
