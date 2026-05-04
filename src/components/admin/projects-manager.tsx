@@ -52,7 +52,19 @@ export function ProjectsManager() {
   };
 
   useEffect(() => {
-    fetchProjects();
+    let active = true;
+
+    fetch("/api/admin/projects")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (!active) return;
+        setProjects(data);
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleEdit = (p: Project) => {

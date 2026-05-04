@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const PROFILE = {
   name: "서민주",
   title: "QA Engineer | Backend Developer",
@@ -11,29 +13,34 @@ const PROFILE = {
   linkedin: "https://www.linkedin.com/in/minjooooo",
   blog: "https://joodev-sandy.vercel.app/",
   summary:
-    "코드를 이해하고 직접 다루며 품질을 검증하는 QA Engineer입니다. 고객의 불편을 기능 단위가 아닌 구조와 코드 관점에서 분석하고, 제품이 왜 그렇게 동작해야 하는지를 끝까지 질문합니다.",
+    "QA 실무와 백엔드 개발 경험을 바탕으로 사용자 불편을 로그, 데이터, 코드, 제품 흐름까지 함께 분석합니다. AI를 적극적으로 활용해 반복 업무를 줄이고, 더 정확한 검증과 빠른 실행이 가능한 서비스를 만드는 데 집중합니다.",
 };
 
 export function Hero() {
   return (
-    <section className="pt-16 pb-4 sm:pt-18">
+    <section className="pt-20 pb-6 sm:pt-24">
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div className="resume-card rounded-lg overflow-hidden">
+        <div className="resume-card rounded-2xl overflow-hidden">
           {/* Card Body */}
           <div className="px-6 py-5 flex flex-col sm:flex-row gap-5">
             {/* Avatar */}
             <div className="shrink-0">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg bg-muted border border-border flex items-center justify-center text-3xl text-muted-foreground">
-                {PROFILE.name.charAt(0)}
-              </div>
+              <Image
+                src="/profile.jpeg"
+                alt={PROFILE.name}
+                width={112}
+                height={112}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover"
+                priority
+              />
             </div>
 
             {/* Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-1">
                 <h1 className="text-xl sm:text-2xl font-bold">{PROFILE.name}</h1>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium bg-[rgba(74,222,128,0.1)] text-[#4ade80] border border-[rgba(74,222,128,0.2)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-medium bg-[rgba(49,130,246,0.1)] text-[#3182f6]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#3182f6]" />
                   {PROFILE.status}
                 </span>
               </div>
@@ -70,7 +77,7 @@ export function Hero() {
           </div>
 
           {/* Info bar */}
-          <div className="bg-[var(--muted)] border-t border-border px-6 py-2.5 flex flex-wrap gap-x-8 gap-y-1 text-xs">
+          <div className="bg-secondary/50 border-t border-border/50 px-6 py-3 flex flex-wrap gap-x-8 gap-y-1 text-xs">
             <div>
               <span className="text-muted-foreground">Birth</span>
               <span className="ml-2 text-foreground">{PROFILE.birthday}</span>

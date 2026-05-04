@@ -27,7 +27,19 @@ export function MessagesManager() {
   };
 
   useEffect(() => {
-    fetchMessages();
+    let active = true;
+
+    fetch("/api/admin/messages")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (!active) return;
+        setMessages(data);
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const markAsRead = async (id: string) => {

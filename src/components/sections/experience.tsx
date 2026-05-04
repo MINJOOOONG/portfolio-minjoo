@@ -19,28 +19,28 @@ interface ExperienceProps {
 /* ── 보기 모드 카드 ── */
 function ViewCard({ item }: { item: ExperienceItem }) {
   return (
-    <div className="border border-border rounded-lg">
-      <div className="px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+    <div className="bg-card rounded-2xl">
+      <div className="px-6 py-5 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-bold">{item.company}</h3>
+          <h3 className="text-sm font-semibold">{item.company}</h3>
           {item.status && (
-            <span className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+            <span className="text-xs px-2.5 py-0.5 rounded-lg bg-primary/10 text-primary">
               {item.status}
             </span>
           )}
         </div>
         <span className="text-xs font-mono text-muted-foreground">{item.period}</span>
       </div>
-      <div className="px-5 pb-4 border-t border-border">
-        <p className="text-sm text-primary font-medium mt-3">{item.role}</p>
+      <div className="px-6 pb-5 border-t border-border/30">
+        <p className="text-sm text-primary font-medium mt-4">{item.role}</p>
         {item.summary && (
-          <p className="text-[13px] text-muted-foreground mt-1.5">{item.summary}</p>
+          <p className="text-sm text-muted-foreground mt-1.5">{item.summary}</p>
         )}
         {item.achievements && item.achievements.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {item.achievements.map((a, j) => (
-              <li key={j} className="flex gap-2 text-[13px] text-muted-foreground leading-snug">
-                <span className="text-primary shrink-0 mt-px">▸</span>
+              <li key={j} className="flex gap-2 text-sm text-muted-foreground leading-snug">
+                <span className="text-muted-foreground/50 shrink-0 mt-px">▸</span>
                 <span>{a}</span>
               </li>
             ))}
@@ -295,12 +295,12 @@ export function Experience({ items }: ExperienceProps) {
   if (displayItems.length === 0 && !isEditMode) return null;
 
   return (
-    <section id="experience" className="py-6">
+    <section id="experience" className="py-10">
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div className="border-t border-border pt-6">
+        <div>
           {/* Section header */}
           <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Work Experience</h2>
+            <h2 className="text-sm font-bold tracking-tight text-foreground">Work Experience</h2>
             {!isEditMode && (
               <button
                 onClick={() => setShowPasswordModal(true)}
@@ -329,7 +329,7 @@ export function Experience({ items }: ExperienceProps) {
           )}
 
           {/* 카드 목록 */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {isEditMode
               ? editItems.map((item, i) => (
                   <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />

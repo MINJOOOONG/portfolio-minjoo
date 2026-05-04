@@ -43,7 +43,19 @@ export function PostsManager() {
   };
 
   useEffect(() => {
-    fetchPosts();
+    let active = true;
+
+    fetch("/api/admin/posts")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (!active) return;
+        setPosts(data);
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleEdit = (p: Post) => {

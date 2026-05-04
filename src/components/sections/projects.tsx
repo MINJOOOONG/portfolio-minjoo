@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 /* ── 타입 ── */
@@ -59,18 +59,18 @@ function MediaPreview({ media }: { media?: ProjectMedia }) {
 /* ── 보기 모드 카드 ── */
 function ViewCard({ item }: { item: ProjectItem }) {
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="bg-card rounded-2xl overflow-hidden">
       <div className="flex flex-col sm:flex-row">
         {/* 좌: 미디어 */}
-        <div className="sm:w-[200px] h-[160px] sm:h-auto shrink-0 relative bg-muted border-b sm:border-b-0 sm:border-r border-border">
+        <div className="sm:w-[200px] h-[160px] sm:h-auto shrink-0 relative bg-muted border-b sm:border-b-0 sm:border-r border-border/30">
           <MediaPreview media={item.media} />
         </div>
 
         {/* 우: 정보 */}
-        <div className="flex-1 min-w-0 px-5 py-4">
+        <div className="flex-1 min-w-0 px-6 py-5">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="text-sm font-bold">{item.title}</h3>
-            <div className="flex gap-2 shrink-0 text-[11px]">
+            <h3 className="text-sm font-semibold">{item.title}</h3>
+            <div className="flex gap-2 shrink-0 text-xs">
               {item.githubUrl && (
                 <a href={item.githubUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-foreground transition-colors">GitHub ↗</a>
               )}
@@ -80,20 +80,20 @@ function ViewCard({ item }: { item: ProjectItem }) {
             </div>
           </div>
 
-          <div className="flex gap-3 text-[11px] text-muted-foreground mb-2">
+          <div className="flex gap-3 text-xs text-muted-foreground mb-2">
             <span className="font-mono">{item.period}</span>
             <span>{item.teamSize}</span>
           </div>
 
           {item.summary && (
-            <p className="text-[13px] text-muted-foreground mb-2">{item.summary}</p>
+            <p className="text-sm text-muted-foreground mb-2">{item.summary}</p>
           )}
 
           {item.description && item.description.length > 0 && (
             <ul className="space-y-1">
               {item.description.map((d, j) => (
-                <li key={j} className="flex gap-2 text-[13px] text-muted-foreground leading-snug">
-                  <span className="text-primary shrink-0 mt-px">▸</span>
+                <li key={j} className="flex gap-2 text-sm text-muted-foreground leading-snug">
+                  <span className="text-muted-foreground/50 shrink-0 mt-px">▸</span>
                   <span>{d}</span>
                 </li>
               ))}
@@ -372,11 +372,11 @@ export function Projects({ items }: ProjectsProps) {
   if (displayItems.length === 0 && !isEditMode) return null;
 
   return (
-    <section id="projects" className="py-6">
+    <section id="projects" className="py-10">
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div className="border-t border-border pt-6">
+        <div>
           <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Projects</h2>
+            <h2 className="text-sm font-bold tracking-tight text-foreground">Projects</h2>
             {!isEditMode && (
               <button
                 onClick={() => setShowPasswordModal(true)}
@@ -402,7 +402,7 @@ export function Projects({ items }: ProjectsProps) {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {isEditMode
               ? editItems.map((item, i) => (
                   <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />

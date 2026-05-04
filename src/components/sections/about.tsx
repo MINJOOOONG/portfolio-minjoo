@@ -8,9 +8,9 @@ export function About({ content }: AboutProps) {
   if (!content) return null;
 
   return (
-    <section id="about" className="py-6">
+    <section id="about" className="py-10">
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div className="border-t border-border pt-6">
+        <div>
           <SectionHeading>About</SectionHeading>
           <div className="text-sm leading-relaxed">
             <MarkdownRenderer content={content} />
@@ -23,6 +23,6 @@ export function About({ content }: AboutProps) {
 
 export function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-5">{children}</h2>
+    <h2 className="text-sm font-bold tracking-tight text-foreground mb-5">{children}</h2>
   );
 }

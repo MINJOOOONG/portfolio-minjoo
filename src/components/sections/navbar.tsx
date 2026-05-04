@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { PdfExportButton } from "@/components/shared/pdf-export-button";
+import type { ResumeData } from "@/lib/pdf/types";
 
 const navItems = [
   { href: "#about", label: "About" },
@@ -12,7 +14,11 @@ const navItems = [
   { href: "#education", label: "Education" },
 ];
 
-export function Navbar() {
+interface NavbarProps {
+  resumeData?: ResumeData;
+}
+
+export function Navbar({ resumeData }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -30,12 +36,12 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-200",
-        scrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : "bg-transparent"
+        scrolled ? "bg-background/80 backdrop-blur-xl border-b border-border/50" : "bg-transparent"
       )}
     >
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div className="flex items-center justify-between h-12">
-          <Link href="/" className="text-sm font-bold text-foreground">
+        <div className="flex items-center justify-between h-14">
+          <Link href="/" className="text-base font-bold text-foreground">
             joodev
           </Link>
           <nav className="hidden sm:flex items-center gap-5">
@@ -44,11 +50,12 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleClick(e, item.href)}
-                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
                 {item.label}
               </a>
             ))}
+            {resumeData && <PdfExportButton resumeData={resumeData} />}
           </nav>
         </div>
       </div>
