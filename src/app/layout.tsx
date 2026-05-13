@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" style={{ backgroundColor: "#FFFFFF" }}>
       <head>
         <link
           rel="stylesheet"
@@ -38,6 +38,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistMono.variable} font-sans antialiased`}
+        style={{ backgroundColor: "#FFFFFF" }}
       >
         {children}
       </body>
