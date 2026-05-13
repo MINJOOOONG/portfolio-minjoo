@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
+import { SlideHeading } from "./about";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { useStaggerReveal } from "@/hooks/use-stagger-reveal";
 
 export interface ExperienceItem {
   company: string;
@@ -16,40 +19,98 @@ interface ExperienceProps {
   items: ExperienceItem[];
 }
 
-/* ── 보기 모드 카드 ── */
+const NOTION_TINTS = [
+  "var(--notion-tint-lavender)",
+  "var(--notion-tint-mint)",
+  "var(--notion-tint-sky)",
+  "var(--notion-tint-peach)",
+  "var(--notion-tint-rose)",
+  "var(--notion-tint-yellow)",
+  "var(--notion-tint-cream)",
+];
+
+/* ── Timeline dot ── */
+function TimelineDot({ active }: { active: boolean }) {
+  return active ? (
+    <span className="relative flex h-3 w-3">
+      <span className="absolute inset-0 rounded-full bg-foreground/10 ring-[3px] ring-foreground/5" />
+      <span className="relative inline-flex h-3 w-3 rounded-full bg-foreground/70" />
+    </span>
+  ) : (
+    <span className="inline-flex h-2.5 w-2.5 rounded-full border border-foreground/15" />
+  );
+}
+
+/* ── View Card ── */
 function ViewCard({ item }: { item: ExperienceItem }) {
+  const cardRef = useStaggerReveal<HTMLDivElement>({
+    childSelector: ".exp-child",
+    stagger: 0.07,
+    y: 25,
+  });
+  const techRef = useStaggerReveal<HTMLDivElement>({
+    childSelector: "> span",
+    stagger: 0.04,
+    y: 12,
+  });
+
+  const isActive = !!item.status;
+
   return (
-    <div className="bg-card rounded-2xl">
-      <div className="px-6 py-5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold">{item.company}</h3>
+    <div className="relative flex gap-5 sm:gap-7">
+      {/* Timeline rail */}
+      <div className="flex flex-col items-center pt-1.5">
+        <TimelineDot active={isActive} />
+        <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
+      </div>
+
+      {/* Content */}
+      <div ref={cardRef} className="flex-1 pb-14 sm:pb-16">
+        {/* Header */}
+        <div className="exp-child flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+          <h3 className="font-display text-2xl font-black tracking-[-0.02em] text-foreground">
+            {item.company}
+          </h3>
           {item.status && (
-            <span className="text-xs px-2.5 py-0.5 rounded-lg bg-primary/10 text-primary">
+            <span className="text-[10px] px-2 py-0.5 rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
               {item.status}
             </span>
           )}
         </div>
-        <span className="text-xs font-mono text-muted-foreground">{item.period}</span>
-      </div>
-      <div className="px-6 pb-5 border-t border-border/30">
-        <p className="text-sm text-primary font-medium mt-4">{item.role}</p>
+
+        <p className="exp-child text-[13px] text-foreground/80 font-medium mb-0.5">
+          {item.role}
+        </p>
+        <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide mb-4">
+          {item.period}
+        </p>
+
         {item.summary && (
-          <p className="text-sm text-muted-foreground mt-1.5">{item.summary}</p>
+          <p className="exp-child text-sm text-muted-foreground/80 leading-[1.85] max-w-xl mb-4">
+            {item.summary}
+          </p>
         )}
+
         {item.achievements && item.achievements.length > 0 && (
-          <ul className="mt-3 space-y-1.5">
+          <ul className="space-y-1.5 mb-5">
             {item.achievements.map((a, j) => (
-              <li key={j} className="flex gap-2 text-sm text-muted-foreground leading-snug">
-                <span className="text-muted-foreground/50 shrink-0 mt-px">▸</span>
-                <span>{a}</span>
+              <li key={j} className="exp-child text-[13px] text-muted-foreground/70 leading-[1.75] pl-3 border-l border-foreground/[0.08]">
+                {a}
               </li>
             ))}
           </ul>
         )}
+
         {item.techStack && item.techStack.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3">
-            {item.techStack.map((t) => (
-              <span key={t} className="tech-badge">{t}</span>
+          <div ref={techRef} className="flex flex-wrap gap-2">
+            {item.techStack.map((t, i) => (
+              <span
+                key={t}
+                className="px-3 py-1 text-[11px] font-medium rounded-md text-foreground/70"
+                style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
+              >
+                {t}
+              </span>
             ))}
           </div>
         )}
@@ -58,7 +119,7 @@ function ViewCard({ item }: { item: ExperienceItem }) {
   );
 }
 
-/* ── 수정 모드 카드 ── */
+/* ── 수정 모드 카드 (unchanged) ── */
 function EditCard({
   item,
   onChange,
@@ -68,7 +129,7 @@ function EditCard({
   onChange: (updated: ExperienceItem) => void;
   onDelete: () => void;
 }) {
-  const inputClass = "w-full bg-background border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:border-primary/50";
+  const inputClass = "w-full bg-background border border-border rounded px-3 py-1.5 text-sm focus:outline-none focus:border-foreground/30";
 
   const updateField = <K extends keyof ExperienceItem>(key: K, value: ExperienceItem[K]) => {
     onChange({ ...item, [key]: value });
@@ -89,8 +150,7 @@ function EditCard({
   };
 
   return (
-    <div className="border border-primary/30 rounded-lg bg-card">
-      {/* Header fields */}
+    <div className="border border-border rounded-lg bg-background">
       <div className="px-5 py-3 space-y-2">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
@@ -114,29 +174,26 @@ function EditCard({
         </div>
       </div>
 
-      {/* Body fields */}
       <div className="px-5 pb-4 border-t border-border pt-3 space-y-3">
         <div>
           <label className="text-[11px] text-muted-foreground uppercase tracking-wider">한 줄 요약</label>
           <input className={inputClass} value={item.summary} onChange={(e) => updateField("summary", e.target.value)} />
         </div>
 
-        {/* Achievements */}
         <div>
           <label className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1.5 block">핵심 성과</label>
           <div className="space-y-1.5">
             {item.achievements.map((a, j) => (
               <div key={j} className="flex gap-1.5">
-                <span className="text-primary shrink-0 mt-2 text-sm">▸</span>
+                <span className="text-muted-foreground/40 shrink-0 mt-2 text-sm">▸</span>
                 <input className={`${inputClass} flex-1`} value={a} onChange={(e) => updateAchievement(j, e.target.value)} />
-                <button onClick={() => removeAchievement(j)} className="text-muted-foreground hover:text-destructive text-sm px-1.5 shrink-0" type="button">×</button>
+                <button onClick={() => removeAchievement(j)} className="h-8 shrink-0 rounded-md px-2 text-base font-bold text-foreground/70 transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/35" type="button">×</button>
               </div>
             ))}
           </div>
-          <button onClick={addAchievement} className="text-xs text-primary hover:text-primary/80 mt-1.5" type="button">+ 성과 추가</button>
+          <button onClick={addAchievement} className="mt-2 inline-flex h-8 items-center rounded-lg border border-border bg-transparent px-3 text-xs font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">+ 성과 추가</button>
         </div>
 
-        {/* Tech Stack */}
         <div>
           <label className="text-[11px] text-muted-foreground uppercase tracking-wider">기술 태그 (콤마 구분)</label>
           <input
@@ -147,9 +204,8 @@ function EditCard({
           />
         </div>
 
-        {/* Delete button */}
         <div className="pt-1">
-          <button onClick={onDelete} className="text-xs text-destructive hover:text-destructive/80" type="button">이 경력 삭제</button>
+          <button onClick={onDelete} className="inline-flex h-8 items-center rounded-lg border border-destructive/30 bg-destructive/10 px-3 text-xs font-bold text-destructive transition-colors duration-150 hover:bg-destructive/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/35" type="button">이 경력 삭제</button>
         </div>
       </div>
     </div>
@@ -196,7 +252,7 @@ function PasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
-      <div className="bg-card border border-border rounded-lg p-6 w-full max-w-xs shadow-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-background border border-border rounded-lg p-6 w-full max-w-xs shadow-lg" onClick={(e) => e.stopPropagation()}>
         <h3 className="text-sm font-bold mb-4">관리자 인증</h3>
         <input
           ref={inputRef}
@@ -205,16 +261,16 @@ function PasswordModal({
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           placeholder="비밀번호 입력"
-          className="w-full bg-background border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-primary/50 mb-2"
+          className="w-full bg-background border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-foreground/30 mb-2"
           autoFocus
         />
         {error && <p className="text-xs text-destructive mb-2">{error}</p>}
         <div className="flex gap-2 justify-end">
-          <button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground px-3 py-1.5" type="button">취소</button>
+          <button onClick={onClose} className="inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">취소</button>
           <button
             onClick={handleSubmit}
             disabled={loading || !password}
-            className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded hover:bg-primary/90 disabled:opacity-50"
+            className="inline-flex h-9 items-center rounded-lg bg-foreground px-3.5 text-sm font-medium text-background transition-colors duration-150 hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:opacity-50"
             type="button"
           >
             {loading ? "확인 중..." : "확인"}
@@ -226,12 +282,13 @@ function PasswordModal({
 }
 
 /* ── 메인 컴포넌트 ── */
-export function Experience({ items }: ExperienceProps) {
+export const Experience = memo(function Experience({ items }: ExperienceProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [editItems, setEditItems] = useState<ExperienceItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [displayItems, setDisplayItems] = useState(items);
+  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
 
   const enterEditMode = () => {
     setEditItems(JSON.parse(JSON.stringify(displayItems)));
@@ -264,7 +321,6 @@ export function Experience({ items }: ExperienceProps) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // 빈 achievements 필터링
       const cleaned = editItems.map((item) => ({
         ...item,
         achievements: item.achievements.filter((a) => a.trim()),
@@ -295,63 +351,56 @@ export function Experience({ items }: ExperienceProps) {
   if (displayItems.length === 0 && !isEditMode) return null;
 
   return (
-    <section id="experience" className="py-10">
-      <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div>
-          {/* Section header */}
-          <div className="flex items-baseline justify-between mb-5">
-            <h2 className="text-sm font-bold tracking-tight text-foreground">Work Experience</h2>
-            {!isEditMode && (
-              <button
-                onClick={() => setShowPasswordModal(true)}
-                className="text-muted-foreground hover:text-foreground text-xs transition-colors"
-                type="button"
-                aria-label="수정하기"
-              >
-                ✎ 수정
-              </button>
-            )}
-          </div>
-
-          {/* 수정 모드 상단 버튼 */}
-          {isEditMode && (
-            <div className="flex gap-2 justify-end mb-3">
-              <button onClick={cancelEdit} className="text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 border border-border rounded" type="button">취소</button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded hover:bg-primary/90 disabled:opacity-50"
-                type="button"
-              >
-                {saving ? "저장 중..." : "저장"}
-              </button>
-            </div>
-          )}
-
-          {/* 카드 목록 */}
-          <div className="space-y-4">
-            {isEditMode
-              ? editItems.map((item, i) => (
-                  <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />
-                ))
-              : displayItems.map((item, i) => (
-                  <ViewCard key={i} item={item} />
-                ))}
-          </div>
-
-          {/* 경력 추가 버튼 */}
-          {isEditMode && (
-            <button onClick={addItem} className="mt-3 w-full border border-dashed border-border rounded-lg py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors" type="button">
-              + 경력 추가
-            </button>
-          )}
+    <div className="w-full">
+      <div className="flex items-end justify-between mb-2">
+        <div ref={isEditMode ? undefined : headingRef}>
+          <SlideHeading label="Experience" title="Work Experience" />
         </div>
+        {!isEditMode && (
+          <button
+            onClick={() => setShowPasswordModal(true)}
+            className="mb-10 inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
+            type="button"
+            aria-label="수정하기"
+          >
+            ✎ 수정
+          </button>
+        )}
       </div>
 
-      {/* 비밀번호 모달 */}
+      {isEditMode && (
+        <div className="flex gap-2 justify-end mb-3">
+          <button onClick={cancelEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">취소</button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="inline-flex h-9 items-center rounded-lg bg-foreground px-3.5 text-sm font-medium text-background transition-colors duration-150 hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:opacity-50"
+            type="button"
+          >
+            {saving ? "저장 중..." : "저장"}
+          </button>
+        </div>
+      )}
+
+      <div className={isEditMode ? "space-y-4" : ""}>
+        {isEditMode
+          ? editItems.map((item, i) => (
+              <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />
+            ))
+          : displayItems.map((item, i) => (
+              <ViewCard key={i} item={item} />
+            ))}
+      </div>
+
+      {isEditMode && (
+        <button onClick={addItem} className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-lg border border-dashed border-border bg-transparent text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">
+          + 경력 추가
+        </button>
+      )}
+
       {showPasswordModal && (
         <PasswordModal onSuccess={enterEditMode} onClose={() => setShowPasswordModal(false)} />
       )}
-    </section>
+    </div>
   );
-}
+});

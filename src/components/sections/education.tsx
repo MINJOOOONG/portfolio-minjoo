@@ -1,4 +1,9 @@
-import { SectionHeading } from "./about";
+"use client";
+
+import { memo } from "react";
+import { SlideHeading } from "./about";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { useStaggerReveal } from "@/hooks/use-stagger-reveal";
 
 export interface EducationItem {
   school: string;
@@ -11,65 +16,81 @@ export interface CertificationItem {
   date: string;
 }
 
-interface EducationCertsProps {
-  education: EducationItem[];
-  certifications: CertificationItem[];
+interface EducationProps {
+  items: EducationItem[];
 }
 
-export function EducationCerts({ education, certifications }: EducationCertsProps) {
-  if (education.length === 0 && certifications.length === 0) return null;
+interface CertificationsProps {
+  items: CertificationItem[];
+}
+
+export const Education = memo(function Education({ items }: EducationProps) {
+  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+  const listRef = useStaggerReveal<HTMLDivElement>({
+    childSelector: "> div",
+    stagger: 0.12,
+    y: 30,
+  });
+
+  if (items.length === 0) return null;
 
   return (
-    <section id="education" className="py-10">
-      <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-        <div>
-          <SectionHeading>Education & Certifications</SectionHeading>
-
-          {education.length > 0 && (
-            <div className="bg-card rounded-2xl overflow-hidden mb-4">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/30">
-                    <th className="text-left text-xs font-medium text-muted-foreground px-6 py-4">기간</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground px-6 py-4">학교</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground px-6 py-4">전공</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {education.map((item, i) => (
-                    <tr key={i} className="border-b border-border/30 last:border-0">
-                      <td className="px-6 py-4 font-mono text-xs text-muted-foreground whitespace-nowrap">{item.period}</td>
-                      <td className="px-6 py-4 font-medium">{item.school}</td>
-                      <td className="px-6 py-4 text-muted-foreground">{item.major}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {certifications.length > 0 && (
-            <div className="bg-card rounded-2xl overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/30">
-                    <th className="text-left text-xs font-medium text-muted-foreground px-6 py-4">자격증</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground px-6 py-4">취득일</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {certifications.map((item, i) => (
-                    <tr key={i} className="border-b border-border/30 last:border-0">
-                      <td className="px-6 py-4 font-medium">{item.name}</td>
-                      <td className="px-6 py-4 font-mono text-xs text-muted-foreground">{item.date}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+    <div className="w-full max-w-[760px]">
+      <div ref={headingRef} className="mb-8">
+        <SlideHeading label="Education" title="Education" />
       </div>
-    </section>
+
+      <div ref={listRef} className="space-y-0">
+        {items.map((item, i) => (
+          <div
+            key={i}
+            className="border-b border-[var(--notion-hairline)] py-6 first:pt-0 last:border-b-0"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-lg font-semibold text-foreground">{item.school}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.major}</p>
+              </div>
+              <p className="text-xs font-medium text-muted-foreground sm:pt-1">
+                {item.period}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
-}
+});
+
+export const Certifications = memo(function Certifications({ items }: CertificationsProps) {
+  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+  const listRef = useStaggerReveal<HTMLDivElement>({
+    childSelector: "> div",
+    stagger: 0.12,
+    y: 30,
+  });
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="w-full max-w-[760px]">
+      <div ref={headingRef} className="mb-8">
+        <SlideHeading label="Certifications" title="Certifications" />
+      </div>
+
+      <div ref={listRef} className="space-y-0">
+        {items.map((item, i) => (
+          <div
+            key={i}
+            className="border-b border-[var(--notion-hairline)] py-6 first:pt-0 last:border-b-0"
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-lg font-semibold text-foreground">{item.name}</p>
+              <p className="text-xs font-medium text-muted-foreground">{item.date}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+});
