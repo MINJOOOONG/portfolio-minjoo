@@ -89,6 +89,10 @@ async function main() {
         "구조별 유지보수성, 확장성, 상황 대응 방식의 차이를 바탕으로 상황별 적합한 AI 구조 선택 기준을 도출",
       ],
       techStack: ["Unity", "C#", "FSM", "Behavior Tree", "Profiler"],
+      media: {
+        type: "pdf",
+        url: "/pdf/fsm-vs-bt-thesis-english.pdf",
+      },
     },
     {
       title: "UNIST 해상 물류 창업 오디션",

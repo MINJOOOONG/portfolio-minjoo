@@ -1,230 +1,100 @@
-# Claude Guide
+# Claude Code 가이드
 
-## 프로젝트 개요
-
-이 프로젝트는 서민주의 QA / Backend 역량을 보여주기 위한
-**이력서형 포트폴리오 웹사이트**입니다.
-
-단순한 기술 블로그가 아니라,
-**"개발을 이해하는 QA 엔지니어"를 증명하는 포트폴리오**입니다.
-
-목표:
-- 채용 담당자가 빠르게 핵심 역량을 파악할 수 있도록 한다.
-- QA + Backend + AI 협업 경험을 함께 보여준다.
-- 단순 구현이 아닌 **설계와 품질에 대한 관점**을 드러낸다.
+이 프로젝트에서 Claude Code를 사용할 때 참고할 규칙과 컨텍스트.
 
 ---
 
-## 핵심 방향
+## 절대 규칙
 
-이 프로젝트는 다음과 같은 성격을 가진다:
-
-- ❌ 블로그
-- ❌ 서비스 랜딩 페이지
-- ❌ 감성 포트폴리오
-
-**✅ 이력서형 엔지니어 포트폴리오**
+1. **라이트 모드 only** — 다크 모드 절대 불가. 모든 배경은 흰색(`#FFFFFF`) 또는 연한 회색(`#F7F6F3`) 계열
+2. **Notion 디자인 토큰** 사용 — `--notion-canvas`, `--notion-ink` 등 `docs/design.md`에 정의된 CSS 변수를 따를 것
+3. **기존 데이터 흐름 유지** — Admin → Prisma → Neon DB → getSettings() → 섹션 컴포넌트. 이 흐름을 깨뜨리지 말 것
+4. **Three.js는 항상 dynamic import** — `next/dynamic`으로 `{ ssr: false }` 적용. SSR에서 Three.js/WebGL 실행 불가
 
 ---
 
-## UX 원칙
+## 디자인 원칙
 
-### 1. 첫 화면 = 요약 이력서
-
-첫 화면에서 반드시 보여야 한다:
-
-- 이름 (서민주)
-- 직무 (QA Engineer | Backend Developer)
-- 상태 (구직 중)
-- 연락처 (Email / GitHub / Blog / LinkedIn)
-- 한 줄 요약
-
-스크롤 없이 핵심이 보여야 한다.
+- **Clean Document** 미학 — 종이 위 이력서, 노트 위 스케치 느낌
+- 흰 배경 + 미세한 모눈 격자(grid)
+- 그레이 계열 위주, 파스텔 tint는 포인트로만
+- 미니멀 타이포, 충분한 여백
+- Three.js 3D 오브젝트는 연한 회색 와이어프레임 (`#c0c0c0`~`#d0d0d0`, opacity 0.25~0.4)
+- 상세 스펙은 `docs/design.md` 참조
 
 ---
 
-### 2. 정보 중심 설계
+## 기술 스택 요약
 
-- 인터랙션보다 정보 전달이 우선이다
-- 클릭 유도 UX보다 **읽기 UX**가 중요하다
-- 기능보다 "이해 가능한 구조"가 중요하다
-
----
-
-### 3. 빠른 스캔 가능
-
-채용 담당자가:
-5~10초 안에 핵심을 파악할 수 있어야 한다
+- **Next.js 16** (App Router, Turbopack) + **React 19** + **TypeScript**
+- **Three.js** + @react-three/fiber + @react-three/drei — 3D 배경
+- **Tailwind CSS v4** — 유틸리티 스타일링
+- **Prisma + Neon** — 서버리스 PostgreSQL
+- **Framer Motion + GSAP + Lenis** — 애니메이션/스크롤
+- 상세 스택은 `docs/skills.md` 참조
 
 ---
 
-## 금지 사항
+## 파일 구조 규칙
 
-다음 패턴은 사용하지 않는다:
-
-- 블로그 랜딩 스타일
-- 대형 Hero 섹션 (슬로건 중심)
-- CTA 버튼 남용
-  - "프로젝트 보기"
-  - "블로그 보기"
-- 과도한 애니메이션
-- 의미 없는 인터랙션
-- hover glow 효과 (비클릭 요소)
-- 그라디언트 장식 (섹션 구분선 등)
+| 위치 | 용도 |
+|------|------|
+| `src/components/sections/` | 포트폴리오 섹션 (hero, about, experience 등) |
+| `src/components/shared/` | 레이아웃, 네비게이션, 3D 배경, 공용 컴포넌트 |
+| `src/components/ui/` | shadcn 기본 UI 컴포넌트 |
+| `src/hooks/` | 커스텀 훅 (scroll-reveal, stagger-reveal, parallax) |
+| `src/lib/` | 유틸리티, DB, 인증, PDF |
+| `src/app/(public)/` | 공개 라우트 (진입, 포트폴리오, 블로그) |
+| `src/app/admin/` | Admin 대시보드 |
 
 ---
 
-## 지향 스타일
+## 코딩 패턴
 
-- 문서형 / 이력서형 UI
-- 정돈된 카드 구조
-- 높은 정보 밀도
-- 단순하고 명확한 레이아웃
-- 섹션 구분: 단순 border-top + uppercase 소제목
-- 최소 장식, 읽는 문서 느낌
+### 컴포넌트
+- `"use client"` — 인터랙션/훅 사용 시 필수
+- `memo()` 래핑 — 섹션 컴포넌트는 `memo`로 불필요한 리렌더링 방지
+- Props는 `interface`로 명시 타입 정의
 
----
+### 애니메이션
+- `useScrollReveal` — 섹션 전체 바운스 등장 (IntersectionObserver + CSS transition)
+- `useStaggerReveal` — 자식 요소 순차 등장 (childSelector로 대상 지정)
+- 이징: `cubic-bezier(0.175, 0.885, 0.32, 1.6)` — 스프링 바운스 (오버슈트 후 정착)
+- Three.js `useFrame` — 매 프레임 애니메이션 (마우스 반응, 스크롤 패럴랙스)
 
-## 컴포넌트 구조
+### 데이터
+```typescript
+// 설정 불러오기
+const settings = await getSettings();
+const data = parseJsonSetting<Type>(settings, "key", fallback);
+```
 
-섹션 기반 구조를 유지한다:
-
-- Profile Summary (하드코딩, hero.tsx)
-- About (settings 기반 Markdown)
-- Experience (settings 기반 JSON, 인라인 수정 가능)
-- Projects (settings 기반 JSON, 인라인 수정 가능, 미디어 지원)
-- Skills (settings 기반 JSON)
-- Education & Certifications (settings 기반 JSON)
-- Blog Preview (DB 기반, 최근 3개)
-
----
-
-## 데이터 관리 전략
-
-### 1. 하드코딩 (핵심 프로필)
-
-다음은 하드코딩으로 관리한다:
-
-- 이름
-- 직무
-- 상태
-- 연락처
-- 링크
-- 프로필 요약
-
-이유:
-- 레이아웃 안정성
-- UI 깨짐 방지
-- 핵심 정보는 자주 변경되지 않음
+### 3D 배경 추가 시
+```typescript
+// 반드시 dynamic import + ssr: false
+const MyThreeComponent = dynamic(
+  () => import("@/components/shared/my-three").then((m) => m.MyThree),
+  { ssr: false }
+);
+```
 
 ---
 
-### 2. settings 기반 데이터
+## 주요 주의사항
 
-다음은 SiteSetting(key-value) JSON으로 관리한다:
-
-- About (about_content - Markdown)
-- Experience (experience_data - JSON 배열)
-- Projects (project_data - JSON 배열)
-- Skills (skills_data - JSON 객체)
-- Education (education_data - JSON 배열)
-- Certifications (certifications_data - JSON 배열)
+1. **CSS 변수 변경 시** — `:root`에 정의된 Notion 토큰과 shadcn 변수가 모든 컴포넌트에 영향. 신중하게 변경
+2. **Three.js 컴포넌트** — `Canvas` 내부에서만 Three.js 훅 (`useFrame`, `useThree` 등) 사용 가능
+3. **PDF 내보내기** — `@react-pdf/renderer`는 Tailwind 클래스 불가. `src/lib/pdf/` 내 별도 스타일 사용
+4. **Admin 기능** — 편집 모드, 인증 등 Admin 관련 로직은 변경 시 반드시 동작 확인
+5. **Lenis 스크롤** — `SmoothScrollProvider`가 스크롤을 제어. `window.scrollTo` 대신 Lenis API 고려
 
 ---
 
-### 3. 인라인 수정 기능
+## 자주 쓰는 명령어
 
-Experience, Projects 섹션은 메인 페이지에서 직접 수정 가능:
-
-- 섹션 제목 옆 `✎ 수정` 버튼
-- 비밀번호 모달 → 서버 측 인증 (`/api/admin/login`)
-- 수정 모드 전환 → 각 필드 편집 → 저장 (`/api/admin/settings`)
-- 프론트엔드 비밀번호 하드코딩 없음
-
----
-
-## 아키텍처 방향
-
-- Next.js App Router 기반
-- Single Page 구조 ("/")
-- Blog는 별도 라우트 유지
-
-라우팅:
-- `/` → 메인 (이력서)
-- `/blog` → 블로그 목록
-- `/blog/[slug]` → 상세
-
----
-
-## 이 포트폴리오의 차별점
-
-이 프로젝트는 단순한 포트폴리오가 아니다.
-
-다음을 보여주는 것이 핵심이다:
-
-- QA 관점의 설계 사고
-- Backend 구조 이해
-- 테스트 및 품질 중심 개발
-- AI 기반 개발 방식 (Claude 활용)
-
----
-
-## Claude 사용 가이드
-
-### 기본 원칙
-
-- Claude는 "보조 개발자"이다
-- 최종 결정은 항상 개발자가 한다
-
----
-
-### 작업 방식
-
-1. 구조 변경 시:
-   → 설계 먼저 설명
-   → 이후 구현
-
-2. UI 변경 시:
-   → 방향 먼저 합의
-
-3. 대규모 변경:
-   → 단계적으로 진행
-
----
-
-### 중요 규칙
-
-- 이력서형 구조를 유지해야 한다
-- 블로그형 UI로 변경하지 않는다
-- CTA 중심 UI로 변경하지 않는다
-- hover glow, 그라디언트 장식을 추가하지 않는다
-- 장식보다 정보 밀도를 우선한다
-
----
-
-## 코드 스타일
-
-- 명확한 네이밍
-- 단순한 구조
-- 가독성 최우선
-- 불필요한 abstraction 금지
-
----
-
-## 문서 관리
-
-- 모든 문서는 docs/ 폴더에서 관리한다
-- 설계 변경 시 문서도 함께 업데이트한다
-
----
-
-## 개발 철학
-
-이 프로젝트는 단순한 결과물이 아니라
-**개발 과정과 사고를 보여주는 프로젝트**이다.
-
-- "왜 이렇게 설계했는가"
-- "어떤 문제를 해결했는가"
-- "품질을 어떻게 보장했는가"
-
-를 드러내는 것이 중요하다.
+```bash
+npm run dev          # 개발 서버 (Turbopack)
+npm run build        # 프로덕션 빌드
+npm run db:studio    # Prisma Studio (DB GUI)
+npm run db:push      # 스키마 변경 반영
+```
