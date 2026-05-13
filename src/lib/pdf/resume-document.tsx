@@ -1,5 +1,5 @@
 import React from "react";
-import { Document, Page, View, Text, Link, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, View, Text, Link, Image, StyleSheet } from "@react-pdf/renderer";
 import { registerFonts } from "./fonts";
 import type { ResumeData } from "./types";
 
@@ -25,6 +25,9 @@ const s = StyleSheet.create({
     paddingHorizontal: 48,
   },
   // Header
+  header: { flexDirection: "row", gap: 18, alignItems: "flex-start" },
+  headerInfo: { flexGrow: 1, flexShrink: 1 },
+  profileImage: { width: 88, borderRadius: 4, objectFit: "contain" },
   headerName: { fontSize: 20, fontWeight: 700, marginBottom: 2 },
   headerTitle: { fontSize: 11, color: colors.accent, fontWeight: 500, marginBottom: 6 },
   headerContact: { fontSize: 8, color: colors.muted, lineHeight: 1.6 },
@@ -90,22 +93,32 @@ function parseAbout(content: string) {
   });
 }
 
-export function ResumeDocument({ data }: { data: ResumeData }) {
+export function ResumeDocument({
+  data,
+  profileImageSrc,
+}: {
+  data: ResumeData;
+  profileImageSrc?: string;
+}) {
   const { profile, about, experience, projects, skills, education, certifications } = data;
 
   return (
     <Document>
       <Page size="A4" style={s.page}>
         {/* Header */}
-        <View>
-          <Text style={s.headerName}>{profile.name}</Text>
-          <Text style={s.headerTitle}>{profile.title}</Text>
-          <Text style={s.headerContact}>
-            {profile.email} | {profile.phone} | {profile.location}
-            {"\n"}
-            <Link src={profile.github}>GitHub</Link> | <Link src={profile.linkedin}>LinkedIn</Link>
-          </Text>
-          <Text style={s.headerSummary}>{profile.summary}</Text>
+        <View style={s.header}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- React PDF Image does not support alt. */}
+          {profileImageSrc && <Image src={profileImageSrc} style={s.profileImage} />}
+          <View style={s.headerInfo}>
+            <Text style={s.headerName}>{profile.name}</Text>
+            <Text style={s.headerTitle}>{profile.title}</Text>
+            <Text style={s.headerContact}>
+              {profile.email} | {profile.phone} | {profile.location}
+              {"\n"}
+              <Link src={profile.github}>GitHub</Link> | <Link src={profile.linkedin}>LinkedIn</Link>
+            </Text>
+            <Text style={s.headerSummary}>{profile.summary}</Text>
+          </View>
         </View>
 
         {/* About */}

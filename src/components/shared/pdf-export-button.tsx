@@ -27,7 +27,7 @@ export function PdfExportButton({ resumeData }: PdfExportButtonProps) {
     <button
       onClick={handleClick}
       disabled={loading}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground border border-border/50 rounded-lg transition-colors duration-200 disabled:opacity-50"
+      className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:opacity-50"
     >
       <Download size={13} />
       {loading ? "생성 중..." : "PDF"}

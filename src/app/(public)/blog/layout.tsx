@@ -9,10 +9,7 @@ export default function BlogLayout({
     <>
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="max-w-[880px] mx-auto px-5 sm:px-8">
-          <div className="flex items-center justify-between h-12">
-            <Link href="/" className="text-sm font-bold text-foreground">
-              joodev
-            </Link>
+          <div className="flex items-center justify-end h-12">
             <nav className="flex items-center gap-5">
               <Link href="/" className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
                 Home
