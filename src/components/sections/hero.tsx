@@ -72,12 +72,6 @@ export const Hero = memo(function Hero() {
         ))}
       </div>
 
-      {/* Scroll indicator */}
-      <div className="mt-10 flex flex-col items-center">
-        <div className="h-8 w-px bg-border relative overflow-hidden">
-          <div className="absolute inset-x-0 top-0 h-3 w-px bg-foreground/40 scroll-indicator-line" />
-        </div>
-      </div>
     </div>
   );
 });

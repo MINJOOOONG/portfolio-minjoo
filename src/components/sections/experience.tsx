@@ -43,6 +43,9 @@ function TimelineDot({ active }: { active: boolean }) {
 
 /* ── View Card ── */
 function ViewCard({ item }: { item: ExperienceItem }) {
+  const detailItems = [item.summary, ...(item.achievements ?? [])]
+    .filter(Boolean)
+    .slice(0, 4);
   const cardRef = useStaggerReveal<HTMLDivElement>({
     childSelector: ".exp-child",
     stagger: 0.07,
@@ -57,18 +60,20 @@ function ViewCard({ item }: { item: ExperienceItem }) {
   const isActive = !!item.status;
 
   return (
-    <div className="relative flex gap-5 sm:gap-7">
+    <div
+      className="relative flex gap-4 overflow-hidden rounded-2xl border border-transparent px-2 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/10 hover:shadow-md sm:gap-6 sm:py-4"
+    >
       {/* Timeline rail */}
-      <div className="flex flex-col items-center pt-1.5">
+      <div className="flex flex-col items-center pt-1">
         <TimelineDot active={isActive} />
         <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
       </div>
 
       {/* Content */}
-      <div ref={cardRef} className="flex-1 pb-14 sm:pb-16">
+      <div ref={cardRef} className="flex flex-1 flex-col justify-center overflow-hidden">
         {/* Header */}
         <div className="exp-child flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
-          <h3 className="font-display text-2xl font-black tracking-[-0.02em] text-foreground">
+          <h3 className="font-display text-xl sm:text-2xl font-black tracking-[-0.02em] text-foreground">
             {item.company}
           </h3>
           {item.status && (
@@ -78,35 +83,33 @@ function ViewCard({ item }: { item: ExperienceItem }) {
           )}
         </div>
 
-        <p className="exp-child text-[13px] text-foreground/80 font-medium mb-0.5">
+        <p className="exp-child text-[13px] text-foreground/80 font-medium">
           {item.role}
         </p>
-        <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide mb-4">
+        <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide mb-2.5">
           {item.period}
         </p>
 
-        {item.summary && (
-          <p className="exp-child text-sm text-muted-foreground/80 leading-[1.85] max-w-xl mb-4">
-            {item.summary}
-          </p>
-        )}
-
-        {item.achievements && item.achievements.length > 0 && (
-          <ul className="space-y-1.5 mb-5">
-            {item.achievements.map((a, j) => (
-              <li key={j} className="exp-child text-[13px] text-muted-foreground/70 leading-[1.75] pl-3 border-l border-foreground/[0.08]">
-                {a}
+        {detailItems.length > 0 && (
+          <ul className="mb-3 space-y-1.5">
+            {detailItems.map((text, j) => (
+              <li
+                key={j}
+                className="exp-child flex gap-2.5 text-[12px] leading-relaxed text-muted-foreground/75 sm:text-[13px]"
+              >
+                <span className="mt-[0.35em] h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/35" />
+                <span>{text}</span>
               </li>
             ))}
           </ul>
         )}
 
         {item.techStack && item.techStack.length > 0 && (
-          <div ref={techRef} className="flex flex-wrap gap-2">
+          <div ref={techRef} className="flex flex-wrap gap-1.5">
             {item.techStack.map((t, i) => (
               <span
                 key={t}
-                className="px-3 py-1 text-[11px] font-medium rounded-md text-foreground/70"
+                className="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-foreground/70"
                 style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
               >
                 {t}
@@ -382,7 +385,7 @@ export const Experience = memo(function Experience({ items }: ExperienceProps) {
         </div>
       )}
 
-      <div className={isEditMode ? "space-y-4" : ""}>
+      <div className={isEditMode ? "space-y-4" : "space-y-0.5"}>
         {isEditMode
           ? editItems.map((item, i) => (
               <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { MagneticCursor } from "@/components/shared/magnetic-cursor";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -40,6 +41,7 @@ export default function RootLayout({
         className={`${geistMono.variable} font-sans antialiased`}
         style={{ backgroundColor: "#FFFFFF" }}
       >
+        <MagneticCursor />
         {children}
       </body>
     </html>

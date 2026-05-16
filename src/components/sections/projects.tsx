@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, memo } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { AnimatePresence, motion } from "framer-motion";
 import { SlideHeading } from "./about";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { useParallax } from "@/hooks/use-parallax";
@@ -53,6 +54,20 @@ const NOTION_TINTS = [
 
 const DEFAULT_MEDIA_RATIO = 4 / 3;
 const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
+
+function scrollProjectCardIntoView(card: HTMLElement) {
+  const topMargin = Math.min(190, Math.max(96, window.innerHeight * 0.14));
+  const bottomMargin = Math.min(48, Math.max(24, window.innerHeight * 0.04));
+  const rect = card.getBoundingClientRect();
+  const cardTop = rect.top + window.scrollY;
+  const availableHeight = window.innerHeight - topMargin - bottomMargin;
+  const top =
+    rect.height < availableHeight
+      ? cardTop - topMargin + (availableHeight - rect.height) / 2
+      : cardTop - topMargin;
+
+  window.scrollTo({ top, behavior: "smooth" });
+}
 
 /* -- 미디어 렌더러 -- */
 function MediaPreview({
@@ -116,8 +131,9 @@ function MediaPreview({
 }
 
 /* -- Showcase 보기 모드 카드 -- */
-function ProjectShowcase({ item, index }: { item: ProjectItem; index: number }) {
+function ProjectShowcase({ item, index, onSelect }: { item: ProjectItem; index: number; onSelect?: (item: ProjectItem) => void }) {
   const isEven = index % 2 === 0;
+  const previewDescriptions = item.description?.slice(0, 4) ?? [];
   const [mediaRatio, setMediaRatio] = useState(
     item.media?.type === "pdf" ? DEFAULT_PDF_RATIO : DEFAULT_MEDIA_RATIO
   );
@@ -130,12 +146,20 @@ function ProjectShowcase({ item, index }: { item: ProjectItem; index: number }) 
   });
 
   return (
-    <div className="min-h-[80vh] flex items-center py-16">
-      <div className={`flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-8 md:gap-12 w-full`}>
+    <div
+      data-project-card
+      data-cursor="VIEW"
+      className="min-h-[calc(100vh-260px)] max-h-[760px] flex items-center overflow-hidden py-8 sm:py-10 cursor-pointer rounded-2xl px-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-foreground/10 border border-transparent"
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect?.(item)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect?.(item); } }}
+    >
+      <div className={`flex h-full flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} gap-6 md:gap-10 w-full md:items-center`}>
         {/* Media — 60% */}
         <div
           ref={mediaRef}
-          className="relative w-full max-w-[460px] mx-auto rounded-xl overflow-hidden bg-[var(--notion-surface)] md:max-w-none md:flex-[0_1_460px]"
+          className="relative w-full max-w-[420px] max-h-[44vh] mx-auto rounded-xl overflow-hidden bg-[var(--notion-surface)] md:max-w-none md:flex-[0_1_420px]"
           style={{ aspectRatio: mediaRatio }}
         >
           <MediaPreview
@@ -149,18 +173,18 @@ function ProjectShowcase({ item, index }: { item: ProjectItem; index: number }) 
         {/* Text — 40% */}
         <div
           ref={textRef}
-          className="flex flex-col justify-center md:flex-1 md:min-w-0"
+          className="flex max-h-[calc(100vh-340px)] flex-col justify-center overflow-hidden md:flex-1 md:min-w-0"
         >
-          <div className="flex items-start justify-between gap-2 mb-3">
-            <h3 className="font-display text-2xl sm:text-3xl font-black tracking-[-0.03em] leading-tight">{item.title}</h3>
+          <div className="flex items-start justify-between gap-2 mb-2.5">
+            <h3 className="font-display text-2xl sm:text-[2rem] font-black tracking-[-0.03em] leading-tight">{item.title}</h3>
           </div>
 
-          <div className="flex gap-3 text-xs text-muted-foreground mb-4">
+          <div className="flex gap-3 text-xs text-muted-foreground mb-3">
             <span>{item.period}</span>
             <span>{item.teamSize}</span>
           </div>
 
-          <div className="flex shrink-0 gap-2 mb-4">
+          <div className="flex shrink-0 gap-2 mb-3">
             {item.githubUrl && (
               <a href={item.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:border-foreground/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45">GitHub ↗</a>
             )}
@@ -170,13 +194,13 @@ function ProjectShowcase({ item, index }: { item: ProjectItem; index: number }) 
           </div>
 
           {item.summary && (
-            <p className="text-sm text-muted-foreground mb-4">{item.summary}</p>
+            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{item.summary}</p>
           )}
 
-          {item.description && item.description.length > 0 && (
-            <ul className="space-y-2 mb-4">
-              {item.description.map((d, j) => (
-                <li key={j} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
+          {previewDescriptions.length > 0 && (
+            <ul className="space-y-1.5 mb-3">
+              {previewDescriptions.map((d, j) => (
+                <li key={j} className="flex gap-2.5 text-[13px] text-muted-foreground leading-relaxed">
                   <span className="text-muted-foreground/40 shrink-0 mt-0.5">▸</span>
                   <span>{d}</span>
                 </li>
@@ -185,11 +209,11 @@ function ProjectShowcase({ item, index }: { item: ProjectItem; index: number }) 
           )}
 
           {item.techStack && item.techStack.length > 0 && (
-            <div ref={techRef} className="flex flex-wrap gap-2">
+            <div ref={techRef} className="flex flex-wrap gap-1.5">
               {item.techStack.map((t, i) => (
                 <span
                   key={t}
-                  className="px-3 py-1 text-xs font-medium rounded-md text-foreground"
+                  className="px-2.5 py-1 text-[11px] font-medium rounded-md text-foreground"
                   style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
                 >
                   {t}
@@ -388,13 +412,132 @@ function PasswordModal({
   );
 }
 
+/* -- 프로젝트 상세 모달 -- */
+function ProjectDetailModal({
+  project,
+  onClose,
+}: {
+  project: ProjectItem;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <>
+      <motion.div
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      />
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div
+          className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-border bg-background p-6 shadow-2xl pointer-events-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-foreground/70 transition-colors hover:bg-muted/80 hover:text-foreground"
+            type="button"
+            aria-label="닫기"
+          >
+            ×
+          </button>
+
+          {/* Media */}
+          <div className="relative w-full rounded-xl overflow-hidden bg-[var(--notion-surface)] mb-5" style={{ aspectRatio: project.media?.type === "pdf" ? DEFAULT_PDF_RATIO : DEFAULT_MEDIA_RATIO }}>
+            <MediaPreview media={project.media} title={project.title} techStack={project.techStack} />
+          </div>
+
+          {/* Title */}
+          <h2 className="font-display text-2xl sm:text-3xl font-black tracking-[-0.03em] leading-tight mb-2">
+            {project.title}
+          </h2>
+
+          {/* Summary */}
+          {project.summary && (
+            <p className="text-sm text-muted-foreground mb-4">{project.summary}</p>
+          )}
+
+          {/* Meta row */}
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-4">
+            <span>{project.period}</span>
+            <span className="text-border">|</span>
+            <span>{project.teamSize}</span>
+            {project.githubUrl && (
+              <>
+                <span className="text-border">|</span>
+                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">GitHub ↗</a>
+              </>
+            )}
+            {project.liveUrl && (
+              <>
+                <span className="text-border">|</span>
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">Live ↗</a>
+              </>
+            )}
+          </div>
+
+          <hr className="border-border mb-4" />
+
+          {/* Description */}
+          {project.description && project.description.length > 0 && (
+            <ul className="space-y-2 mb-5">
+              {project.description.map((d, j) => (
+                <li key={j} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-muted-foreground/40 shrink-0 mt-0.5">▸</span>
+                  <span>{d}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Tech stack badges */}
+          {project.techStack && project.techStack.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {project.techStack.map((t, i) => (
+                <span
+                  key={t}
+                  className="px-3 py-1 text-xs font-medium rounded-md text-foreground"
+                  style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
 /* -- 메인 컴포넌트 -- */
 export const Projects = memo(function Projects({ items }: ProjectsProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [editItems, setEditItems] = useState<ProjectItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [displayItems, setDisplayItems] = useState(items);
+  const projectsRootRef = useRef<HTMLDivElement>(null);
   const viewItems = displayItems.filter((item) => !isArticleProject(item));
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
 
@@ -458,10 +601,46 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     }
   };
 
+  const goToNextProject = () => {
+    const root = projectsRootRef.current;
+    if (!root) return;
+
+    const cards = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-project-card]")
+    );
+    if (cards.length < 2) return;
+
+    const viewportAnchor = window.scrollY + window.innerHeight * 0.35;
+    const currentIndex = cards.reduce((bestIndex, card, index) => {
+      const bestTop = cards[bestIndex].getBoundingClientRect().top + window.scrollY;
+      const cardTop = card.getBoundingClientRect().top + window.scrollY;
+      const bestDistance = Math.abs(bestTop - viewportAnchor);
+      const distance = Math.abs(cardTop - viewportAnchor);
+      return distance < bestDistance ? index : bestIndex;
+    }, 0);
+    const nextCard = cards[currentIndex + 1];
+
+    if (nextCard) scrollProjectCardIntoView(nextCard);
+  };
+
+  const handleProjectAreaClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isEditMode || selectedProject || showPasswordModal) return;
+
+    const target = e.target as HTMLElement;
+    if (
+      target.closest("a, button, input, textarea, select, video, .pdf-viewer, [contenteditable], [data-project-card]")
+    ) {
+      return;
+    }
+
+    e.stopPropagation();
+    goToNextProject();
+  };
+
   if (viewItems.length === 0 && !isEditMode) return null;
 
   return (
-    <div className="w-full">
+    <div ref={projectsRootRef} className="w-full" onClickCapture={handleProjectAreaClick}>
       <div className="flex items-end justify-between mb-2">
         <div ref={isEditMode ? undefined : headingRef}>
           <SlideHeading label="Projects" title="Projects" />
@@ -497,7 +676,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
               <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />
             ))
           : viewItems.map((item, i) => (
-              <ProjectShowcase key={i} item={item} index={i} />
+              <ProjectShowcase key={i} item={item} index={i} onSelect={setSelectedProject} />
             ))}
       </div>
 
@@ -510,6 +689,12 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
       {showPasswordModal && (
         <PasswordModal onSuccess={enterEditMode} onClose={() => setShowPasswordModal(false)} />
       )}
+
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 });

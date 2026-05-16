@@ -16,14 +16,13 @@ const ThreePortfolioBg = dynamic(
 );
 
 const SECTION_IDS = [
-  "hero",
   "about",
   "experience",
   "projects",
   "articles",
   "skills",
   "education",
-  "certifications",
+  "contact",
 ];
 
 interface SceneLayoutProps {
@@ -44,7 +43,7 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
               key={SECTION_IDS[i]}
               id={SECTION_IDS[i]}
               className={
-                i === 0
+                SECTION_IDS[i] === "contact"
                   ? "scene-section scene-section-hero"
                   : "scene-section"
               }

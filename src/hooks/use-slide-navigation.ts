@@ -6,6 +6,20 @@ interface UseSlideNavigationOptions {
   sectionIds: string[];
 }
 
+function scrollCardIntoView(card: HTMLElement) {
+  const topMargin = Math.min(190, Math.max(96, window.innerHeight * 0.14));
+  const bottomMargin = Math.min(48, Math.max(24, window.innerHeight * 0.04));
+  const rect = card.getBoundingClientRect();
+  const cardTop = rect.top + window.scrollY;
+  const availableHeight = window.innerHeight - topMargin - bottomMargin;
+  const top =
+    rect.height < availableHeight
+      ? cardTop - topMargin + (availableHeight - rect.height) / 2
+      : cardTop - topMargin;
+
+  window.scrollTo({ top, behavior: "smooth" });
+}
+
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const isScrolling = useRef(false);
@@ -77,6 +91,52 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     goTo(currentIndex - 1);
   }, [currentIndex, goTo]);
 
+  const goToSectionCard = useCallback((sectionId: string, cardSelector: string, direction: 1 | -1) => {
+    if (cooldownRef.current) return;
+
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+
+    const cards = Array.from(
+      section.querySelectorAll<HTMLElement>(cardSelector)
+    );
+    if (cards.length < 2) {
+      if (direction > 0) goNext();
+      else goPrev();
+      return;
+    }
+
+    const viewportAnchor = window.scrollY + window.innerHeight * 0.35;
+    const currentCardIndex = cards.reduce((bestIndex, card, index) => {
+      const bestTop = cards[bestIndex].getBoundingClientRect().top + window.scrollY;
+      const cardTop = card.getBoundingClientRect().top + window.scrollY;
+      const bestDistance = Math.abs(bestTop - viewportAnchor);
+      const distance = Math.abs(cardTop - viewportAnchor);
+      return distance < bestDistance ? index : bestIndex;
+    }, 0);
+    const targetCard = cards[currentCardIndex + direction];
+
+    if (!targetCard) {
+      if (direction > 0) goNext();
+      else goPrev();
+      return;
+    }
+
+    isScrolling.current = true;
+    cooldownRef.current = true;
+    scrollCardIntoView(targetCard);
+    setTimeout(() => {
+      isScrolling.current = false;
+    }, 800);
+    setTimeout(() => {
+      cooldownRef.current = false;
+    }, 950);
+  }, [goNext, goPrev]);
+
+  const goToNextProject = useCallback(() => {
+    goToSectionCard("projects", "[data-project-card]", 1);
+  }, [goToSectionCard]);
+
   /* ── Click handler (skip interactive elements) ── */
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -87,9 +147,15 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       ) {
         return;
       }
+
+      if (target.closest("#projects")) {
+        goToNextProject();
+        return;
+      }
+
       goNext();
     },
-    [goNext]
+    [goNext, goToNextProject]
   );
 
   /* ── Keyboard handler ── */
@@ -144,7 +210,11 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
 
       const threshold = 80;
       if (Math.abs(wheelAccum.current) > threshold) {
-        if (wheelAccum.current > 0) {
+        const direction = wheelAccum.current > 0 ? 1 : -1;
+
+        if (sectionIds[currentIndex] === "projects") {
+          goToSectionCard("projects", "[data-project-card]", direction);
+        } else if (direction > 0) {
           goNext();
         } else {
           goPrev();
@@ -152,7 +222,7 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
         wheelAccum.current = 0;
       }
     },
-    [goNext, goPrev]
+    [currentIndex, goNext, goPrev, goToSectionCard, sectionIds]
   );
 
   /* ── Touch swipe handler ── */

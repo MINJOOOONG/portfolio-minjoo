@@ -11,7 +11,7 @@ import {
 import React from "react";
 
 /* ── Context ── */
-const ActiveSectionContext = createContext<string>("hero");
+const ActiveSectionContext = createContext<string>("about");
 
 export function useActiveSection() {
   return useContext(ActiveSectionContext);
@@ -27,7 +27,7 @@ export function ActiveSectionProvider({
   sectionIds,
   children,
 }: ActiveSectionProviderProps) {
-  const [active, setActive] = useState(sectionIds[0] ?? "hero");
+  const [active, setActive] = useState(sectionIds[0] ?? "about");
 
   const handleIntersect = useCallback(
     (entries: IntersectionObserverEntry[]) => {

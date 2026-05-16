@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { PdfExportButton } from "@/components/shared/pdf-export-button";
 import type { ResumeData } from "@/lib/pdf/types";
 
-const SECTION_IDS = ["hero", "about", "experience", "projects", "articles", "skills", "education", "certifications"];
+const SECTION_IDS = ["about", "experience", "projects", "articles", "skills", "education", "contact"];
 
 const navItems = [
   { id: "about", label: "About" },
@@ -14,7 +14,7 @@ const navItems = [
   { id: "articles", label: "Articles" },
   { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
-  { id: "certifications", label: "Certifications" },
+  { id: "contact", label: "Contact" },
 ];
 
 interface SceneNavbarProps {
@@ -22,7 +22,7 @@ interface SceneNavbarProps {
 }
 
 export const SceneNavbar = memo(function SceneNavbar({ resumeData }: SceneNavbarProps) {
-  const [activeSection, setActiveSection] = useState("hero");
+  const [activeSection, setActiveSection] = useState("about");
   const [scrolled, setScrolled] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
 

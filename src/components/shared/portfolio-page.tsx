@@ -5,7 +5,7 @@ import { Experience, type ExperienceItem } from "@/components/sections/experienc
 import { Projects, type ProjectItem } from "@/components/sections/projects";
 import { Articles } from "@/components/sections/articles";
 import { Skills } from "@/components/sections/skills";
-import { Certifications, Education, type CertificationItem, type EducationItem } from "@/components/sections/education";
+import { EducationCertifications, type CertificationItem, type EducationItem } from "@/components/sections/education";
 import { SceneLayout } from "@/components/shared/scene-layout";
 import { isArticleProject } from "@/lib/project-groups";
 import type { ResumeData } from "@/lib/pdf/types";
@@ -42,14 +42,13 @@ export async function PortfolioPage() {
   };
 
   const sections = [
-    <Hero key="hero" />,
     <About key="about" content={settings.about_content || ""} />,
     <Experience key="experience" items={experienceData} />,
     <Projects key="projects" items={projectData} />,
     <Articles key="articles" items={articleData} />,
     <Skills key="skills" data={skillsData} />,
-    <Education key="education" items={educationData} />,
-    <Certifications key="certifications" items={certificationData} />,
+    <EducationCertifications key="education" educationItems={educationData} certificationItems={certificationData} />,
+    <Hero key="contact" />,
   ];
 
   return <SceneLayout sections={sections} resumeData={resumeData} />;

@@ -46,6 +46,22 @@ async function main() {
 
   const projectData = [
     {
+      title: "포트폴리오 웹사이트",
+      teamSize: "개인",
+      period: "2025",
+      summary: "Three.js 3D 배경, 커스텀 커서 인터랙션, GSAP 애니메이션 등 인터랙티브 요소를 결합한 프리미엄 포트폴리오 사이트입니다.",
+      description: [
+        "Next.js App Router와 React Server Component 기반으로 SSR과 클라이언트 인터랙션을 분리해 초기 로딩 성능과 사용자 경험을 동시에 확보",
+        "Three.js + @react-three/fiber로 프로젝트별 3D 배경 씬을 구현하고 마우스 반응, 스크롤 패럴랙스 등 몰입형 인터랙션 적용",
+        "Framer Motion 기반 커스텀 커서를 설계해 탄성 변형, 클릭 리플, 호버 라벨, mix-blend-mode 등 에디토리얼 스타일 인터랙션 구현",
+        "Prisma + Neon PostgreSQL로 프로젝트, 경력, 스킬 등 전체 콘텐츠를 DB화하고 Admin 페이지에서 실시간 CRUD 가능한 CMS 구조 설계",
+        "GSAP 기반 엔트리 페이지 애니메이션, Lenis 스무스 스크롤, IntersectionObserver 기반 섹션별 등장 효과로 페이지 전환 경험 강화",
+        "@react-pdf/renderer로 포트폴리오 데이터를 PDF로 내보내는 기능을 구현해 오프라인 공유 지원",
+      ],
+      techStack: ["Next.js", "TypeScript", "Three.js", "Framer Motion", "GSAP", "Prisma", "Neon", "Tailwind CSS"],
+      githubUrl: "https://github.com/MINJOOOONG/portfolio-minjoo",
+    },
+    {
       title: "개인 기술 블로그 joodev",
       teamSize: "개인",
       period: "2025",
@@ -153,8 +169,10 @@ async function main() {
 
   const certificationsData = [
     {
-      name: "국제 트리즈 협회 Lv.1",
+      name: "MA TRIZ Certified Specialist Lv.1",
       date: "2024.05.23",
+      certificateNo: "01/27509/A-72",
+      verifyUrl: "https://matriz.org/certification/#certified-specialists",
     },
   ];
 
@@ -178,11 +196,13 @@ async function main() {
     },
     {
       key: "about_content",
-      value: `"다양한 경험으로 다양한 시각을 가진" QA 엔지니어이자 백엔드 개발자입니다.
+      value: `"단순한 기능 구현이 아니라, 왜 이렇게 개발하는지에 대한 기준과 철학을 가진" 개발자입니다.
 
-학부 시절부터 개발 동아리, 해커톤, 논문, 창업 활동, QA 실무를 이어오며 문제를 한 가지 관점으로만 보지 않는 훈련을 해왔습니다. 사용자가 겪는 불편을 로그, 데이터, 코드, QA 경험, 디자인 흐름까지 함께 분석해 핵심 원인을 찾아내는 데 강점이 있습니다.
+제한된 시간과 리소스 안에서 **최대의 효율을 끌어내는 개발**을 지향합니다. 모든 기능에는 명확한 의도와 이유가 있어야 하고, 기술 자체보다 사용자가 실제로 편리함을 느끼는 서비스를 만드는 것이 중요하다고 생각합니다.
 
-AI를 적극적으로 활용해 반복 업무를 줄이고, 더 정확한 검증과 더 빠른 실행이 가능한 개발 프로세스를 만드는 데 관심이 많습니다. 단순히 도구를 사용하는 것을 넘어 **깊이 있는 시각을 가진 엔지니어**로 성장하기 위해 기록, 실험, 검증을 꾸준히 이어가고 있습니다.`,
+QA 실무와 백엔드 개발을 병행하며 **"왜 이 기능이 이렇게 동작해야 하는지"**를 끝까지 질문하는 습관을 갖게 되었습니다. 자신이 만든 기능과 구조를 동료에게 설명하고 설득할 수 있어야 진짜 이해한 것이라 믿습니다.
+
+서비스의 방향성과 사용자 경험까지 고려한 설계, 역할과 책임이 명확히 분리된 구조를 추구합니다. 해커톤, 논문, 창업, QA 현장까지 다양한 환경에서 쌓은 경험을 바탕으로 문제를 하나의 관점에 가두지 않고 **로그, 데이터, 코드, 제품 흐름**을 함께 분석해 핵심 원인을 찾아냅니다.`,
     },
     {
       key: "about_interests",

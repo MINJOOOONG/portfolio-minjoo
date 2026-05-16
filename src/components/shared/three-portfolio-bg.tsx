@@ -14,13 +14,12 @@ interface SectionParams {
 }
 
 const SECTION_PARAMS: Record<string, SectionParams> = {
-  hero:           { shapes: 0.25, particles: 0.50, lines: 0.12, rotSpeed: 0.05 },
   about:          { shapes: 0.20, particles: 0.40, lines: 0.10, rotSpeed: 0.03 },
   experience:     { shapes: 0.30, particles: 0.55, lines: 0.10, rotSpeed: 0.06 },
   projects:       { shapes: 0.15, particles: 0.35, lines: 0.20, rotSpeed: 0.04 },
   skills:         { shapes: 0.35, particles: 0.30, lines: 0.15, rotSpeed: 0.08 },
   education:      { shapes: 0.25, particles: 0.50, lines: 0.12, rotSpeed: 0.05 },
-  certifications: { shapes: 0.25, particles: 0.50, lines: 0.12, rotSpeed: 0.05 },
+  contact:        { shapes: 0.25, particles: 0.50, lines: 0.12, rotSpeed: 0.05 },
 };
 
 const DEFAULT_PARAMS: SectionParams = { shapes: 0.25, particles: 0.50, lines: 0.12, rotSpeed: 0.05 };
@@ -30,7 +29,7 @@ function lerp(a: number, b: number, t: number) {
 }
 
 /* ── Shared section state (bridging DOM context → R3F) ── */
-const sectionState = { current: "hero" };
+const sectionState = { current: "about" };
 
 function SectionBridge() {
   const active = useActiveSection();
