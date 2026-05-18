@@ -221,6 +221,19 @@
   background: #FFFFFF !important;
 }
 
+#about {
+  align-items: flex-start;
+  padding-top: 80px;
+  padding-bottom: 48px;
+}
+
+@media (max-width: 640px) {
+  #about {
+    padding-top: 64px;
+    padding-bottom: 32px;
+  }
+}
+
 #about,
 #experience,
 #projects,
@@ -302,43 +315,86 @@
   white-space: nowrap;
 }
 
-.slide-hint {
+/* ─── Slide Nav Buttons (Prev / Next) ─── */
+.slide-nav-btn {
   position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  animation: slide-hint-pulse 2.5s ease-in-out infinite;
-}
-
-.slide-hint__text {
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.3em;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(33, 29, 25, 0.18);
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   color: var(--notion-ink);
-  opacity: 0.25;
-  text-transform: uppercase;
+  cursor: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.slide-hint__arrow {
-  font-size: 12px;
-  color: var(--notion-ink);
-  opacity: 0.2;
-  animation: slide-hint-bounce 2s ease-in-out infinite;
+.slide-nav-btn svg {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
 }
 
-@keyframes slide-hint-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+.slide-nav-btn:hover {
+  border-color: rgba(33, 29, 25, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
-@keyframes slide-hint-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
+.slide-nav-btn:hover svg {
+  opacity: 0.8;
+}
+
+.slide-nav-btn--disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.slide-nav-btn--prev {
+  left: 24px;
+}
+
+.slide-nav-btn--next {
+  right: 56px;
+}
+
+.slide-nav-btn__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .slide-nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .slide-nav-btn--prev {
+    left: 14px;
+  }
+  .slide-nav-btn--next {
+    right: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .slide-nav-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .slide-nav-btn--prev {
+    left: 10px;
+  }
+  .slide-nav-btn--next {
+    right: 10px;
+  }
 }
 
 @media (max-width: 640px) {

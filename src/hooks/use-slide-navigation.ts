@@ -20,6 +20,24 @@ function scrollCardIntoView(card: HTMLElement) {
   window.scrollTo({ top, behavior: "smooth" });
 }
 
+/** Interactive elements that should NOT trigger section navigation */
+const INTERACTIVE_SELECTOR = [
+  "a",
+  "button",
+  "input",
+  "textarea",
+  "select",
+  "[role='button']",
+  "[role='dialog']",
+  "[role='tooltip']",
+  "video",
+  ".pdf-viewer",
+  "[contenteditable]",
+  "[data-no-section-nav]",
+  "[data-annotation-area]",
+  "[data-annotation-card]",
+].join(", ");
+
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const isScrolling = useRef(false);
@@ -66,11 +84,9 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       cooldownRef.current = true;
       setCurrentIndex(clamped);
 
-      // Scroll to section top (no navbar offset needed — hero is index 0 with no padding)
       const top = el.offsetTop;
       window.scrollTo({ top, behavior: "smooth" });
 
-      // Release lock after animation
       setTimeout(() => {
         isScrolling.current = false;
       }, 800);
@@ -91,91 +107,94 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     goTo(currentIndex - 1);
   }, [currentIndex, goTo]);
 
-  const goToSectionCard = useCallback((sectionId: string, cardSelector: string, direction: 1 | -1) => {
-    if (cooldownRef.current) return;
+  const goToSectionCard = useCallback(
+    (sectionId: string, cardSelector: string, direction: 1 | -1) => {
+      if (cooldownRef.current) return;
 
-    const section = document.getElementById(sectionId);
-    if (!section) return;
+      const section = document.getElementById(sectionId);
+      if (!section) return;
 
-    const cards = Array.from(
-      section.querySelectorAll<HTMLElement>(cardSelector)
-    );
-    if (cards.length < 2) {
-      if (direction > 0) goNext();
-      else goPrev();
-      return;
-    }
+      const cards = Array.from(
+        section.querySelectorAll<HTMLElement>(cardSelector)
+      );
+      if (cards.length < 2) {
+        if (direction > 0) goNext();
+        else goPrev();
+        return;
+      }
 
-    const viewportAnchor = window.scrollY + window.innerHeight * 0.35;
-    const currentCardIndex = cards.reduce((bestIndex, card, index) => {
-      const bestTop = cards[bestIndex].getBoundingClientRect().top + window.scrollY;
-      const cardTop = card.getBoundingClientRect().top + window.scrollY;
-      const bestDistance = Math.abs(bestTop - viewportAnchor);
-      const distance = Math.abs(cardTop - viewportAnchor);
-      return distance < bestDistance ? index : bestIndex;
-    }, 0);
-    const targetCard = cards[currentCardIndex + direction];
+      const viewportAnchor = window.scrollY + window.innerHeight * 0.35;
+      const currentCardIndex = cards.reduce((bestIndex, card, index) => {
+        const bestTop =
+          cards[bestIndex].getBoundingClientRect().top + window.scrollY;
+        const cardTop = card.getBoundingClientRect().top + window.scrollY;
+        const bestDistance = Math.abs(bestTop - viewportAnchor);
+        const distance = Math.abs(cardTop - viewportAnchor);
+        return distance < bestDistance ? index : bestIndex;
+      }, 0);
+      const targetCard = cards[currentCardIndex + direction];
 
-    if (!targetCard) {
-      if (direction > 0) goNext();
-      else goPrev();
-      return;
-    }
+      if (!targetCard) {
+        if (direction > 0) goNext();
+        else goPrev();
+        return;
+      }
 
-    isScrolling.current = true;
-    cooldownRef.current = true;
-    scrollCardIntoView(targetCard);
-    setTimeout(() => {
-      isScrolling.current = false;
-    }, 800);
-    setTimeout(() => {
-      cooldownRef.current = false;
-    }, 950);
-  }, [goNext, goPrev]);
+      isScrolling.current = true;
+      cooldownRef.current = true;
+      scrollCardIntoView(targetCard);
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, 800);
+      setTimeout(() => {
+        cooldownRef.current = false;
+      }, 950);
+    },
+    [goNext, goPrev]
+  );
 
-  const goToNextProject = useCallback(() => {
-    goToSectionCard("projects", "[data-project-card]", 1);
-  }, [goToSectionCard]);
-
-  /* ── Click handler (skip interactive elements) ── */
+  /* ── Click handler: left half = prev, right half = next ── */
   const handleClick = useCallback(
     (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
       // Skip clicks on interactive elements
-      if (
-        target.closest("a, button, input, textarea, select, [role='button'], video, .pdf-viewer, [contenteditable]")
-      ) {
+      if (target.closest(INTERACTIVE_SELECTOR)) {
         return;
       }
 
-      if (target.closest("#projects")) {
-        goToNextProject();
-        return;
-      }
+      const isRightSide = e.clientX > window.innerWidth / 2;
 
-      goNext();
+      if (isRightSide) {
+        // Projects section: navigate between project cards first
+        if (sectionIds[currentIndex] === "projects") {
+          goToSectionCard("projects", "[data-project-card]", 1);
+        } else {
+          goNext();
+        }
+      } else {
+        if (sectionIds[currentIndex] === "projects") {
+          goToSectionCard("projects", "[data-project-card]", -1);
+        } else {
+          goPrev();
+        }
+      }
     },
-    [goNext, goToNextProject]
+    [currentIndex, goNext, goPrev, goToSectionCard, sectionIds]
   );
 
   /* ── Keyboard handler ── */
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      // Skip if user is typing in an input
       const tag = (e.target as HTMLElement).tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
 
       switch (e.key) {
-        case "ArrowDown":
         case "ArrowRight":
-        case " ":
-        case "PageDown":
           e.preventDefault();
           goNext();
           break;
-        case "ArrowUp":
         case "ArrowLeft":
-        case "PageUp":
           e.preventDefault();
           goPrev();
           break;
@@ -192,83 +211,50 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     [goNext, goPrev, goTo, sectionIds.length]
   );
 
-  /* ── Wheel handler (snap on scroll) ── */
-  const wheelAccum = useRef(0);
-  const wheelTimer = useRef<number | null>(null);
-
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      e.preventDefault();
-      if (cooldownRef.current) return;
-
-      wheelAccum.current += e.deltaY;
-      if (wheelTimer.current) clearTimeout(wheelTimer.current);
-
-      wheelTimer.current = window.setTimeout(() => {
-        wheelAccum.current = 0;
-      }, 150);
-
-      const threshold = 80;
-      if (Math.abs(wheelAccum.current) > threshold) {
-        const direction = wheelAccum.current > 0 ? 1 : -1;
-
-        if (sectionIds[currentIndex] === "projects") {
-          goToSectionCard("projects", "[data-project-card]", direction);
-        } else if (direction > 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
-        wheelAccum.current = 0;
-      }
-    },
-    [currentIndex, goNext, goPrev, goToSectionCard, sectionIds]
-  );
-
-  /* ── Touch swipe handler ── */
-  const touchStartY = useRef(0);
-
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
-  }, []);
-
-  const handleTouchEnd = useCallback(
-    (e: TouchEvent) => {
-      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      const threshold = 50;
-      if (Math.abs(deltaY) > threshold) {
-        if (deltaY > 0) goNext();
-        else goPrev();
-      }
-    },
-    [goNext, goPrev]
-  );
-
-  /* ── Prevent touchmove default to stop momentum scroll ── */
+  /* ── Block native scroll so only click/keyboard navigates ── */
   useEffect(() => {
-    const preventTouchScroll = (e: TouchEvent) => {
+    const blockWheel = (e: WheelEvent) => {
+      if ((e.target as HTMLElement).closest("[data-allow-scroll]")) return;
       e.preventDefault();
     };
-    document.addEventListener("touchmove", preventTouchScroll, { passive: false });
-    return () => document.removeEventListener("touchmove", preventTouchScroll);
+    const blockTouchMove = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest("[data-allow-scroll]")) return;
+      e.preventDefault();
+    };
+    const blockScroll = (e: Event) => {
+      if ((e.target as HTMLElement)?.closest?.("[data-allow-scroll]")) return;
+      e.preventDefault();
+    };
+
+    // CSS-level scroll lock
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    window.addEventListener("wheel", blockWheel, { passive: false });
+    document.addEventListener("wheel", blockWheel, { passive: false });
+    document.addEventListener("touchmove", blockTouchMove, { passive: false });
+    document.addEventListener("scroll", blockScroll, { passive: false });
+
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+      window.removeEventListener("wheel", blockWheel);
+      document.removeEventListener("wheel", blockWheel);
+      document.removeEventListener("touchmove", blockTouchMove);
+      document.removeEventListener("scroll", blockScroll);
+    };
   }, []);
 
   /* ── Attach listeners ── */
   useEffect(() => {
     window.addEventListener("click", handleClick);
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener("click", handleClick);
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [handleClick, handleKeyDown, handleWheel, handleTouchStart, handleTouchEnd]);
+  }, [handleClick, handleKeyDown]);
 
   return {
     currentIndex,

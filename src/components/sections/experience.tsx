@@ -2,8 +2,6 @@
 
 import { useState, useRef, memo } from "react";
 import { SlideHeading } from "./about";
-import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { useStaggerReveal } from "@/hooks/use-stagger-reveal";
 
 export interface ExperienceItem {
   company: string;
@@ -46,22 +44,14 @@ function ViewCard({ item }: { item: ExperienceItem }) {
   const detailItems = [item.summary, ...(item.achievements ?? [])]
     .filter(Boolean)
     .slice(0, 4);
-  const cardRef = useStaggerReveal<HTMLDivElement>({
-    childSelector: ".exp-child",
-    stagger: 0.07,
-    y: 25,
-  });
-  const techRef = useStaggerReveal<HTMLDivElement>({
-    childSelector: "> span",
-    stagger: 0.04,
-    y: 12,
-  });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const techRef = useRef<HTMLDivElement>(null);
 
   const isActive = !!item.status;
 
   return (
     <div
-      className="relative flex gap-4 overflow-hidden rounded-2xl border border-transparent px-2 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/10 hover:shadow-md sm:gap-6 sm:py-4"
+      className="relative flex gap-4 overflow-hidden rounded-2xl border border-transparent px-2 py-3 sm:gap-6 sm:py-4"
     >
       {/* Timeline rail */}
       <div className="flex flex-col items-center pt-1">
@@ -291,7 +281,7 @@ export const Experience = memo(function Experience({ items }: ExperienceProps) {
   const [editItems, setEditItems] = useState<ExperienceItem[]>([]);
   const [saving, setSaving] = useState(false);
   const [displayItems, setDisplayItems] = useState(items);
-  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+  const headingRef = useRef<HTMLDivElement>(null);
 
   const enterEditMode = () => {
     setEditItems(JSON.parse(JSON.stringify(displayItems)));

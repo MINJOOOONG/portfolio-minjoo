@@ -22,12 +22,13 @@ const RING_LABELED = 90;
 
 const DOT_SPRING = { damping: 40, stiffness: 700, mass: 0.12 };
 const RING_SPRING = { damping: 18, stiffness: 140, mass: 0.9 };
+const HIGHLIGHT_SPRING = { damping: 22, stiffness: 120, mass: 0.8 };
 
 const MAGNETIC_RADIUS = 70;
 const MAGNETIC_WEAK = 0.2;
 const MAGNETIC_STRONG = 0.35;
 
-type CursorMode = "default" | "nav" | "button" | "project" | "labeled";
+type CursorMode = "default" | "nav" | "button" | "project" | "labeled" | "highlight";
 
 interface RippleItem {
   id: number;
@@ -64,6 +65,8 @@ export function MagneticCursor() {
   const dotY = useSpring(rawY, DOT_SPRING);
   const ringX = useSpring(rawX, RING_SPRING);
   const ringY = useSpring(rawY, RING_SPRING);
+  const highlightX = useSpring(rawX, HIGHLIGHT_SPRING);
+  const highlightY = useSpring(rawY, HIGHLIGHT_SPRING);
 
   /* ── Stretch values (updated in rAF) ── */
   const ringScaleX = useMotionValue(1);
@@ -138,6 +141,9 @@ export function MagneticCursor() {
         'button, [role="button"]'
       ) as HTMLElement | null;
       const link = target.closest("a") as HTMLElement | null;
+      const highlightArea = target.closest(
+        "[data-cursor-highlight]"
+      ) as HTMLElement | null;
 
       let mode: CursorMode = "default";
       let label = "";
@@ -157,6 +163,9 @@ export function MagneticCursor() {
       } else if (link) {
         mode = "button";
         label = "OPEN";
+      } else if (highlightArea) {
+        mode = "highlight";
+        label = "";
       }
 
       cursorModeRef.current = mode;
@@ -260,7 +269,8 @@ export function MagneticCursor() {
   /* ═══════════════════════════════════════════
      Derive visual state from mode
      ═══════════════════════════════════════════ */
-  const isHovering = cursorMode !== "default";
+  const isHovering = cursorMode !== "default" && cursorMode !== "highlight";
+  const isHighlight = cursorMode === "highlight";
   const hasLabel = cursorLabel.length > 0;
   const isPill = cursorMode === "button";
 
@@ -462,6 +472,33 @@ export function MagneticCursor() {
           />
         ))}
       </AnimatePresence>
+
+      {/* ════════════ Highlight (pastel pink ellipse) ════════════ */}
+      <motion.div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          x: highlightX,
+          y: highlightY,
+          translateX: "-50%",
+          translateY: "-50%",
+          width: 120,
+          height: 28,
+          borderRadius: 4,
+          backgroundColor: "rgba(255, 182, 193, 0.35)",
+          mixBlendMode: "multiply",
+          pointerEvents: "none",
+          zIndex: 9996,
+          willChange: "transform, opacity",
+        }}
+        animate={{
+          opacity: isVisible && isHighlight ? 1 : 0,
+        }}
+        transition={{
+          opacity: { duration: 0.2, ease: "easeOut" },
+        }}
+      />
     </>
   );
 }
