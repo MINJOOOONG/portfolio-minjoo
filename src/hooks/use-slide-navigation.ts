@@ -38,10 +38,19 @@ const INTERACTIVE_SELECTOR = [
   "[data-annotation-card]",
 ].join(", ");
 
+/** Sections whose content scrolls internally instead of PPT-style navigation */
+const SCROLLABLE_SECTIONS = new Set(["projects"]);
+
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const currentIndexRef = useRef(0);
   const isScrolling = useRef(false);
   const cooldownRef = useRef(false);
+
+  // Keep ref in sync for use in event handlers (avoids stale closures)
+  useEffect(() => {
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
 
   /* ── Sync currentIndex with scroll position ── */
   useEffect(() => {
@@ -212,18 +221,40 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   );
 
   /* ── Block native scroll so only click/keyboard navigates ── */
+  /* For scrollable sections (e.g. "projects"), forward wheel to internal scroller */
   useEffect(() => {
+    /** Find the internal scroll container for the current section */
+    const getScroller = (): HTMLElement | null => {
+      const sectionId = sectionIds[currentIndexRef.current];
+      if (!sectionId || !SCROLLABLE_SECTIONS.has(sectionId)) return null;
+      const section = document.getElementById(sectionId);
+      return section?.querySelector<HTMLElement>("[data-scroller]") ?? null;
+    };
+
     const blockWheel = (e: WheelEvent) => {
-      if ((e.target as HTMLElement).closest("[data-allow-scroll]")) return;
       e.preventDefault();
+      const scroller = getScroller();
+      if (scroller) {
+        // Convert line/page units to pixels
+        let dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 20; // line → px
+        if (e.deltaMode === 2) dy *= window.innerHeight; // page → px
+        scroller.scrollBy({ top: dy, behavior: "instant" });
+      }
+    };
+
+    let touchStartY = 0;
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
     };
     const blockTouchMove = (e: TouchEvent) => {
-      if ((e.target as HTMLElement).closest("[data-allow-scroll]")) return;
       e.preventDefault();
-    };
-    const blockScroll = (e: Event) => {
-      if ((e.target as HTMLElement)?.closest?.("[data-allow-scroll]")) return;
-      e.preventDefault();
+      const scroller = getScroller();
+      if (scroller) {
+        const deltaY = touchStartY - e.touches[0].clientY;
+        touchStartY = e.touches[0].clientY;
+        scroller.scrollBy({ top: deltaY, behavior: "instant" });
+      }
     };
 
     // CSS-level scroll lock
@@ -231,19 +262,19 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     document.body.style.overflow = "hidden";
 
     window.addEventListener("wheel", blockWheel, { passive: false });
-    document.addEventListener("wheel", blockWheel, { passive: false });
+    document.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
     document.addEventListener("touchmove", blockTouchMove, { passive: false });
-    document.addEventListener("scroll", blockScroll, { passive: false });
 
     return () => {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       window.removeEventListener("wheel", blockWheel);
-      document.removeEventListener("wheel", blockWheel);
+      document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchmove", blockTouchMove);
-      document.removeEventListener("scroll", blockScroll);
     };
-  }, []);
+  }, [sectionIds]);
 
   /* ── Attach listeners ── */
   useEffect(() => {

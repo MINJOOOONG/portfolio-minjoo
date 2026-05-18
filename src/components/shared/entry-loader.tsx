@@ -1,105 +1,52 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import gsap from "gsap";
+import Image from "next/image";
+import { useCallback, useEffect, useState, type KeyboardEvent } from "react";
 
 export function EntryPage() {
   const router = useRouter();
-  const [isExiting, setIsExiting] = useState(false);
-  const mainRef = useRef<HTMLElement>(null);
-  const scaleWrapRef = useRef<HTMLDivElement>(null);
-  const vignetteRef = useRef<HTMLDivElement>(null);
-  const idleTween = useRef<gsap.core.Tween | null>(null);
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    router.prefetch("/portfolio");
+  }, [router]);
 
-    gsap.set(scaleWrapRef.current, { scale: 1.15 });
-    gsap.set(vignetteRef.current, { opacity: 0 });
+  const go = useCallback(() => {
+    if (leaving) return;
+    setLeaving(true);
+    setTimeout(() => {
+      router.push("/portfolio#about");
+    }, 400);
+  }, [router, leaving]);
 
-    tl.to(scaleWrapRef.current, {
-      scale: 1.0,
-      duration: 2,
-      ease: "power2.out",
-    });
-
-    tl.to(vignetteRef.current, { opacity: 1, duration: 1.5 }, 0.3);
-
-    tl.call(() => {
-      idleTween.current = gsap.to(scaleWrapRef.current, {
-        scale: 1.05,
-        duration: 20,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-    });
-
-    return () => {
-      tl.kill();
-      idleTween.current?.kill();
-    };
-  }, []);
-
-  const enterPortfolio = useCallback(() => {
-    if (isExiting) return;
-    setIsExiting(true);
-
-    idleTween.current?.kill();
-
-    const exitTl = gsap.timeline({
-      defaults: { ease: "power3.inOut" },
-      onComplete: () => router.push("/portfolio#about"),
-    });
-
-    // Zoom into the card
-    exitTl.to(scaleWrapRef.current, {
-      scale: 3,
-      duration: 1.2,
-      ease: "power3.in",
-    });
-
-    // Fade to white while zooming
-    exitTl.to(mainRef.current, {
-      opacity: 0,
-      duration: 0.6,
-      ease: "power2.in",
-    }, 0.5);
-  }, [isExiting, router]);
-
-  const handleKeyDown = useCallback(
+  const onKey = useCallback(
     (e: KeyboardEvent<HTMLElement>) => {
       if (e.key !== "Enter" && e.key !== " ") return;
       e.preventDefault();
-      enterPortfolio();
+      go();
     },
-    [enterPortfolio]
+    [go]
   );
 
   return (
     <main
-      ref={mainRef}
-      className="entry-overlay"
+      className={`entry-overlay ${leaving ? "entry-overlay--leaving" : ""}`}
       role="button"
       tabIndex={0}
       aria-label="포트폴리오로 들어가기"
       data-cursor="ENTER"
-      onClick={enterPortfolio}
-      onKeyDown={handleKeyDown}
+      onClick={go}
+      onKeyDown={onKey}
     >
-      <div className="entry-cinematic">
-        <div ref={scaleWrapRef} className="entry-scale-wrap">
-          <img
-            src="/entry-page.png"
-            alt=""
-            draggable={false}
-            className="entry-image"
-          />
-        </div>
-        <div ref={vignetteRef} className="entry-vignette" />
-        <div className="entry-grain" />
-      </div>
+      <Image
+        src="/entry-page.png"
+        alt="Minjoo portfolio entry badge"
+        fill
+        priority
+        sizes="100vw"
+        className="entry-image"
+      />
     </main>
   );
 }

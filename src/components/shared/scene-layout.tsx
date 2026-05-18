@@ -47,10 +47,27 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
                   ? "scene-section scene-section-hero"
                   : "scene-section"
               }
+              /* Projects section: no wrapper, content manages its own layout */
+              style={
+                SECTION_IDS[i] === "projects"
+                  ? {
+                      height: "100vh",
+                      minHeight: 0,
+                      maxHeight: "100vh",
+                      padding: 0,
+                      overflow: "hidden",
+                      display: "block",
+                    }
+                  : undefined
+              }
             >
-              <div className="w-full max-w-[960px] mx-auto">
-                {content}
-              </div>
+              {SECTION_IDS[i] === "projects" ? (
+                content
+              ) : (
+                <div className="w-full max-w-[960px] mx-auto">
+                  {content}
+                </div>
+              )}
             </section>
           ))}
         </main>
