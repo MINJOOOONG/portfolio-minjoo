@@ -1,11 +1,29 @@
 "use client";
 
-import { useState, useEffect, memo, type CSSProperties } from "react";
-import Image from "next/image";
+import { useState, useEffect, memo, useCallback, type CSSProperties } from "react";
+import Image, { type ImageProps } from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { isArticleProject } from "@/lib/project-groups";
+
+/* ── 이미지 로드 실패 시 fallback을 보여주는 래퍼 ── */
+function SafeImage(props: ImageProps & { fallbackText?: string }) {
+  const { fallbackText, alt, ...rest } = props;
+  const [failed, setFailed] = useState(false);
+  const onError = useCallback(() => setFailed(true), []);
+
+  if (failed) {
+    return (
+      <div className="pj-image-fallback" aria-label={alt || "이미지를 불러올 수 없습니다"}>
+        <span className="pj-image-fallback__icon">🖼</span>
+        <span className="pj-image-fallback__text">{fallbackText || "이미지를 불러올 수 없습니다"}</span>
+      </div>
+    );
+  }
+
+  return <Image {...rest} alt={alt || ""} onError={onError} />;
+}
 
 const ProjectMiniScene = dynamic(
   () => import("@/components/three/project-scenes"),
@@ -168,14 +186,15 @@ function MediaPreview({
   }
 
   return (
-    <Image
+    <SafeImage
       src={media.url}
       alt={media.title || title || "project"}
       fill
       className="object-contain"
       sizes="(max-width: 768px) 100vw, 460px"
+      fallbackText={media.title || title || "프로젝트 이미지"}
       onLoad={(event) => {
-        const image = event.currentTarget;
+        const image = event.currentTarget as HTMLImageElement;
         if (image.naturalWidth && image.naturalHeight) {
           onMediaRatioChange?.(image.naturalWidth / image.naturalHeight);
         }
@@ -215,12 +234,13 @@ function ProjectMediaGallery({
                 className="pj-media-item__asset"
                 aria-label={`${item.title ?? "프로젝트 이미지"} 새 창으로 보기`}
               >
-                <Image
+                <SafeImage
                   src={item.url}
                   alt={item.title ?? "프로젝트 이미지"}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 180px"
+                  fallbackText={item.title}
                 />
               </a>
             )}
@@ -304,13 +324,14 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
               >
-                <Image
+                <SafeImage
                   src={block.url}
                   alt={block.caption || "프로젝트 이미지"}
                   width={640}
                   height={400}
                   className="pj-content-image__img"
                   sizes="(max-width: 768px) 90vw, 640px"
+                  fallbackText={block.caption}
                 />
                 {block.caption && (
                   <figcaption className="pj-content-caption">{block.caption}</figcaption>
@@ -446,7 +467,7 @@ function ProjectCard({
         aria-hidden="true"
       >
         {hasImageMedia && (
-          <Image
+          <SafeImage
             src={item.media!.url}
             alt=""
             fill
