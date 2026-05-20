@@ -1,11 +1,12 @@
 import { getSettings, parseJsonSetting } from "@/lib/settings";
-import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
+import { ContactSection } from "@/components/sections/profile";
 import { Experience, type ExperienceItem } from "@/components/sections/experience";
 import { Projects, type ProjectItem } from "@/components/sections/projects";
 import { Articles } from "@/components/sections/articles";
+import { AILab } from "@/components/sections/ai-lab";
 import { Skills } from "@/components/sections/skills";
-import { EducationCertifications, type CertificationItem, type EducationItem } from "@/components/sections/education";
+import { type CertificationItem, type EducationItem } from "@/components/sections/education";
 import { SceneLayout } from "@/components/shared/scene-layout";
 import { isArticleProject } from "@/lib/project-groups";
 import type { ResumeData } from "@/lib/pdf/types";
@@ -45,10 +46,10 @@ export async function PortfolioPage() {
     <About key="about" content={settings.about_content || ""} />,
     <Experience key="experience" items={experienceData} />,
     <Projects key="projects" items={projectData} />,
+    <AILab key="ai-lab" />,
     <Articles key="articles" items={articleData} />,
     <Skills key="skills" data={skillsData} />,
-    <EducationCertifications key="education" educationItems={educationData} certificationItems={certificationData} />,
-    <Hero key="contact" />,
+    <ContactSection key="contact" educationItems={educationData} certificationItems={certificationData} />,
   ];
 
   return <SceneLayout sections={sections} resumeData={resumeData} />;

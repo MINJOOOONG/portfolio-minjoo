@@ -39,7 +39,7 @@ const INTERACTIVE_SELECTOR = [
 ].join(", ");
 
 /** Sections whose content scrolls internally instead of PPT-style navigation */
-const SCROLLABLE_SECTIONS = new Set(["projects"]);
+const SCROLLABLE_SECTIONS = new Set(["projects", "ai-lab"]);
 
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -162,35 +162,7 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     [goNext, goPrev]
   );
 
-  /* ── Click handler: left half = prev, right half = next ── */
-  const handleClick = useCallback(
-    (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-
-      // Skip clicks on interactive elements
-      if (target.closest(INTERACTIVE_SELECTOR)) {
-        return;
-      }
-
-      const isRightSide = e.clientX > window.innerWidth / 2;
-
-      if (isRightSide) {
-        // Projects section: navigate between project cards first
-        if (sectionIds[currentIndex] === "projects") {
-          goToSectionCard("projects", "[data-project-card]", 1);
-        } else {
-          goNext();
-        }
-      } else {
-        if (sectionIds[currentIndex] === "projects") {
-          goToSectionCard("projects", "[data-project-card]", -1);
-        } else {
-          goPrev();
-        }
-      }
-    },
-    [currentIndex, goNext, goPrev, goToSectionCard, sectionIds]
-  );
+  /* ── Click handler removed: navigation only via buttons ── */
 
   /* ── Keyboard handler ── */
   const handleKeyDown = useCallback(
@@ -276,16 +248,22 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     };
   }, [sectionIds]);
 
-  /* ── Attach listeners ── */
+  /* ── Listen for nav requests from other components (e.g. SceneNavbar) ── */
   useEffect(() => {
-    window.addEventListener("click", handleClick);
+    const handleNavRequest = (e: Event) => {
+      const sectionId = (e as CustomEvent<string>).detail;
+      const idx = sectionIds.indexOf(sectionId);
+      if (idx >= 0) goTo(idx);
+    };
+
+    window.addEventListener("slide-nav-goto", handleNavRequest);
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("click", handleClick);
+      window.removeEventListener("slide-nav-goto", handleNavRequest);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleClick, handleKeyDown]);
+  }, [handleKeyDown, goTo, sectionIds]);
 
   return {
     currentIndex,

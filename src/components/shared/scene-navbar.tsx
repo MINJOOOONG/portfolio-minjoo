@@ -5,15 +5,15 @@ import { cn } from "@/lib/utils";
 import { PdfExportButton } from "@/components/shared/pdf-export-button";
 import type { ResumeData } from "@/lib/pdf/types";
 
-const SECTION_IDS = ["about", "experience", "projects", "articles", "skills", "education", "contact"];
+const SECTION_IDS = ["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"];
 
 const navItems = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
+  { id: "ai-lab", label: "AI Lab" },
   { id: "articles", label: "Articles" },
   { id: "skills", label: "Skills" },
-  { id: "education", label: "Education" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -62,12 +62,7 @@ export const SceneNavbar = memo(function SceneNavbar({ resumeData }: SceneNavbar
   }, []);
 
   const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    const offset = 56;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top, behavior: "smooth" });
+    window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: id }));
   };
 
   return (

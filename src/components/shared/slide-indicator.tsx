@@ -38,19 +38,19 @@ export const SlideIndicator = memo(function SlideIndicator({
 
       {/* ── Prev button (left center) ── */}
       <button
-        className={`slide-nav-btn slide-nav-btn--prev ${isFirst ? "slide-nav-btn--disabled" : ""}`}
+        className="slide-nav-btn slide-nav-btn--prev"
         onClick={(e) => {
           e.stopPropagation();
           if (!isFirst) goPrev();
         }}
-        aria-label="이전 섹션"
-        aria-disabled={isFirst}
+        disabled={isFirst}
+        aria-label="Previous section"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path
-            d="M11 14L6 9L11 4"
+            d="M10 13L5 8L10 3"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="1.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -59,19 +59,19 @@ export const SlideIndicator = memo(function SlideIndicator({
 
       {/* ── Next button (right center) ── */}
       <button
-        className={`slide-nav-btn slide-nav-btn--next ${isLast ? "slide-nav-btn--disabled" : ""}`}
+        className="slide-nav-btn slide-nav-btn--next"
         onClick={(e) => {
           e.stopPropagation();
           if (!isLast) goNext();
         }}
-        aria-label="다음 섹션"
-        aria-disabled={isLast}
+        disabled={isLast}
+        aria-label="Next section"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path
-            d="M7 4L12 9L7 14"
+            d="M6 3L11 8L6 13"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="1.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />

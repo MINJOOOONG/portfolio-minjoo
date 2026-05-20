@@ -19,9 +19,9 @@ const SECTION_IDS = [
   "about",
   "experience",
   "projects",
+  "ai-lab",
   "articles",
   "skills",
-  "education",
   "contact",
 ];
 
@@ -42,14 +42,11 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
             <section
               key={SECTION_IDS[i]}
               id={SECTION_IDS[i]}
-              className={
-                SECTION_IDS[i] === "contact"
-                  ? "scene-section scene-section-hero"
-                  : "scene-section"
-              }
+              className="scene-section"
               /* Projects section: no wrapper, content manages its own layout */
+              /* Contact section: top-aligned instead of center */
               style={
-                SECTION_IDS[i] === "projects"
+                SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab"
                   ? {
                       height: "100vh",
                       minHeight: 0,
@@ -58,10 +55,12 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
                       overflow: "hidden",
                       display: "block",
                     }
-                  : undefined
+                  : SECTION_IDS[i] === "contact"
+                    ? { alignItems: "flex-start" }
+                    : undefined
               }
             >
-              {SECTION_IDS[i] === "projects" ? (
+              {SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab" ? (
                 content
               ) : (
                 <div className="w-full max-w-[960px] mx-auto">
