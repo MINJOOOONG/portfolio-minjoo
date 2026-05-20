@@ -76,6 +76,8 @@ export interface ProjectItem {
   blogUrl?: string;
   caseStudy?: CaseStudyBlock[];
   contentBlocks?: ContentBlock[];
+  achievement?: string;
+  role?: string;
 }
 
 interface ProjectsProps {
@@ -486,24 +488,26 @@ function ProjectCard({
       </div>
 
       <div className="pj-card__content">
-        <div className="mb-3 flex items-center justify-between gap-3 text-[10px] uppercase tracking-[0.16em] text-muted-foreground/55">
-          <span>{item.period}</span>
-          <span>{item.teamSize}</span>
-        </div>
-
-        <h3 className="font-display text-[20px] font-black leading-tight mb-3">
+        <h3 className="font-display text-[20px] font-black leading-tight mb-2">
           {item.title}
         </h3>
 
         {item.summary && (
-          <p className="pj-card__summary text-[13px] text-muted-foreground leading-relaxed">
+          <p className="pj-card__summary text-[13px] text-muted-foreground leading-relaxed mb-2">
             {item.summary}
           </p>
         )}
 
+        {item.achievement && (
+          <p className="pj-card__achievement">
+            <span className="pj-card__achievement-prefix">▸</span>
+            {item.achievement}
+          </p>
+        )}
+
         {item.techStack.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
-            {item.techStack.slice(0, 4).map((t) => (
+          <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
+            {item.techStack.slice(0, 6).map((t) => (
               <span
                 key={t}
                 className="rounded border border-[var(--notion-hairline)] bg-transparent px-2 py-0.5 text-[10px] font-medium text-muted-foreground/70"
@@ -511,13 +515,23 @@ function ProjectCard({
                 {t}
               </span>
             ))}
-            {item.techStack.length > 4 && (
+            {item.techStack.length > 6 && (
               <span className="px-2 py-0.5 text-[10px] text-muted-foreground/40">
-                +{item.techStack.length - 4}
+                +{item.techStack.length - 6}
               </span>
             )}
           </div>
         )}
+
+        <div className="pj-card__meta">
+          <span>{item.period}</span>
+          {item.role && (
+            <>
+              <span className="text-[var(--notion-hairline)]">·</span>
+              <span>{item.role}</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
