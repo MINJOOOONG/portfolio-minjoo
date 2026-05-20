@@ -1,5 +1,6 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
+import { notionProjectAssets } from "./notion-project-assets";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -60,6 +61,7 @@ async function main() {
       ],
       techStack: ["Next.js", "TypeScript", "Three.js", "Framer Motion", "GSAP", "Prisma", "Neon", "Tailwind CSS"],
       githubUrl: "https://github.com/MINJOOOONG/portfolio-minjoo",
+      ...notionProjectAssets.portfolioWebsite,
     },
     {
       title: "개인 기술 블로그 joodev",
@@ -76,6 +78,7 @@ async function main() {
       techStack: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "TipTap", "Vercel Blob"],
       githubUrl: "https://github.com/MINJOOOONG/joodev",
       liveUrl: "https://joodev-sandy.vercel.app/",
+      ...notionProjectAssets.joodevBlog,
     },
     {
       title: "E-commerce Backend Engineering",
@@ -94,6 +97,22 @@ async function main() {
       githubUrl: "https://github.com/MINJOOOONG",
     },
     {
+      title: "아두이노를 이용한 사회적 제품 제작",
+      teamSize: "4명",
+      period: "2023",
+      summary: "Arduino, OpenCV, Python을 활용해 일상 속 사회 문제를 개선하는 제품 아이디어를 프로토타입으로 구현한 팀 프로젝트입니다.",
+      description: [
+        "제품 아이디어를 문제 정의, 사용자 상황, 구현 가능성 기준으로 좁히고 센서 입력과 시각 처리 흐름을 함께 설계",
+        "Arduino 기반 하드웨어 입력과 Python 로직을 연결해 실제 사용 상황에서 동작하는 프로토타입을 제작",
+        "OpenCV를 활용해 카메라 입력을 처리하고, 인식 결과를 제품 동작 로직과 연결하는 흐름을 구현",
+        "Flow chart로 전체 동작 과정을 정리하며 팀원 간 구현 범위와 데이터 흐름을 명확히 공유",
+        "제한된 장비와 기간 안에서 완성 가능한 형태로 기능을 줄이고 검증 가능한 데모를 만드는 경험을 축적",
+      ],
+      techStack: ["Arduino", "Python", "OpenCV", "Hardware Prototype"],
+      blogUrl: "https://m.blog.naver.com/minjoongthi/223239867325",
+      ...notionProjectAssets.arduinoSocialProduct,
+    },
+    {
       title: "FSM과 BT 구조를 활용한 게임 인공지능 분석",
       teamSize: "졸업논문",
       period: "2024 - 2025",
@@ -109,6 +128,7 @@ async function main() {
         type: "pdf",
         url: "/pdf/fsm-vs-bt-thesis-english.pdf",
       },
+      ...notionProjectAssets.fsmBtThesis,
     },
     {
       title: "UNIST 해상 물류 창업 오디션",
@@ -122,19 +142,53 @@ async function main() {
         "UNIST 창업 오디션 최종 선정 및 1,000만 원 창업 지원금을 수주하며 아이디어의 실행 가능성을 검증",
       ],
       techStack: ["Unity", "Arduino", "PM", "UI/UX", "Product Validation"],
+      ...notionProjectAssets.unistStartupAudition,
     },
     {
       title: "2024 K-HTML 대학대항전 해커톤",
       teamSize: "팀 프로젝트",
       period: "2024",
-      summary: "제한된 시간 내 문제 정의, UI 설계, AI 연동 기능 구현까지 완료한 웹 서비스 프로젝트입니다.",
+      summary: "용인시 사회문제 개선을 주제로 Python, HTML, Azure OpenAI, AWS를 활용해 제한 시간 안에 서비스 형태로 구현한 해커톤 프로젝트입니다.",
       description: [
         "한국외국어대학교 대표팀으로 참가해 문제 정의부터 UI 설계, 서비스 구현까지 수행",
         "사용자 행동 흐름 기반 UI 구조와 인터랙션을 설계하고 HTML, CSS, JavaScript로 구현",
-        "OpenAI API를 연동해 사용자 입력에 따라 동적으로 응답하는 기능을 구현하고 서비스 형태로 완성",
+        "Azure OpenAI 기반 응답 기능을 연동해 사용자 입력에 따라 동적으로 반응하는 기능을 구현",
+        "AWS 배포 환경을 고려해 짧은 시간 안에 화면, 기능, 데이터 흐름을 하나의 서비스로 묶음",
         "문제 정의, UI 설계, 구현, 검증 과정을 짧은 주기로 반복하며 제한 시간 내 작동 가능한 결과물을 완성",
       ],
-      techStack: ["HTML", "CSS", "JavaScript", "OpenAI API", "UI Design"],
+      techStack: ["Python", "HTML", "Azure OpenAI", "AWS", "UI Design"],
+      githubUrl: "https://github.com/MINJOOOONG/ssaknayong.git",
+      ...notionProjectAssets.kHtmlHackathon,
+    },
+    {
+      title: "미니 산학 연계 캡스톤 프로젝트",
+      teamSize: "개인",
+      period: "2024",
+      summary: "클라우드와 생성형 AI 교육 과정을 바탕으로 AWS, Azure OpenAI 기반 서비스 아이디어를 정리하고 구현 실험을 진행한 프로젝트입니다.",
+      description: [
+        "40시간 클라우드 및 인공지능 교육을 통해 AWS와 Microsoft 기반 생성형 AI 활용 흐름을 학습",
+        "마이크로소프트와 구글 코리아 본사 탐방을 통해 실제 클라우드, AI 서비스 운영 사례를 접하고 프로젝트 방향을 구체화",
+        "생성형 AI 기능을 서비스 문제 해결에 연결하기 위해 사용자 입력, 응답 생성, 결과 검증 흐름을 설계",
+        "클라우드 기반 배포와 외부 AI API 연동을 고려해 기능 구조를 작은 단위로 나누어 실험",
+        "AI를 단순 기능이 아니라 제품 문제 해결을 돕는 도구로 사용하는 관점을 쌓음",
+      ],
+      techStack: ["AWS", "Cloud", "Azure OpenAI", "Generative AI"],
+      ...notionProjectAssets.miniCapstoneAiCloud,
+    },
+    {
+      title: "폴가이즈 기반 레고 파티클 게임",
+      teamSize: "팀 프로젝트",
+      period: "2025",
+      summary: "Unreal Engine 5로 Fall Guys의 파티 게임 감각을 참고해 레고 파티클 콘셉트의 멀티플레이 미니게임을 구현한 부트캠프 팀 프로젝트입니다.",
+      description: [
+        "Unreal Engine 5와 C++ 기반으로 플레이어 이동, 라운드 진행, UI 표시 흐름을 구현",
+        "플레이어 머리 위 화살표, 게임 시작 전 카운트다운, 옵션 UI 등 실제 플레이에 필요한 인터페이스를 설계",
+        "게임 상태 변화에 맞춰 UI가 갱신되도록 위젯 구조와 이벤트 연결 방식을 정리",
+        "팀 프로젝트에서 SVN과 Git을 병행하며 작업 단위를 나누고 충돌 가능성이 있는 리소스 변경을 관리",
+        "폴가이즈류 게임에서 중요한 즉각적인 피드백과 화면 가독성을 중심으로 UI 디테일을 개선",
+      ],
+      techStack: ["Unreal Engine 5", "C++", "UI", "SVN", "Git"],
+      ...notionProjectAssets.legoParticleParty,
     },
     {
       title: "AWS DeepRacer 경진 대회 1등",

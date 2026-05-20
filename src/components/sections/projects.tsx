@@ -21,12 +21,27 @@ const PdfViewer = dynamic(
 export interface ProjectMedia {
   type: "image" | "video" | "pdf";
   url: string;
+  title?: string;
+}
+
+export interface ProjectAttachment {
+  type: "pdf" | "file";
+  title: string;
+  url: string;
 }
 
 export interface CaseStudyBlock {
   heading: string;
   body: string[];
 }
+
+export type ContentBlock =
+  | { type: "text"; heading?: string; body: string[] }
+  | { type: "image"; url: string; caption?: string }
+  | { type: "video"; url: string; caption?: string }
+  | { type: "pdf"; url: string; caption?: string }
+  | { type: "audio"; url: string; caption?: string }
+  | { type: "file"; url: string; title: string };
 
 export interface ProjectItem {
   title: string;
@@ -36,9 +51,13 @@ export interface ProjectItem {
   description: string[];
   techStack: string[];
   media?: ProjectMedia;
+  gallery?: ProjectMedia[];
+  attachments?: ProjectAttachment[];
   githubUrl?: string;
   liveUrl?: string;
+  blogUrl?: string;
   caseStudy?: CaseStudyBlock[];
+  contentBlocks?: ContentBlock[];
 }
 
 interface ProjectsProps {
@@ -151,7 +170,7 @@ function MediaPreview({
   return (
     <Image
       src={media.url}
-      alt="project"
+      alt={media.title || title || "project"}
       fill
       className="object-contain"
       sizes="(max-width: 768px) 100vw, 460px"
@@ -162,6 +181,228 @@ function MediaPreview({
         }
       }}
     />
+  );
+}
+
+function ProjectMediaGallery({
+  items,
+  mainUrl,
+}: {
+  items?: ProjectMedia[];
+  mainUrl?: string;
+}) {
+  const galleryItems = (items ?? []).filter((item) => item.url !== mainUrl);
+  if (galleryItems.length === 0) return null;
+
+  return (
+    <section className="pj-media-section">
+      <h4 className="pj-modal__section-title">프로젝트 미디어</h4>
+      <div className="pj-media-grid">
+        {galleryItems.map((item, index) => (
+          <figure key={`${item.url}-${index}`} className="pj-media-item">
+            {item.type === "video" ? (
+              <video
+                src={item.url}
+                controls
+                preload="metadata"
+                className="pj-media-item__asset"
+              />
+            ) : (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pj-media-item__asset"
+                aria-label={`${item.title ?? "프로젝트 이미지"} 새 창으로 보기`}
+              >
+                <Image
+                  src={item.url}
+                  alt={item.title ?? "프로젝트 이미지"}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 180px"
+                />
+              </a>
+            )}
+            {item.title && <figcaption>{item.title}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProjectAttachmentList({ items }: { items?: ProjectAttachment[] }) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <section className="pj-media-section">
+      <h4 className="pj-modal__section-title">첨부 문서</h4>
+      <div className="pj-attachment-list">
+        {items.map((item) => (
+          <a
+            key={item.url}
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pj-attachment-link"
+          >
+            <span className="pj-attachment-link__type">
+              {item.type === "pdf" ? "PDF" : "FILE"}
+            </span>
+            <span className="pj-attachment-link__title">{item.title}</span>
+            <span className="pj-attachment-link__open">열기</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── 콘텐츠 블록 렌더러 (블로그 스타일) ── */
+function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
+  return (
+    <div className="pj-content-flow">
+      {blocks.map((block, i) => {
+        switch (block.type) {
+          case "text":
+            return (
+              <motion.section
+                key={`text-${i}`}
+                className="pj-content-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                {block.heading && (
+                  <h4 className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold mb-3">
+                    {block.heading}
+                  </h4>
+                )}
+                <ul className="space-y-2">
+                  {block.body.map((line, j) => (
+                    <li
+                      key={j}
+                      className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
+                    >
+                      {block.body.length > 1 && (
+                        <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
+                      )}
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.section>
+            );
+
+          case "image":
+            return (
+              <motion.figure
+                key={`img-${i}`}
+                className="pj-content-block pj-content-image"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <Image
+                  src={block.url}
+                  alt={block.caption || "프로젝트 이미지"}
+                  width={640}
+                  height={400}
+                  className="pj-content-image__img"
+                  sizes="(max-width: 768px) 90vw, 640px"
+                />
+                {block.caption && (
+                  <figcaption className="pj-content-caption">{block.caption}</figcaption>
+                )}
+              </motion.figure>
+            );
+
+          case "video":
+            return (
+              <motion.figure
+                key={`vid-${i}`}
+                className="pj-content-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <video
+                  src={block.url}
+                  controls
+                  preload="metadata"
+                  className="w-full rounded-lg border border-[var(--notion-hairline)]"
+                />
+                {block.caption && (
+                  <figcaption className="pj-content-caption">{block.caption}</figcaption>
+                )}
+              </motion.figure>
+            );
+
+          case "pdf":
+            return (
+              <motion.figure
+                key={`pdf-${i}`}
+                className="pj-content-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <div
+                  className="relative w-full rounded-lg overflow-hidden bg-[var(--notion-surface)] border border-[var(--notion-hairline)]"
+                  style={{ aspectRatio: DEFAULT_PDF_RATIO }}
+                >
+                  <PdfViewer url={block.url} />
+                </div>
+                {block.caption && (
+                  <figcaption className="pj-content-caption">{block.caption}</figcaption>
+                )}
+              </motion.figure>
+            );
+
+          case "audio":
+            return (
+              <motion.figure
+                key={`audio-${i}`}
+                className="pj-content-block pj-content-audio"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <audio src={block.url} controls className="w-full" preload="metadata" />
+                {block.caption && (
+                  <figcaption className="pj-content-caption">{block.caption}</figcaption>
+                )}
+              </motion.figure>
+            );
+
+          case "file":
+            return (
+              <motion.div
+                key={`file-${i}`}
+                className="pj-content-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <a
+                  href={block.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pj-attachment-link"
+                >
+                  <span className="pj-attachment-link__type">FILE</span>
+                  <span className="pj-attachment-link__title">{block.title}</span>
+                  <span className="pj-attachment-link__open">열기</span>
+                </a>
+              </motion.div>
+            );
+
+          default:
+            return null;
+        }
+      })}
+    </div>
   );
 }
 
@@ -177,6 +418,7 @@ function ProjectCard({
 }) {
   const num = String(index + 1).padStart(2, "0");
   const symbol = SYMBOLS[index % SYMBOLS.length];
+  const hasImageMedia = item.media?.type === "image" && Boolean(item.media.url);
   const cardRef = useScrollReveal<HTMLDivElement>({
     y: 40,
     duration: 0.8,
@@ -199,13 +441,27 @@ function ProjectCard({
       }}
       className="pj-card group"
     >
-      <div className="pj-card__poster" aria-hidden="true">
-        <span className="absolute left-4 top-4 font-display text-[2rem] font-black leading-none text-foreground/[0.12] select-none">
+      <div
+        className={`pj-card__poster${hasImageMedia ? " pj-card__poster--media" : ""}`}
+        aria-hidden="true"
+      >
+        {hasImageMedia && (
+          <Image
+            src={item.media!.url}
+            alt=""
+            fill
+            className="pj-card__poster-image"
+            sizes="280px"
+          />
+        )}
+        <span className="pj-card__poster-number">
           {num}
         </span>
-        <span className="pj-card__poster-symbol select-none">
-          {symbol}
-        </span>
+        {!hasImageMedia && (
+          <span className="pj-card__poster-symbol select-none">
+            {symbol}
+          </span>
+        )}
       </div>
 
       <div className="pj-card__content">
@@ -423,39 +679,64 @@ function ProjectModal({
                 </a>
               </>
             )}
+            {project.blogUrl && (
+              <>
+                <span className="text-[var(--notion-hairline)]">|</span>
+                <a
+                  href={project.blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 hover:text-foreground transition-colors"
+                >
+                  Blog ↗
+                </a>
+              </>
+            )}
           </div>
 
           {/* 구분선 */}
           <div className="h-px w-full bg-[var(--notion-hairline)] mb-8" />
 
-          {/* 케이스 스터디 블록 */}
-          <div className="space-y-8">
-            {blocks.map((block, i) => (
-              <motion.section
-                key={block.heading}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
-              >
-                <h4 className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold mb-3">
-                  {block.heading}
-                </h4>
-                <ul className="space-y-2">
-                  {block.body.map((line, j) => (
-                    <li
-                      key={j}
-                      className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
-                    >
-                      {block.body.length > 1 && (
-                        <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
-                      )}
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.section>
-            ))}
-          </div>
+          {/* 콘텐츠: contentBlocks가 있으면 블로그 스타일, 없으면 기존 방식 */}
+          {project.contentBlocks && project.contentBlocks.length > 0 ? (
+            <ContentBlockRenderer blocks={project.contentBlocks} />
+          ) : (
+            <>
+              <ProjectMediaGallery
+                items={project.gallery}
+                mainUrl={project.media?.url}
+              />
+              <ProjectAttachmentList items={project.attachments} />
+
+              <div className="space-y-8">
+                {blocks.map((block, i) => (
+                  <motion.section
+                    key={block.heading}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
+                  >
+                    <h4 className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold mb-3">
+                      {block.heading}
+                    </h4>
+                    <ul className="space-y-2">
+                      {block.body.map((line, j) => (
+                        <li
+                          key={j}
+                          className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
+                        >
+                          {block.body.length > 1 && (
+                            <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
+                          )}
+                          <span>{line}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.section>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
       </div>

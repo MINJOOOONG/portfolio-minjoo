@@ -745,12 +745,47 @@
     var(--poster-tint, var(--notion-tint-cream));
 }
 
-.pj-card__poster::before {
+.pj-card__poster:not(.pj-card__poster--media)::before {
   content: "";
   position: absolute;
   inset: 14px;
   border: 1px solid rgba(33, 29, 25, 0.13);
   border-radius: 50%;
+}
+
+.pj-card__poster--media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 44%);
+  pointer-events: none;
+}
+
+.pj-card__poster-image {
+  object-fit: cover;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pj-card:hover .pj-card__poster-image {
+  transform: scale(1.04);
+}
+
+.pj-card__poster-number {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  z-index: 1;
+  color: rgba(33, 29, 25, 0.12);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+  user-select: none;
+}
+
+.pj-card__poster--media .pj-card__poster-number {
+  color: rgba(255, 255, 255, 0.84);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.22);
 }
 
 .pj-card__poster-symbol {
@@ -777,6 +812,91 @@
   overflow: hidden;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+.pj-media-section {
+  margin-bottom: 28px;
+}
+
+.pj-modal__section-title {
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(33, 29, 25, 0.46);
+}
+
+.pj-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 12px;
+}
+
+.pj-media-item {
+  min-width: 0;
+}
+
+.pj-media-item__asset {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--notion-hairline);
+  border-radius: 8px;
+  background: var(--notion-surface);
+}
+
+.pj-media-item video.pj-media-item__asset {
+  object-fit: cover;
+}
+
+.pj-media-item figcaption {
+  margin-top: 6px;
+  overflow: hidden;
+  color: rgba(33, 29, 25, 0.58);
+  font-size: 11px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pj-attachment-list {
+  display: grid;
+  gap: 8px;
+}
+
+.pj-attachment-link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--notion-hairline);
+  color: var(--foreground);
+}
+
+.pj-attachment-link__type {
+  min-width: 42px;
+  color: rgba(33, 29, 25, 0.46);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.pj-attachment-link__title {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pj-attachment-link__open {
+  color: rgba(33, 29, 25, 0.48);
+  font-size: 11px;
 }
 
 /* ─── Project Modal (center floating) ─── */
@@ -881,6 +1001,48 @@
     border-radius: 0;
     border: none;
   }
+}
+
+/* ─── Blog-style content blocks ─── */
+.pj-content-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.pj-content-block {
+  margin: 0;
+}
+
+.pj-content-image__img {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  border: 1px solid var(--notion-hairline);
+  border-radius: 10px;
+  background: var(--notion-surface);
+  object-fit: contain;
+}
+
+.pj-content-caption {
+  margin-top: 8px;
+  color: rgba(33, 29, 25, 0.52);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.pj-content-audio {
+  padding: 16px 20px;
+  border: 1px solid var(--notion-hairline);
+  border-radius: 10px;
+  background: var(--notion-surface);
+}
+
+.pj-content-audio audio {
+  border-radius: 6px;
 }
 
 /* PDF inline viewer — fit page into container */
