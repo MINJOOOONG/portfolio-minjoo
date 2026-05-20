@@ -37,6 +37,10 @@ function renderAnnotatedText(text: string): ReactNode[] {
 }
 
 export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
+  const handleDetailLink = (targetId: string) => {
+    window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: targetId }));
+  };
+
   return (
     <div
       data-no-section-nav
@@ -81,6 +85,24 @@ export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
                 </p>
               ))}
             </div>
+
+            {section.detailLink
+              ? (() => {
+                  const detailLink = section.detailLink;
+
+                  return (
+                    <button
+                      type="button"
+                      data-no-section-nav
+                      onClick={() => handleDetailLink(detailLink.targetId)}
+                      className="mt-8 inline-flex items-center gap-2 rounded-md border border-[var(--notion-hairline)] px-4 py-2 text-[12px] font-semibold tracking-[-0.01em] text-foreground/70 transition-colors duration-150 hover:border-foreground/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+                    >
+                      {detailLink.label}
+                      <span aria-hidden="true">-&gt;</span>
+                    </button>
+                  );
+                })()
+              : null}
           </motion.div>
         ) : (
           <motion.div

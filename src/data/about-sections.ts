@@ -9,6 +9,10 @@ export interface AboutSection {
   englishTitle: string;
   sentence: string;
   paragraphs: string[];
+  detailLink?: {
+    label: string;
+    targetId: string;
+  };
 }
 
 export const aboutSections: AboutSection[] = [
@@ -49,6 +53,20 @@ export const aboutSections: AboutSection[] = [
       "저는 서로의 관점을 이해하고 피드백을 주고받는 과정에서 더 좋은 결과가 만들어진다고 믿습니다. 함께 일하는 사람들과 신뢰를 쌓으며 문제를 해결하는 방식을 지향합니다. 실제 업무에서도 매일 업무보고를 상세하게 진행하며 금주 배포사항, 금일 배포사항, 발생한 이슈, 확인한 내용들을 기록하고 공유했습니다. 또한 일을 하며 느낀 불편한 점이나 개선되면 좋겠다고 생각한 부분은 메모해두었다가 정리한 뒤, 함께 일하는 동료들에게 의견을 묻고 피드백을 요청했습니다. 혼자 판단하고 끝내기보다, 더 나은 방향을 함께 찾는 방식으로 일하려고 합니다.",
     ],
   },
+  {
+    number: "05",
+    koreanTitle: "AI 활용력",
+    englishTitle: "AI Lab",
+    sentence: "저는 AI를 잘 쓰고, 계속 관심 있게 탐구하는 사람입니다.",
+    paragraphs: [
+      "저는 AI를 단순히 답을 대신 내주는 도구로 보지 않습니다. 문제를 더 빠르게 구조화하고, 반복되는 작업을 줄이며, 결과물을 검증 가능한 형태로 만드는 협업 도구로 사용합니다. Claude와 Codex를 활용해 테스트 케이스 정리, 업무 자동화 아이디어 구체화, 코드 리팩토링, 문서 구조화 같은 작업을 수행하며 실제 업무 속도를 높여왔습니다.",
+      "AI를 잘 쓰기 위해서는 질문을 잘하는 것만큼이나 결과를 의심하고 검증하는 태도가 중요하다고 생각합니다. 그래서 AI가 만든 결과물을 그대로 받아들이기보다 의도, 구조, 리스크를 다시 확인하고, 공식 문서나 실제 동작으로 검증하는 과정을 습관화하고 있습니다. 앞으로도 AI를 생산성 도구를 넘어 일하는 방식 자체를 개선하는 실험실처럼 다루고 싶습니다.",
+    ],
+    detailLink: {
+      label: "AI Lab에서 활용 방식 보기",
+      targetId: "ai-lab",
+    },
+  },
 ];
 
 export const keywordAnnotations: Record<string, string> = {
@@ -76,6 +94,8 @@ export const keywordAnnotations: Record<string, string> = {
     "테스트 케이스(Test Case)를 프로그래밍 방식으로 조회, 수정, 생성할 수 있는 API 인터페이스입니다.",
   "Claude와 Codex":
     "Anthropic의 Claude와 OpenAI의 Codex를 활용하여 반복 업무 자동화와 개발 생산성 향상에 적극적으로 활용했습니다.",
+  "AI":
+    "반복 업무를 줄이고 사고 과정을 확장하기 위해 사용하는 협업 도구입니다. 결과를 그대로 믿기보다 검증 가능한 방식으로 활용하는 것을 중요하게 생각합니다.",
   "업무보고":
     "매일 금주 배포사항, 금일 배포사항, 발생 이슈, 확인 내용을 체계적으로 기록하고 팀에 공유하는 루틴을 유지했습니다.",
   "피드백":
