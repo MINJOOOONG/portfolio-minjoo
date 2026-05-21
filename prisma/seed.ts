@@ -48,27 +48,28 @@ async function main() {
   const projectData = [
     {
       title: "포트폴리오 웹사이트",
-      teamSize: "개인",
-      period: "2025",
-      summary: "Three.js 3D 배경, 커스텀 커서 인터랙션, GSAP 애니메이션 등 인터랙티브 요소를 결합한 프리미엄 포트폴리오 사이트입니다.",
+      teamSize: "개인 / 1인 개발",
+      period: "2026.05 - 진행중",
+      summary: "Three.js 3D 배경과 인터랙티브 요소를 결합한 포트폴리오 사이트에, Python 기반 RAG AI Assistant를 연동하여 포트폴리오 문서 기반 질문 답변과 관련 섹션 이동 기능을 구현했습니다.",
       description: [
         "Next.js App Router와 React Server Component 기반으로 SSR과 클라이언트 인터랙션을 분리해 초기 로딩 성능과 사용자 경험을 동시에 확보",
         "Three.js + @react-three/fiber로 프로젝트별 3D 배경 씬을 구현하고 마우스 반응, 스크롤 패럴랙스 등 몰입형 인터랙션 적용",
-        "Framer Motion 기반 커스텀 커서를 설계해 탄성 변형, 클릭 리플, 호버 라벨, mix-blend-mode 등 에디토리얼 스타일 인터랙션 구현",
         "Prisma + Neon PostgreSQL로 프로젝트, 경력, 스킬 등 전체 콘텐츠를 DB화하고 Admin 페이지에서 실시간 CRUD 가능한 CMS 구조 설계",
-        "GSAP 기반 엔트리 페이지 애니메이션, Lenis 스무스 스크롤, IntersectionObserver 기반 섹션별 등장 효과로 페이지 전환 경험 강화",
-        "@react-pdf/renderer로 포트폴리오 데이터를 PDF로 내보내는 기능을 구현해 오프라인 공유 지원",
+        "Python 기반 RAG 파이프라인(문서 로딩 → chunking → sentence-transformers 로컬 임베딩 → FAISS vector search → Groq LLM 답변 생성)을 설계하고 FastAPI 서버로 구현",
+        "Next.js 포트폴리오 상단에 AI 검색창(PortfolioAskBar)을 추가하고, Next.js API Route → Python FastAPI 프록시 구조로 RAG 시스템과 연동",
+        "RAG 답변과 함께 관련 포트폴리오 섹션으로 이동하는 AI Navigation 기능을 추가하여 탐색 경험을 개선",
       ],
-      techStack: ["Next.js", "TypeScript", "Three.js", "Framer Motion", "GSAP", "Prisma", "Neon", "Tailwind CSS"],
-      achievement: "프로젝트 상세 모달, 인터랙션 기반 탐색, 블로그/노션형 콘텐츠 구조 구현",
-      role: "디자인 기획, 프론트엔드 구현",
+      techStack: ["Next.js", "TypeScript", "Three.js", "Prisma", "Neon", "Python", "FastAPI", "FAISS", "Groq API", "LangChain"],
+      achievement: "3D 인터랙티브 포트폴리오 구현 + Python RAG AI Assistant 연동 및 AI Navigation 기능 추가",
+      role: "프론트엔드 구현, RAG 파이프라인 설계, Python 백엔드 구현",
       githubUrl: "https://github.com/MINJOOOONG/portfolio-minjoo",
+      liveUrl: "https://portfolio-minjoo.vercel.app",
       ...notionProjectAssets.portfolioWebsite,
     },
     {
       title: "개인 기술 블로그 joodev",
       teamSize: "개인",
-      period: "2025",
+      period: "2025.04 - 진행중",
       summary: "기술 기록과 콘텐츠 관리 비효율을 해결하기 위해 직접 설계하고 개발한 CMS형 블로그 플랫폼입니다.",
       description: [
         "Next.js App Router와 TypeScript 기반으로 SSR과 React Server Component를 적용해 페이지별 데이터 흐름을 분리하고 불필요한 클라이언트 상태를 축소",
@@ -87,7 +88,7 @@ async function main() {
     {
       title: "E-commerce Backend Engineering",
       teamSize: "부트캠프 프로젝트",
-      period: "2025",
+      period: "2025.01 - 2025.03",
       summary: "이커머스 도메인의 주문, 결제, 이벤트 흐름을 설계하며 백엔드 트랜잭션과 데이터 정합성을 학습한 프로젝트입니다.",
       description: [
         "요구사항을 기능 단위로 분해하고 매주 구현, 테스트, 회고를 반복하며 API 동작과 예외 케이스를 함께 검증",
@@ -105,7 +106,7 @@ async function main() {
     {
       title: "아두이노를 이용한 사회적 제품 제작",
       teamSize: "4명",
-      period: "2023",
+      period: "2023.09 - 2023.12",
       summary: "Arduino, OpenCV, Python을 활용해 일상 속 사회 문제를 개선하는 제품 아이디어를 프로토타입으로 구현한 팀 프로젝트입니다.",
       description: [
         "제품 아이디어를 문제 정의, 사용자 상황, 구현 가능성 기준으로 좁히고 센서 입력과 시각 처리 흐름을 함께 설계",
@@ -123,7 +124,7 @@ async function main() {
     {
       title: "FSM과 BT 구조를 활용한 게임 인공지능 분석",
       teamSize: "졸업논문",
-      period: "2024 - 2025",
+      period: "2024.03 - 2025.02",
       summary: "게임 AI 구조를 직접 구현하고 성능 지표를 기반으로 FSM과 Behavior Tree의 적합성을 비교 분석한 연구 프로젝트입니다.",
       description: [
         "FSM과 Behavior Tree 기반 AI 구조를 비교 분석하고 실제 게임 환경에서 구조별 동작 차이와 성능 차이를 검증",
@@ -143,7 +144,7 @@ async function main() {
     {
       title: "UNIST 해상 물류 창업 오디션",
       teamSize: "팀 프로젝트",
-      period: "2024",
+      period: "2024.03 - 2024.12",
       summary: "1년간 창업 아이템을 기획, 검증하고 최종 선발 및 창업 지원금을 수주한 제품 실행 경험입니다.",
       description: [
         "PM으로서 문제 정의, 아이템 기획, 프로토타입 개발, 사업화 검증, 발표까지 전 과정을 주도",
@@ -159,7 +160,7 @@ async function main() {
     {
       title: "2024 K-HTML 대학대항전 해커톤",
       teamSize: "팀 프로젝트",
-      period: "2024",
+      period: "2024.07",
       summary: "용인시 사회문제 개선을 주제로 Python, HTML, Azure OpenAI, AWS를 활용해 제한 시간 안에 서비스 형태로 구현한 해커톤 프로젝트입니다.",
       description: [
         "한국외국어대학교 대표팀으로 참가해 문제 정의부터 UI 설계, 서비스 구현까지 수행",
@@ -177,7 +178,7 @@ async function main() {
     {
       title: "미니 산학 연계 캡스톤 프로젝트",
       teamSize: "개인",
-      period: "2024",
+      period: "2024.06 - 2024.08",
       summary: "클라우드와 생성형 AI 교육 과정을 바탕으로 AWS, Azure OpenAI 기반 서비스 아이디어를 정리하고 구현 실험을 진행한 프로젝트입니다.",
       description: [
         "40시간 클라우드 및 인공지능 교육을 통해 AWS와 Microsoft 기반 생성형 AI 활용 흐름을 학습",
@@ -194,7 +195,7 @@ async function main() {
     {
       title: "폴가이즈 기반 레고 파티클 게임",
       teamSize: "팀 프로젝트",
-      period: "2025",
+      period: "2025.01 - 2025.02",
       summary: "Unreal Engine 5로 Fall Guys의 파티 게임 감각을 참고해 레고 파티클 콘셉트의 멀티플레이 미니게임을 구현한 부트캠프 팀 프로젝트입니다.",
       description: [
         "Unreal Engine 5와 C++ 기반으로 플레이어 이동, 라운드 진행, UI 표시 흐름을 구현",
@@ -211,7 +212,7 @@ async function main() {
     {
       title: "AWS DeepRacer 경진 대회 1등",
       teamSize: "팀 프로젝트",
-      period: "2024",
+      period: "2024.09",
       summary: "강화학습 기반 자율주행 모델을 실험하고 로그 기반으로 개선해 AWS DeepRacer 대회 1위를 달성했습니다.",
       description: [
         "AWS DeepRacer 기반 머신러닝 교육을 통해 강화학습, 보상 함수 설계, 모델 학습 구조를 학습",
@@ -226,7 +227,7 @@ async function main() {
     {
       title: "QA Minjoo Helper",
       teamSize: "개인",
-      period: "2025",
+      period: "2025.05 - 진행중",
       summary: "QA 업무 중 TC 수정 요청 사항을 기록하고 요약하는 AI 기반 업무 보조 도구",
       description: [
         "QA 실무에서 테스트 중 발생하는 수정/추가/삭제 요청을 실시간으로 기록하고 관리하는 도구를 직접 설계하고 개발",
@@ -242,11 +243,13 @@ async function main() {
   ];
 
   const skillsData = {
-    Frontend: ["React", "Next.js App Router", "TypeScript"],
-    "State / Styling": ["React Query", "Tailwind CSS", "Emotion"],
+    Frontend: ["React", "Next.js App Router", "TypeScript", "Three.js", "Tailwind CSS"],
+    "State / Styling": ["React Query", "Zustand", "Emotion", "Framer Motion"],
+    Backend: ["Spring Boot", "Java", "Python", "FastAPI", "REST API", "Prisma", "PostgreSQL", "Redis", "Kafka"],
+    "AI / Data": ["LangChain", "FAISS", "Groq API", "sentence-transformers", "RAG Pipeline"],
     "Build & CI/CD": ["Webpack", "Babel", "Vercel", "GitHub Actions", "SVN"],
-    Backend: ["Spring Boot", "Java", "REST API", "Prisma", "PostgreSQL", "Redis", "Kafka"],
-    "Collaboration / QA": ["Jira", "TestRail", "Redmine", "Slack", "Notion"],
+    QA: ["TestRail", "Jira", "Redmine", "Regression Test", "TC 설계 및 관리"],
+    Collaboration: ["Slack", "Notion", "Git", "Agile / Scrum"],
   };
 
   const educationData = [

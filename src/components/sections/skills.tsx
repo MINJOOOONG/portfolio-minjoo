@@ -23,12 +23,23 @@ import {
   SiVercel,
   SiVite,
   SiWebpack,
+  SiSpringboot,
+  SiPostgresql,
+  SiRedis,
+  SiApachekafka,
+  SiPrisma,
+  SiFastapi,
+  SiPython,
+  SiJira,
+  SiSlack,
+  SiNotion,
+  SiLangchain,
 } from "react-icons/si";
-import { FaAws } from "react-icons/fa";
+import { FaAws, FaJava } from "react-icons/fa";
 import { SlideHeading } from "@/components/sections/about";
 
 /* ── Types ── */
-type SkillCategory = "Frontend" | "Library" | "Environment & Deploy" | "Design";
+type SkillCategory = "Frontend" | "Backend" | "Library" | "QA" | "Environment & Deploy" | "Design";
 
 interface SkillItem {
   name: string;
@@ -43,7 +54,9 @@ interface SkillItem {
 /* ── Categories ── */
 const SKILL_CATEGORIES: SkillCategory[] = [
   "Frontend",
+  "Backend",
   "Library",
+  "QA",
   "Environment & Deploy",
   "Design",
 ];
@@ -57,18 +70,38 @@ const SKILLS: SkillItem[] = [
   { name: "TypeScript", category: "Frontend", icon: SiTypescript, color: "#3178c6" },
   { name: "Zustand", category: "Frontend", label: "Z", tileBackground: "#211d19", labelColor: "#f5c46b" },
   { name: "Tailwind CSS", category: "Frontend", icon: SiTailwindcss, color: "#38bdf8" },
+  { name: "Three.js", category: "Frontend", icon: SiThreedotjs, color: "#000000" },
+
+  // Backend
+  { name: "Java", category: "Backend", icon: FaJava, color: "#f89820", tileBackground: "#5382a1" },
+  { name: "Spring Boot", category: "Backend", icon: SiSpringboot, color: "#6db33f" },
+  { name: "Python", category: "Backend", icon: SiPython, color: "#3776ab" },
+  { name: "FastAPI", category: "Backend", icon: SiFastapi, color: "#009688" },
+  { name: "Prisma", category: "Backend", icon: SiPrisma, color: "#2d3748" },
+  { name: "PostgreSQL", category: "Backend", icon: SiPostgresql, color: "#4169e1" },
+  { name: "Redis", category: "Backend", icon: SiRedis, color: "#dc382d" },
+  { name: "Kafka", category: "Backend", icon: SiApachekafka, color: "#231f20" },
+  { name: "REST API", category: "Backend", label: "API", tileBackground: "#2b2d42", labelColor: "#a8dadc" },
 
   // Library
   { name: "React Query", category: "Library", icon: SiReactquery, color: "#ff4154" },
   { name: "Recoil", category: "Library", icon: SiRecoil, color: "#3578e5" },
   { name: "Redux", category: "Library", icon: SiRedux, color: "#764abc" },
+  { name: "LangChain", category: "Library", icon: SiLangchain, color: "#1c3c3c" },
+  { name: "FAISS", category: "Library", label: "FA", tileBackground: "#3b5998", labelColor: "#ffffff" },
   { name: "Storybook", category: "Library", icon: SiStorybook, color: "#ff4785" },
   { name: "GraphQL", category: "Library", icon: SiGraphql, color: "#e10098" },
-  { name: "Three.js", category: "Library", icon: SiThreedotjs, color: "#000000" },
   { name: "GSAP", category: "Library", icon: SiGreensock, color: "#88ce02" },
   { name: "Sass", category: "Library", icon: SiSass, color: "#cc6699" },
   { name: "Webpack", category: "Library", icon: SiWebpack, color: "#8dd6f9" },
   { name: "Vite", category: "Library", icon: SiVite, color: "#646cff" },
+
+  // QA
+  { name: "Jira", category: "QA", icon: SiJira, color: "#0052cc" },
+  { name: "TestRail", category: "QA", label: "TR", tileBackground: "#65c179", labelColor: "#ffffff" },
+  { name: "Redmine", category: "QA", label: "Rm", tileBackground: "#b32024", labelColor: "#ffffff" },
+  { name: "Regression Test", category: "QA", label: "RT", tileBackground: "#2b2d42", labelColor: "#ef8354" },
+  { name: "TC 설계", category: "QA", label: "TC", tileBackground: "#1b2838", labelColor: "#66c0f4" },
 
   // Environment & Deploy
   { name: "GitHub", category: "Environment & Deploy", icon: SiGithub, color: "#000000" },
@@ -77,6 +110,8 @@ const SKILLS: SkillItem[] = [
   { name: "Docker", category: "Environment & Deploy", icon: SiDocker, color: "#2496ed" },
   { name: "Gradle", category: "Environment & Deploy", icon: SiGradle, color: "#02303a" },
   { name: "Testcontainers", category: "Environment & Deploy", label: "TC", tileBackground: "#2b2d42", labelColor: "#23d18b" },
+  { name: "Slack", category: "Environment & Deploy", icon: SiSlack, color: "#4a154b" },
+  { name: "Notion", category: "Environment & Deploy", icon: SiNotion, color: "#000000" },
 
   // Design
   { name: "Photoshop", category: "Design", label: "Ps", tileBackground: "#001e36", labelColor: "#31a8ff" },
@@ -101,12 +136,15 @@ function SkillTile({ item }: { item: SkillItem }) {
   } as CSSProperties;
 
   return (
-    <div className="skills-icon-card" style={style} title={item.name} aria-label={item.name}>
+    <div className="skills-icon-card group" style={style} aria-label={item.name}>
       {Icon ? (
         <Icon className="skills-icon-card__icon" aria-hidden="true" />
       ) : (
         <span className="skills-icon-card__label">{item.label ?? item.name.slice(0, 2)}</span>
       )}
+      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+        {item.name}
+      </span>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, memo } from "react";
 import { cn } from "@/lib/utils";
 import { PdfExportButton } from "@/components/shared/pdf-export-button";
+import { PortfolioAskBar } from "@/components/shared/portfolio-ask-bar";
 import type { ResumeData } from "@/lib/pdf/types";
 
 const SECTION_IDS = ["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"];
@@ -75,7 +76,8 @@ export const SceneNavbar = memo(function SceneNavbar({ resumeData }: SceneNavbar
       )}
     >
       <div className="max-w-[960px] mx-auto px-5 sm:px-8">
-        <div className="flex items-center justify-end h-14">
+        <div className="flex items-center justify-between h-14">
+          <PortfolioAskBar />
           <nav className="hidden sm:flex items-center gap-1">
             {navItems.map((item) => (
               <button

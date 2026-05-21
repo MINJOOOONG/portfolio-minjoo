@@ -5,37 +5,76 @@ export const notionProjectAssets = {
       url: "/images/projects/portfolio-website/01-entry.png",
     },
     gallery: [
-      { type: "image", title: "진입 페이지", url: "/images/projects/portfolio-website/01-entry.png" },
       { type: "image", title: "About 섹션", url: "/images/projects/portfolio-website/02-about.png" },
       { type: "image", title: "프로젝트 섹션", url: "/images/projects/portfolio-website/04-projects.png" },
     ],
     attachments: [],
     contentBlocks: [
+      // ── 1. 프로젝트 개요 ──
       { type: "text", heading: "프로젝트 개요", body: [
-        "기존 Notion 기반 포트폴리오의 한계를 느끼고, 인터랙티브한 웹 포트폴리오를 직접 설계하고 개발한 프로젝트입니다.",
-        "Next.js App Router와 React Server Component를 활용해 SSR로 초기 로딩을 최적화하면서도, 클라이언트 측 인터랙션은 별도로 분리해 사용자 경험을 확보했습니다.",
+        "기존 Notion 기반 포트폴리오의 한계를 느끼고, 인터랙티브한 웹 포트폴리오를 직접 설계하고 개발한 프로젝트입니다. 단순한 정적 페이지가 아니라, 프로젝트 탐색·상세 모달·섹션 네비게이션·PDF 출력·RAG 기반 AI 검색까지 포함한 개인 포트폴리오 플랫폼을 목표로 했습니다.",
+        "Next.js App Router와 React Server Component를 활용해 SSR로 초기 로딩을 최적화하면서도, Three.js 3D 배경·커스텀 커서·스크롤 애니메이션 등 클라이언트 인터랙션은 별도로 분리해 사용자 경험을 확보했습니다.",
+        "Python 기반 RAG Assistant를 연동해 포트폴리오 문서(프로젝트, 경력, 스킬 등)를 검색하고, 근거 기반으로 답변하며, 답변과 관련된 포트폴리오 섹션으로 이동할 수 있는 AI Navigation 기능까지 구현했습니다.",
       ] },
       { type: "image", url: "/images/projects/portfolio-website/01-entry.png", caption: "진입 페이지 — 사원증 콘셉트의 인터랙티브 랜딩" },
-      { type: "text", heading: "3D 인터랙션 및 커스텀 커서", body: [
-        "Three.js와 @react-three/fiber를 활용해 프로젝트 카드별로 고유한 3D 배경 씬을 렌더링하고, 마우스 움직임에 반응하는 패럴랙스 효과를 적용했습니다.",
-        "Framer Motion 기반의 커스텀 커서를 설계해 탄성 변형, 클릭 리플, 호버 시 라벨 표시, mix-blend-mode 반전 등 에디토리얼 스타일의 인터랙션을 구현했습니다.",
-        "커서와 3D 씬의 조합으로 일반적인 포트폴리오 사이트와 차별화된 몰입감을 제공합니다.",
+
+      // ── 2. 프로젝트 구조 ──
+      { type: "text", heading: "프로젝트 구조", body: [
+        "프론트엔드는 Next.js App Router 기반으로, src/components/sections/ 아래에 Hero·About·Experience·Projects·Skills·Contact 등 섹션 컴포넌트를 배치하고, src/components/shared/ 에 레이아웃·네비게이션·3D 배경·커스텀 커서 등 공용 컴포넌트를 구성했습니다.",
+        "데이터 계층은 Prisma ORM + Neon PostgreSQL(서버리스)로 프로젝트·경력·스킬·교육 등 모든 콘텐츠를 DB 기반으로 관리하며, Admin 페이지에서 실시간 CRUD가 가능한 CMS 구조를 설계했습니다. SiteSetting 테이블을 key-value 형태로 설계해 hero 문구, about 소개글 등 사이트 전반의 텍스트를 유연하게 관리합니다.",
+        "RAG 백엔드는 rag-assistant/ 디렉토리에 Python FastAPI 서버로 분리했습니다. rag/ 모듈 아래 loader.py → chunker.py → embedder.py → retriever.py → chain.py 5단계 파이프라인으로 구성되며, api.py가 POST /ask 엔드포인트를 제공합니다.",
+        "전체 데이터 흐름:\n사용자 → Next.js Portfolio UI → PortfolioAskBar 검색창\n→ Next.js API Route (/api/portfolio-assistant)\n→ Python FastAPI RAG Server (POST /ask)\n→ FAISS Retriever (유사 문서 검색)\n→ Groq LLM (답변 생성)\n→ answer + sources + recommended_section 반환\n→ 포트폴리오 화면에 답변 표시 + 관련 섹션 이동 버튼 제공",
       ] },
       { type: "image", url: "/images/projects/portfolio-website/02-about.png", caption: "About 섹션 — 좌측 마스터 메뉴 + 우측 디테일 콘텐츠 레이아웃" },
-      { type: "text", heading: "콘텐츠 관리 시스템 (CMS)", body: [
-        "Prisma ORM과 Neon PostgreSQL(서버리스)을 연동해 프로젝트, 경력, 스킬, 교육 등 모든 콘텐츠를 DB 기반으로 관리합니다.",
-        "Admin 페이지에서 실시간 CRUD가 가능한 구조를 설계해, 코드 수정 없이도 콘텐츠를 업데이트할 수 있습니다.",
-        "SiteSetting 테이블을 key-value 형태로 설계해 hero 문구, about 소개글 등 사이트 전반의 텍스트를 유연하게 관리합니다.",
+
+      // ── 3. 주요 기능 ──
+      { type: "text", heading: "주요 기능", body: [
+        "섹션 기반 포트폴리오 네비게이션: Lenis 스무스 스크롤과 IntersectionObserver 기반 섹션별 등장 애니메이션을 적용해 PPT 슬라이드를 넘기는 듯한 탐색 경험을 제공합니다. 좌측 Scene Navbar로 섹션 간 빠른 이동이 가능합니다.",
+        "Projects 카드 및 상세 모달: 프로젝트 카드 클릭 시 상세 모달이 열리며, contentBlocks 구조로 텍스트·이미지·영상·PDF·첨부파일을 블로그 스타일로 자유롭게 구성할 수 있습니다. 키보드 네비게이션(화살표, Escape)도 지원합니다.",
+        "PDF 출력 기능: @react-pdf/renderer를 활용해 DB에 저장된 포트폴리오 데이터를 실시간으로 PDF로 변환하고 다운로드할 수 있습니다.",
+        "커스텀 커서 / 인터랙션: Framer Motion 기반의 커스텀 커서를 설계해 탄성 변형, 클릭 리플, 호버 시 라벨 표시, mix-blend-mode 반전 등 에디토리얼 스타일의 인터랙션을 구현했습니다.",
+        "Three.js 3D 시각 요소: Three.js와 @react-three/fiber를 활용해 프로젝트 카드별로 고유한 3D 배경 씬을 렌더링하고, 마우스 움직임에 반응하는 패럴랙스 효과를 적용했습니다.",
+        "PortfolioAskBar 검색창: 포트폴리오 상단에 AI 검색창을 배치하고, 질문 입력 → 답변 표시 → 참고 문서 뱃지 → 관련 섹션 이동 버튼까지 하나의 흐름으로 연결됩니다.",
+        "Python 기반 RAG Assistant 연동: Next.js API Route가 Python FastAPI 서버를 호출하는 프록시 패턴으로, 프론트엔드와 RAG 백엔드의 관심사를 분리했습니다.",
+        "AI Navigation: RAG 답변과 함께 질문/문서 키워드를 분석해 관련 포트폴리오 섹션(Experience, Projects, Skills 등)을 추천하고, 버튼 클릭으로 해당 섹션으로 스크롤 이동합니다.",
       ] },
       { type: "image", url: "/images/projects/portfolio-website/03-experience.png", caption: "경력 섹션 — 타임라인 기반 경력 카드" },
-      { type: "image", url: "/images/projects/portfolio-website/04-projects.png", caption: "프로젝트 섹션 — Notion 틴트 컬러를 적용한 카드 그리드" },
-      { type: "text", heading: "페이지 전환 및 UX 디테일", body: [
-        "GSAP 기반 엔트리 애니메이션으로 사원증 콘셉트의 진입 페이지를 구현하고, 클릭 시 자연스러운 페이드-줌 전환으로 포트폴리오 본문에 진입합니다.",
-        "Lenis 스무스 스크롤과 IntersectionObserver 기반 섹션별 등장 애니메이션을 적용해 PPT 슬라이드를 넘기는 듯한 탐색 경험을 제공합니다.",
-        "@react-pdf/renderer를 활용해 DB에 저장된 포트폴리오 데이터를 실시간으로 PDF로 변환하고 다운로드할 수 있는 기능을 구현했습니다.",
+      { type: "image", url: "/images/projects/portfolio-website/04-projects.png", caption: "프로젝트 섹션 — 카드 그리드와 상세 모달" },
+
+      // ── 4. RAG 파이프라인 핵심 코드 ──
+      { type: "text", heading: "RAG 파이프라인 핵심 코드", body: [
+        "RAG 파이프라인은 5개 모듈로 분리되어 있으며, 각 단계가 독립적으로 동작합니다.",
+
+        "loader.py — 문서 로드: data/ 디렉토리의 마크다운 파일을 LangChain Document로 변환합니다.\n```python\ndef load_documents(data_dir: str = \"data\") -> list[Document]:\n    for md_file in sorted(Path(data_dir).glob(\"*.md\")):\n        content = md_file.read_text(encoding=\"utf-8\")\n        doc = Document(\n            page_content=content,\n            metadata={\"source\": md_file.name},\n        )\n        documents.append(doc)\n    return documents\n```",
+
+        "chunker.py — 청크 분할: 마크다운 구조를 고려한 RecursiveCharacterTextSplitter로 500자 단위 청크를 생성합니다.\n```python\nsplitter = RecursiveCharacterTextSplitter(\n    chunk_size=500, chunk_overlap=100,\n    separators=[\"\\n## \", \"\\n### \", \"\\n\\n\", \"\\n\", \" \"],\n)\nchunks = splitter.split_documents(documents)\n```",
+
+        "embedder.py — 임베딩 + FAISS 저장: sentence-transformers 로컬 모델로 임베딩 후 FAISS 벡터스토어를 생성합니다.\n```python\ndef build_vectorstore(chunks: list[Document]) -> FAISS:\n    embeddings = HuggingFaceEmbeddings(\n        model_name=\"sentence-transformers/all-MiniLM-L6-v2\"\n    )\n    vectorstore = FAISS.from_documents(chunks, embeddings)\n    vectorstore.save_local(\"vectorstore\")\n    return vectorstore\n```",
+
+        "retriever.py — 유사 문서 검색: 질문을 임베딩하여 상위 4개 관련 문서를 검색합니다.\n```python\ndef retrieve_documents(vectorstore, query, top_k=4):\n    return vectorstore.similarity_search(query, k=top_k)\n\ndef format_context(documents):\n    for i, doc in enumerate(documents, 1):\n        source = doc.metadata.get(\"source\", \"unknown\")\n        context_parts.append(f\"[문서 {i}] (출처: {source})\\n{doc.page_content}\")\n    return \"\\n\\n---\\n\\n\".join(context_parts)\n```",
+
+        "chain.py — Groq LLM 답변 생성: 검색된 context와 질문을 기반으로 LLM 답변을 생성합니다.\n```python\ndef generate_answer(context: str, question: str) -> str:\n    llm = ChatGroq(\n        model=\"llama-3.1-8b-instant\",\n        temperature=0.2,\n    )\n    prompt = ChatPromptTemplate.from_messages([\n        (\"system\", SYSTEM_PROMPT),  # RAG grounding 규칙\n        (\"human\", \"{question}\"),\n    ])\n    chain = prompt | llm | StrOutputParser()\n    return chain.invoke({\"context\": context, \"question\": question})\n```",
+
+        "api.py — POST /ask 엔드포인트: FastAPI 서버가 전체 파이프라인을 조합하고, 섹션 추천까지 포함해 응답합니다.\n```python\n@app.post(\"/ask\", response_model=AskResponse)\nasync def ask(req: AskRequest):\n    retrieved_docs = retrieve_documents(vectorstore, req.question)\n    context = format_context(retrieved_docs)\n    answer = generate_answer(context, req.question)\n    sources = get_source_list(retrieved_docs)\n    recommended = get_recommended_section(req.question, sources)\n    return AskResponse(\n        answer=answer, sources=sources,\n        recommended_section=recommended,\n    )\n```",
       ] },
       { type: "image", url: "/images/projects/portfolio-website/05-skills.png", caption: "기술 스택 섹션 — 카테고리별 뱃지 그리드" },
+
+      // ── 5. Groq 선택 이유 ──
+      { type: "text", heading: "기술 선택: Groq + 로컬 임베딩 + FAISS", body: [
+        "LLM 응답 생성에는 Groq API를 사용했습니다. 포트폴리오 검색 기능은 사용자가 짧은 질문을 던지고 빠르게 답변을 확인하는 UX가 중요하기 때문에, 빠른 응답 속도와 가벼운 테스트 환경을 제공하는 Groq를 선택했습니다.",
+        "Groq 모델은 Llama 계열 모델(llama-3.1-8b-instant)을 사용해 답변 생성을 담당하고, 임베딩은 sentence-transformers/all-MiniLM-L6-v2를 사용해 문서 검색을 수행했습니다.",
+        "임베딩은 외부 API 비용에 의존하지 않도록 sentence-transformers 로컬 모델을 사용하고, 검색 결과는 FAISS로 관리해 별도의 벡터 DB 인프라 없이 로컬 파일 기반으로 운영할 수 있도록 했습니다.",
+        "연동 구조는 Next.js API Route가 Python FastAPI 서버를 호출하는 프록시 패턴으로, 프론트엔드와 RAG 백엔드의 관심사를 분리했습니다. 이를 통해 RAG 시스템을 독립적으로 개선하거나 교체할 수 있는 구조를 유지합니다.",
+      ] },
       { type: "image", url: "/images/projects/portfolio-website/06-contact.png", caption: "Contact 섹션 — 메시지 폼과 소셜 링크" },
+
+      // ── 6. 검색 기반 Assistant로의 확장 ──
+      { type: "text", heading: "단순 챗봇이 아닌 검색 기반 Assistant로 확장", body: [
+        "단순 LLM API 호출이 아니라 문서 검색(retrieval) → context 구성 → LLM 응답 생성 → UI 연동까지의 전체 흐름을 직접 설계하고 구현했습니다. RAG 파이프라인의 각 단계를 모듈화하여 독립적으로 테스트하고 교체할 수 있는 구조를 만들었습니다.",
+        "Python RAG 시스템을 FastAPI 서버로 분리하고, Next.js 포트폴리오와 API Route 프록시 패턴으로 연동했습니다. 프론트엔드(TypeScript)와 백엔드(Python) 간 관심사 분리를 통해 각각 독립적으로 배포·개선할 수 있습니다.",
+        "답변과 함께 관련 섹션으로 이동하는 AI Navigation UX를 구현했습니다. 질문 키워드와 검색된 문서의 source 파일명을 분석해 Experience, Projects, Skills 등 가장 관련 있는 섹션을 추천하고, 버튼 클릭 한 번으로 해당 섹션으로 스크롤 이동합니다.",
+        "비용·속도·운영 부담을 고려해 Groq(빠른 응답, 무료 티어) + sentence-transformers 로컬 임베딩(외부 API 비용 없음) + FAISS(별도 인프라 불필요) 구조를 선택했습니다. 포트폴리오 규모의 문서에서 충분한 검색 품질을 확보하면서도 운영 비용을 최소화하는 구성입니다.",
+      ] },
     ],
   },
   joodevBlog: {

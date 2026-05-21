@@ -100,6 +100,23 @@ const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
 /* ── 카드 심볼 (이미지 없을 때 기하학 아이콘) ── */
 const SYMBOLS = ["◆", "○", "△", "□", "◇", "▽", "⬡", "✦"];
 
+function normalizeMediaUrl(url?: string) {
+  return url?.split("#")[0].split("?")[0];
+}
+
+function isSameMediaUrl(a?: string, b?: string) {
+  return Boolean(a && b && normalizeMediaUrl(a) === normalizeMediaUrl(b));
+}
+
+function filterRepeatedMediaBlocks(blocks: ContentBlock[], mediaUrl?: string) {
+  if (!mediaUrl) return blocks;
+
+  return blocks.filter((block) => {
+    if (!("url" in block)) return true;
+    return !isSameMediaUrl(block.url, mediaUrl);
+  });
+}
+
 /* ── 케이스 스터디 자동 생성 ── */
 function buildCaseStudy(item: ProjectItem): CaseStudyBlock[] {
   if (item.caseStudy && item.caseStudy.length > 0) return item.caseStudy;
@@ -212,7 +229,7 @@ function ProjectMediaGallery({
   items?: ProjectMedia[];
   mainUrl?: string;
 }) {
-  const galleryItems = (items ?? []).filter((item) => item.url !== mainUrl);
+  const galleryItems = (items ?? []).filter((item) => !isSameMediaUrl(item.url, mainUrl));
   if (galleryItems.length === 0) return null;
 
   return (
@@ -505,32 +522,8 @@ function ProjectCard({
           </p>
         )}
 
-        {item.techStack.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-            {item.techStack.slice(0, 6).map((t) => (
-              <span
-                key={t}
-                className="rounded border border-[var(--notion-hairline)] bg-transparent px-2 py-0.5 text-[10px] font-medium text-muted-foreground/70"
-              >
-                {t}
-              </span>
-            ))}
-            {item.techStack.length > 6 && (
-              <span className="px-2 py-0.5 text-[10px] text-muted-foreground/40">
-                +{item.techStack.length - 6}
-              </span>
-            )}
-          </div>
-        )}
-
         <div className="pj-card__meta">
           <span>{item.period}</span>
-          {item.role && (
-            <>
-              <span className="text-[var(--notion-hairline)]">·</span>
-              <span>{item.role}</span>
-            </>
-          )}
         </div>
       </div>
     </div>
@@ -557,6 +550,11 @@ function ProjectModal({
 }) {
   const num = String(index + 1).padStart(2, "0");
   const blocks = buildCaseStudy(project);
+  const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
+  const detailContentBlocks = project.contentBlocks
+    ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)
+    : [];
+  const shouldShowPrimaryMedia = Boolean(project.media?.url && project.media.type !== "image");
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -634,8 +632,8 @@ function ProjectModal({
 
         {/* 스크롤 가능한 본문 */}
         <div className="pj-modal__body">
-          {/* 미디어 */}
-          {project.media?.url && (
+          {/* 미디어: 카드 대표 이미지는 상세에서 반복 노출하지 않음 */}
+          {shouldShowPrimaryMedia && project.media && (
             <div
               className="relative w-full rounded-lg overflow-hidden bg-[var(--notion-surface)] mb-8"
               style={{
@@ -654,12 +652,14 @@ function ProjectModal({
           )}
 
           {/* 프로젝트 번호 + 제목 */}
-          <span className="font-display text-[3rem] font-black text-foreground/[0.05] leading-none select-none mb-1 block">
-            {num}
-          </span>
-          <h2 className="font-display text-2xl sm:text-3xl font-black tracking-[-0.03em] leading-tight mb-2">
-            {project.title}
-          </h2>
+          <div className="pj-modal__title-block">
+            <span className="pj-modal__title-number">
+              {num}
+            </span>
+            <h2 className="pj-modal__title">
+              {project.title}
+            </h2>
+          </div>
 
           {/* 한 줄 설명 */}
           {project.summary && (
@@ -671,11 +671,10 @@ function ProjectModal({
           {/* 기술스택 배지 */}
           {project.techStack.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-5">
-              {project.techStack.map((t, i) => (
+              {project.techStack.map((t) => (
                 <span
                   key={t}
-                  className="px-2.5 py-1 text-[11px] font-medium rounded-md text-foreground"
-                  style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
+                  className="px-2.5 py-1 text-[11px] font-medium rounded-md text-foreground/80 bg-white border border-[var(--notion-hairline)]"
                 >
                   {t}
                 </span>
@@ -684,10 +683,10 @@ function ProjectModal({
           )}
 
           {/* 메타 정보 */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mb-6">
-            <span>{project.period}</span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground mb-6">
+            <span><span className="font-semibold text-foreground/70">기간</span> {project.period}</span>
             <span className="text-[var(--notion-hairline)]">|</span>
-            <span>{project.teamSize}</span>
+            <span><span className="font-semibold text-foreground/70">개발 인원</span> {project.teamSize}</span>
             {project.githubUrl && (
               <>
                 <span className="text-[var(--notion-hairline)]">|</span>
@@ -733,8 +732,8 @@ function ProjectModal({
           <div className="h-px w-full bg-[var(--notion-hairline)] mb-8" />
 
           {/* 콘텐츠: contentBlocks가 있으면 블로그 스타일, 없으면 기존 방식 */}
-          {project.contentBlocks && project.contentBlocks.length > 0 ? (
-            <ContentBlockRenderer blocks={project.contentBlocks} />
+          {detailContentBlocks.length > 0 ? (
+            <ContentBlockRenderer blocks={detailContentBlocks} />
           ) : (
             <>
               <ProjectMediaGallery
