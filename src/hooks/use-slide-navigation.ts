@@ -203,7 +203,16 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       return section?.querySelector<HTMLElement>("[data-scroller]") ?? null;
     };
 
+    /** Check if the event target is inside a modal overlay (z-index ≥ 50) */
+    const isInsideModal = (target: EventTarget | null): boolean => {
+      if (!(target instanceof HTMLElement)) return false;
+      return target.closest(".pj-modal, [role='dialog'], [data-modal-overlay]") !== null;
+    };
+
     const blockWheel = (e: WheelEvent) => {
+      // Let modal handle its own scroll natively
+      if (isInsideModal(e.target)) return;
+
       e.preventDefault();
       const scroller = getScroller();
       if (scroller) {
@@ -220,6 +229,9 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       touchStartY = e.touches[0].clientY;
     };
     const blockTouchMove = (e: TouchEvent) => {
+      // Let modal handle its own touch scroll natively
+      if (isInsideModal(e.target)) return;
+
       e.preventDefault();
       const scroller = getScroller();
       if (scroller) {

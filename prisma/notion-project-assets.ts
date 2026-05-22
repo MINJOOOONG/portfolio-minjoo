@@ -25,97 +25,86 @@ export const notionProjectAssets = {
 
       // ── 섹션 2: 디자인 규칙 ──
       { type: "section-heading", title: "02 — 디자인 규칙" },
-      { type: "design-rules", placeholder: "Design reference image\nPinterest / YouTube / Google research", rules: [
-        { title: "Clean Document Mood", body: "흰 배경, 얇은 선, 절제된 컬러를 기본으로 사용합니다. 포트폴리오가 과하게 장식적으로 보이기보다, 하나의 정리된 기술 문서처럼 읽히는 것을 목표로 했습니다." },
-        { title: "Typography First", body: "화려한 컬러보다 글자의 크기, 간격, 굵기 차이로 위계를 만듭니다. 사용자가 긴 프로젝트 설명을 읽을 때도 현재 보고 있는 정보의 단계가 명확하게 느껴지도록 설계했습니다." },
-        { title: "Interaction with Purpose", body: "커서, 슬라이드 이동, 모달, hover 설명 같은 인터랙션은 단순 장식이 아니라 탐색을 돕는 역할을 해야 한다고 보았습니다. 움직임이 있어도 사용자가 길을 잃지 않도록 명확한 동작 규칙을 유지했습니다." },
-        { title: "Responsive by Default", body: "포트폴리오는 데스크톱에서만 보는 문서가 아니기 때문에, 화면 크기가 달라져도 프로젝트 카드, 상세 모달, 기술 스택, 이미지가 무너지지 않도록 반응형 구조를 우선 고려했습니다." },
-        { title: "QA Perspective", body: "QA 업무 경험을 바탕으로, 사용자가 헷갈릴 수 있는 흐름을 줄이는 데 집중했습니다. 의도하지 않은 휠 이동을 막고, 버튼과 카테고리 이동을 명확하게 분리한 것도 같은 이유입니다." },
+      { type: "design-rules", image: "/images/projects/portfolio-website/02-about.png", rules: [
+        { title: "전체 디자인 기준은 design.md에 먼저 정의한다", body: "포트폴리오의 색상, 여백, 타이포그래피, 버튼, 카드, 모션 규칙을 코드로 바로 만들기 전에 design.md에 먼저 정리했습니다. Claude Code와 협업할 때도 이 문서를 기준으로 수정 범위를 맞춰, 섹션마다 디자인이 따로 노는 문제를 줄였습니다." },
+        { title: "섹션별 디자인 문서를 분리한다", body: "About, Experience, Projects, AI Lab, Articles, Skills, Contact처럼 성격이 다른 섹션은 하나의 규칙으로만 처리하지 않고, 각 섹션별 md 파일을 만들어 목적과 레이아웃을 따로 정리했습니다. 이를 통해 About은 자기소개 중심, Projects는 성과와 구현 중심, AI Lab은 실험과 기록 중심으로 다른 읽기 흐름을 갖도록 설계했습니다." },
+        { title: "공통 컴포넌트는 유지하되 표현 방식은 섹션마다 다르게 둔다", body: "버튼, 뱃지, 제목, 구분선, 모달 같은 기본 UI 요소는 공통 스타일을 유지하지만, 각 섹션의 목적에 따라 배치와 강조 방식은 다르게 적용했습니다. 같은 디자인 시스템 안에서도 모든 화면이 똑같이 보이지 않도록 조정했습니다." },
+        { title: "인터랙션은 디자인 문서의 규칙 안에서만 확장한다", body: "커스텀 커서, PPT식 섹션 이동, hover 효과, 모달 전환은 단순 장식이 아니라 탐색을 돕는 기능으로 정의했습니다. 새로운 인터랙션을 추가할 때도 design.md의 모션 강도, 속도, 사용 조건을 기준으로 과한 효과가 되지 않게 조절했습니다." },
+        { title: "수정은 감각이 아니라 기준으로 반복한다", body: "화면을 보며 마음에 들지 않는 부분을 즉흥적으로 고치는 대신, 디자인 문서와 섹션별 md를 기준으로 원인을 나눠 수정했습니다. 예를 들어 글 간격, 제목 위계, 뱃지 정렬, 내부 스크롤, 모달 레이아웃처럼 문제를 작은 단위로 분리해 반복 개선했습니다." },
       ] },
 
-      // ── 섹션 3: 설계 목표 ──
-      { type: "section-heading", title: "03 — 설계 목표" },
+      // ── 섹션 3: 설계 목표와 아키텍처 ──
+      { type: "section-heading", title: "03 — 설계 목표와 아키텍처" },
       { type: "text", body: [
-        "PPT 스타일 내비게이션: 일반적인 긴 스크롤이 아니라, 섹션 단위로 이동하는 슬라이드 방식을 채택했습니다. Projects와 AI Lab처럼 내부 콘텐츠가 긴 영역은 별도의 스크롤 컨테이너(data-scroller)로 분리해 두 동작이 충돌하지 않도록 설계했습니다.",
-        "섹션 독립성: About, Experience, Projects, AI Lab, Articles, Skills, Contact — 7개 섹션이 각각 하나의 화면 단위로 동작합니다. IntersectionObserver가 현재 활성 섹션을 추적하고, Three.js 배경과 네비게이션 상태가 이에 반응합니다.",
-        "SSR + CSR 분리: 데이터 의존 영역은 React Server Component로, Three.js / 커서 / 애니메이션은 Client Component로 분리해 초기 로딩 성능을 확보하면서도 풍부한 인터랙션을 유지합니다.",
-        "DB 기반 CMS: Prisma + Neon PostgreSQL로 모든 콘텐츠를 관리하고, Admin 페이지에서 코드 수정 없이 프로젝트, 경력, 스킬, 사이트 설정까지 CRUD할 수 있는 구조를 설계했습니다.",
-        "RAG AI 연동: Python FastAPI 서버를 별도로 분리하고, Next.js API Route가 프록시 역할을 담당합니다. 답변과 함께 관련 섹션 추천까지 포함해 탐색 경험을 확장합니다.",
+        "이 프로젝트의 설계 목표는 포트폴리오를 단순한 소개 페이지가 아니라, 하나의 인터랙티브 기술 문서처럼 읽히게 만드는 것이었습니다. 전체 섹션은 PPT처럼 명확한 화면 단위로 이동하고, Projects와 AI Lab처럼 깊이 읽어야 하는 콘텐츠는 내부 스크롤 영역으로 분리했습니다. 이를 통해 사용자는 전체 흐름을 잃지 않으면서도 필요한 프로젝트 설명과 기술 구현 내용을 충분히 탐색할 수 있도록 설계했습니다.",
       ] },
-      { type: "callout", variant: "info", title: "KEY PRINCIPLE", body: [
-        "이 프로젝트의 핵심 설계 원칙은 \"한 섹션은 하나의 화면처럼 명확하게 보여주고, 긴 콘텐츠가 필요한 영역은 내부 스크롤과 모달로 분리한다\"는 것이었습니다. 이를 통해 전체 포트폴리오는 PPT처럼 명확한 흐름을 유지하면서도, Projects와 AI Lab처럼 깊게 읽어야 하는 콘텐츠는 별도의 읽기 공간에서 충분히 탐색할 수 있도록 구성했습니다.",
-      ] },
-
-      // ── 섹션 4: 전체 아키텍처 ──
-      { type: "section-heading", title: "04 — 전체 아키텍처" },
       { type: "image", url: "/images/projects/portfolio/architecture-diagram.svg", caption: "3-레이어 아키텍처: Frontend → Data/CMS → AI/RAG" },
       { type: "text", body: [
-        "프론트엔드 레이어: Next.js App Router + React Server Component 기반입니다. scene-layout.tsx가 7개 섹션을 배치하고, use-slide-navigation.ts 훅이 PPT 스타일 내비게이션을 담당합니다.",
-        "데이터 레이어: Prisma ORM + Neon PostgreSQL(서버리스)로 구성됩니다. SiteSetting 테이블을 key-value 구조로 설계해 사이트 전반의 텍스트를 유연하게 관리할 수 있습니다.",
-        "RAG 레이어: Python FastAPI 서버가 rag/ 모듈 아래 5단계 파이프라인(loader → chunker → embedder → retriever → chain)을 실행합니다. FAISS 벡터 검색으로 관련 문서를 찾고, Groq LLM이 답변을 생성합니다.",
-      ] },
-      { type: "tech-grid", items: [
-        { name: "Next.js App Router", reason: "App Router + RSC로 SSR/CSR 분리" },
-        { name: "TypeScript", reason: "타입 안전성 + IDE 자동완성" },
-        { name: "Three.js", reason: "@react-three/fiber 기반 3D 배경" },
-        { name: "Prisma + Neon", reason: "서버리스 PostgreSQL, 스키마 기반 ORM" },
-        { name: "Framer Motion", reason: "섹션 등장 애니메이션 + 커서 스프링" },
-        { name: "Python FastAPI", reason: "RAG 파이프라인 서빙, 비동기 처리" },
-        { name: "FAISS", reason: "로컬 벡터 검색, 인프라 부담 없음" },
-        { name: "Groq API", reason: "Llama 3.1 기반 빠른 LLM 응답" },
+        "프론트엔드는 Next.js App Router + TypeScript 기반입니다. 섹션 구조가 명확한 포트폴리오 특성상, 서버 컴포넌트와 클라이언트 컴포넌트를 분리하기 쉬운 App Router가 적합했습니다. 프로젝트 목록이나 사이트 설정처럼 DB에서 가져오는 데이터는 React Server Component로 처리하고, Three.js 배경·커스텀 커서·애니메이션은 Client Component로 분리해 초기 로딩과 인터랙션을 동시에 확보했습니다.",
+        "인터랙션은 Three.js(React Three Fiber), Framer Motion, GSAP을 조합했습니다. 3D 배경은 섹션 전환에 따라 도형 밀도와 회전 속도가 변해야 했기 때문에 React 상태와 연동 가능한 R3F를 선택했고, 모달·섹션 등장 같은 상태 기반 전환은 Framer Motion으로, 커서 추적처럼 프레임 단위 정밀 제어가 필요한 부분은 GSAP으로 나눠 처리했습니다.",
+        "데이터는 Prisma ORM + Neon PostgreSQL(서버리스)로 관리합니다. 포트폴리오 텍스트와 프로젝트 정보를 코드에 하드코딩하지 않고 DB로 분리해, Admin 페이지에서 코드 배포 없이 수정할 수 있는 CMS 구조를 만들었습니다. Prisma는 TypeScript 타입 자동 생성이 강점이라 Next.js와 궁합이 좋았고, Neon은 서버리스 환경에서 cold start가 빨라 Vercel 배포와 잘 맞았습니다.",
+        "RAG는 Python FastAPI 서버로 분리했습니다. 문서 로딩·임베딩·벡터 검색·LLM 응답 생성까지의 파이프라인이 Python 생태계(LangChain, sentence-transformers, FAISS)에 의존하기 때문에 Node.js가 아닌 별도 서버로 구성했습니다. FAISS는 외부 인프라 없이 로컬 벡터 검색이 가능해 비용 부담이 없었고, Groq API는 Llama 3.1 기반으로 응답 속도가 빨라 실시간 Q&A에 적합했습니다. Next.js API Route는 프론트엔드와 RAG 서버 사이의 프록시 역할만 담당합니다.",
+        "결과적으로 프론트엔드(Next.js), 데이터(Prisma/Neon), AI(FastAPI/FAISS/Groq) 세 레이어가 독립적으로 동작하는 구조입니다. 각 레이어를 별도로 수정하거나 확장할 수 있어, 포트폴리오 규모가 커져도 유지보수가 어렵지 않도록 설계했습니다.",
       ] },
 
-      // ── 섹션 5: 주요 기능 상세 ──
-      { type: "section-heading", title: "05 — 주요 기능 상세" },
+      // ── 섹션 4: 주요 기능 ──
+      { type: "section-heading", title: "04 — 주요 기능" },
 
-      { type: "feature-block", title: "5-1. PPT 스타일 섹션 내비게이션", body: [
-        "일반적인 긴 스크롤 포트폴리오가 아니라, 각 섹션을 하나의 슬라이드처럼 보여주는 구조를 선택했습니다. About, Experience, Projects, AI Lab, Articles, Skills, Contact가 각각 하나의 화면 단위로 보이도록 구성했고, 사용자는 상단 카테고리나 좌우 버튼을 통해 명시적으로 이동할 수 있습니다.",
-        "이 방식을 선택한 이유는 사용자가 의도하지 않은 스크롤로 섹션을 지나치지 않게 하기 위해서입니다. 특히 포트폴리오처럼 각 섹션의 역할이 명확한 페이지에서는, 한 화면씩 읽히는 구조가 정보 전달에 더 적합하다고 판단했습니다.",
-        "use-slide-navigation 훅이 wheel 이벤트를 차단하고, goTo() 함수로 섹션을 전환합니다. IntersectionObserver가 현재 보이는 섹션을 추적하고, CustomEvent('slide-nav-goto')를 통해 외부에서도 이동을 트리거할 수 있습니다. Projects, AI Lab처럼 내부 스크롤이 필요한 영역은 SCROLLABLE_SECTIONS Set으로 관리하며, data-scroller 컨테이너 내부에서는 일반 스크롤이 동작합니다.",
-      ], code: { title: "섹션 이동 로직 보기", code: "// use-slide-navigation.ts (핵심 발췌)\nconst SCROLLABLE_SECTIONS = new Set([\"projects\", \"ai-lab\"]);\n\nconst goTo = (index: number) => {\n  const el = document.getElementById(sectionIds[clamped]);\n  window.scrollTo({ top: el.offsetTop, behavior: \"smooth\" });\n};\n\n// wheel 이벤트 차단 + 내부 스크롤 전달\nconst blockWheel = (e: WheelEvent) => {\n  e.preventDefault();\n  const scroller = getScroller();\n  if (scroller) {\n    scroller.scrollBy({ top: e.deltaY, behavior: \"instant\" });\n  }\n};\n\n// 외부에서 섹션 이동 트리거\nwindow.addEventListener(\"slide-nav-goto\", (e) => {\n  const idx = sectionIds.indexOf(e.detail);\n  if (idx >= 0) goTo(idx);\n});" } },
-
-      { type: "feature-block", title: "5-2. 프로젝트 상세 모달", body: [
-        "Projects 섹션에서는 프로젝트 카드를 클릭하면 상세 모달이 열리도록 구성했습니다. 목록에서는 핵심 정보만 빠르게 확인하고, 관심 있는 프로젝트는 모달 안에서 개발일지처럼 깊게 읽을 수 있도록 설계했습니다.",
-        "이 방식은 페이지 이동 없이 현재 맥락을 유지할 수 있다는 장점이 있습니다. 사용자는 Projects 화면에서 벗어나지 않은 상태로 상세 내용을 읽고, 닫으면 다시 프로젝트 목록으로 돌아올 수 있습니다.",
-        "모달은 contentBlocks 배열을 기반으로 다양한 콘텐츠 타입(text, image, video, pdf, code, callout, tech-grid, feature-block 등)을 블로그 스타일로 자유롭게 구성할 수 있습니다. 키보드 내비게이션(좌우 화살표로 이전/다음 프로젝트, Escape로 닫기)도 지원합니다.",
-      ], code: { title: "프로젝트 상세 모달 구조 보기", code: "// ContentBlock 타입 (projects.tsx)\nexport type ContentBlock =\n  | { type: \"text\"; heading?: string; body: string[] }\n  | { type: \"image\"; url: string; caption?: string }\n  | { type: \"code\"; title: string; language: string; code: string }\n  | { type: \"callout\"; variant: \"problem\" | \"solution\" | \"info\"; ... }\n  | { type: \"tech-grid\"; items: { name: string; reason: string }[] }\n  | { type: \"feature-block\"; title: string; body: string[]; code?: ... }\n  // ... 등 10+ 타입 지원\n\n// 모달에서 contentBlocks 렌더링\n{detailContentBlocks.length > 0 ? (\n  <ContentBlockRenderer blocks={detailContentBlocks} />\n) : (\n  // 자동 생성된 케이스 스터디 fallback\n)}" } },
-
-      { type: "feature-block", title: "5-3. Three.js 3D 배경", body: [
-        "포트폴리오 페이지(scene-layout.tsx)의 배경으로 Three.js 3D 씬을 렌더링합니다. 진입 페이지에서는 Three.js를 사용하지 않으며, 정적 이미지(entry-page.png)만 표시합니다.",
-        "three-portfolio-bg.tsx에서 @react-three/fiber의 Canvas와 useFrame을 사용해 5개 와이어프레임 도형(Icosahedron, Octahedron 등)과 120개 파티클을 렌더링합니다. 현재 활성 섹션에 따라 도형의 밀도, 회전 속도, 파티클 투명도가 부드럽게 변합니다.",
-        "Three.js는 window 객체에 의존하기 때문에 Next.js SSR 환경에서 에러가 발생합니다. 이를 next/dynamic + ssr: false로 해결했으며, 클라이언트에서만 마운트되도록 처리했습니다.",
-      ], code: { title: "섹션별 3D 파라미터 보기", code: "// three-portfolio-bg.tsx\nconst SECTION_PARAMS: Record<string, SectionParams> = {\n  about:      { shapes: 0.20, particles: 0.40, lines: 0.10, rotSpeed: 0.03 },\n  experience: { shapes: 0.30, particles: 0.55, lines: 0.10, rotSpeed: 0.06 },\n  projects:   { shapes: 0.15, particles: 0.35, lines: 0.20, rotSpeed: 0.04 },\n  skills:     { shapes: 0.35, particles: 0.30, lines: 0.15, rotSpeed: 0.08 },\n};\n\n// SectionBridge가 DOM context → R3F로 활성 섹션 정보를 전달\nfunction SectionBridge() {\n  const active = useActiveSection();\n  useEffect(() => { sectionState.current = active; }, [active]);\n  return null;\n}" } },
-
-      { type: "feature-block", title: "5-4. 커스텀 커서", body: [
-        "이 포트폴리오는 기본 마우스 커서 대신, 사이트의 분위기에 맞춘 커스텀 커서를 적용했습니다. 커서는 단순 장식이 아니라 사용자가 현재 어떤 요소와 상호작용하고 있는지 알려주는 피드백 역할을 합니다.",
-        "magnetic-cursor.tsx에서 6가지 모드를 지원합니다: default(6px dot + 50px ring), nav(110px 확대), button(88×42 pill), project(150px 대형), labeled(텍스트 라벨 표시), highlight(핑크 ellipse). 각 모드는 data-cursor, data-project-card 등의 HTML 속성으로 트리거됩니다.",
-        "70px 반경 내의 버튼이나 링크에 자기장처럼 커서가 끌리는 magnetic pull 효과를 적용했습니다. 클릭 시에는 2-layer ripple 애니메이션이 발동합니다. 모바일 터치 환경이나 prefers-reduced-motion 설정에서는 자동으로 비활성화됩니다.",
-      ], code: { title: "커스텀 커서 모드 보기", code: "// magnetic-cursor.tsx (설정 발췌)\nconst DOT_SIZE = 6;\nconst RING_DEFAULT = 50;\nconst RING_NAV = 110;\nconst RING_BUTTON_W = 88;\nconst RING_BUTTON_H = 42;\nconst RING_PROJECT = 150;\nconst RING_LABELED = 90;\nconst MAGNETIC_RADIUS = 70;\n\n// 모드 감지: data-cursor 속성 기반\n// \"VIEW\" → project mode\n// \"ENTER\" → labeled mode\n// 버튼/링크 → button mode\n// nav 요소 → nav mode" } },
-
-      { type: "feature-block", title: "5-5. About hover 설명 인터랙션", body: [
-        "About 섹션에서는 모든 설명을 한 번에 노출하기보다, 핵심 문장을 먼저 보여주고 사용자가 관심 있는 키워드나 문장에 hover했을 때 보조 설명이 나타나는 방식으로 구성했습니다.",
-        "이 방식은 긴 자기소개를 처음부터 모두 읽게 만들기보다, 사용자가 관심 있는 내용만 선택적으로 확인할 수 있게 합니다. QA 관점에서도 정보 과밀을 줄이고, 사용자가 현재 보고 있는 맥락에서 필요한 설명을 바로 확인할 수 있다는 장점이 있습니다.",
-        "about-keyword-annotation.tsx 컴포넌트가 점선 밑줄 키워드를 렌더링하고, hover/click/focus 시 tooltip 카드를 표시합니다. 뷰포트 위치에 따라 위/아래 자동 배치되며, 키보드 접근성(Enter/Space 토글, Escape 닫기)도 지원합니다.",
+      { type: "feature-block", title: "4-1. 섹션 단위 내비게이션", body: [
+        "About, Experience, Projects, AI Lab, Articles, Skills, Contact를 각각 하나의 화면 단위로 구성했습니다.",
+        "상단 메뉴와 좌우 버튼으로 섹션을 명확히 이동할 수 있게 만들고, 현재 위치는 슬라이드 인디케이터로 확인할 수 있게 했습니다.",
+        "Projects와 AI Lab처럼 내용이 긴 섹션은 내부 스크롤 영역으로 분리해, 전체 섹션 이동과 콘텐츠 스크롤이 충돌하지 않도록 처리했습니다.",
       ] },
 
-      { type: "feature-block", title: "5-6. AI Lab 콘텐츠 설계", body: [
-        "AI Lab은 단순히 AI 관련 경험을 나열하는 영역이 아니라, 외부 문서, YouTube 영상, 참고 페이지, 개인적으로 읽고 느낀 점을 함께 기록할 수 있는 개인 연구 노트처럼 설계했습니다.",
-        "AI 시대에 어떤 자료를 참고했고, 그 자료를 보고 어떤 생각을 했는지를 함께 보여주기 위한 영역입니다. 단순 링크 모음이 아니라, media 정보와 개인 해석을 함께 배치해 \"AI를 어떻게 받아들이고 학습하는 사람인지\" 보여주는 역할을 합니다.",
-        "5개 카테고리(Principles, Practices, Prompting, AI Tools, Media Notes)로 구성됩니다. AI Tools 카테고리는 도구별 상세 카드(사용 목적, 장점, 한계, 리뷰)를 제공하고, Media Notes는 YouTube 영상이나 아티클의 요약, 인사이트, 적용 경험을 기록할 수 있는 구조입니다.",
+      { type: "feature-block", title: "4-2. 프로젝트 상세 모달", body: [
+        "프로젝트 카드는 목록에서 핵심 정보만 보여주고, 클릭하면 상세 모달에서 개발 과정과 구현 내용을 깊게 읽을 수 있게 했습니다.",
+        "모달 본문은 contentBlocks 기반으로 렌더링해 text, image, video, pdf, code, tech-grid, rag-pipeline 같은 콘텐츠 타입을 확장할 수 있습니다.",
+        "모달이 열렸을 때는 배경 스크롤을 잠그고, 본문만 독립적으로 스크롤되도록 분리해 탐색 흐름이 흔들리지 않게 했습니다.",
       ] },
 
-      { type: "feature-block", title: "5-7. RAG AI Assistant", body: [
-        "포트폴리오 안에 AI Assistant를 넣은 이유는 단순히 챗봇 기능을 보여주기 위해서가 아니라, 사용자가 프로젝트와 경험을 질문 기반으로 탐색할 수 있게 만들기 위해서입니다.",
-        "일반적인 AI 챗봇은 실제 포트폴리오에 없는 내용을 그럴듯하게 생성할 위험이 있습니다. 그래서 이 프로젝트에서는 포트폴리오 문서를 기반으로 검색한 뒤, 관련 문맥을 바탕으로 답변하는 RAG(Retrieval-Augmented Generation) 구조를 적용했습니다.",
-        "Python FastAPI 서버에서 마크다운 문서를 로드(loader.py)하고, 500자 단위로 청크 분할(chunker.py)한 뒤, sentence-transformers/all-MiniLM-L6-v2로 임베딩(embedder.py)합니다. FAISS 벡터스토어에 저장된 문서 중 질문과 유사한 상위 4개를 검색(retriever.py)하고, Groq LLM(llama-3.1-8b-instant)이 문맥 기반 답변을 생성(chain.py)합니다.",
-      ], code: { title: "RAG 검색 흐름 보기", code: "# api.py (FastAPI 엔드포인트)\n@app.post(\"/ask\")\nasync def ask(req: AskRequest):\n    retrieved_docs = retrieve_documents(vectorstore, req.question)\n    context = format_context(retrieved_docs)\n    answer = generate_answer(context, req.question)\n    sources = get_source_list(retrieved_docs)\n    recommended = get_recommended_section(req.question, sources)\n    return AskResponse(\n        answer=answer,\n        sources=sources,\n        recommended_section=recommended,\n    )" } },
-      { type: "image", url: "/images/projects/portfolio/rag-flow-diagram.svg", caption: "RAG 파이프라인 흐름: 질문 → 임베딩 → FAISS 검색 → Groq 답변 → UI 표시" },
+      { type: "feature-block", title: "4-3. Three.js 3D 배경", body: [
+        "포트폴리오 페이지 배경에 와이어프레임 도형과 파티클을 배치해, 정적인 이력서 페이지보다 깊이감 있는 화면을 만들었습니다.",
+        "현재 활성 섹션에 따라 도형의 밀도, 회전 속도, 파티클 투명도가 달라지도록 구성해 섹션 전환에 반응하는 배경을 구현했습니다.",
+        "Three.js는 브라우저 객체에 의존하므로 dynamic import와 ssr: false를 적용해 클라이언트에서만 렌더링되도록 분리했습니다.",
+      ] },
 
-      { type: "feature-block", title: "5-8. AI Navigation", body: [
-        "AI Assistant의 답변이 단순 텍스트에서 끝나지 않고, 관련 섹션으로 이동할 수 있도록 AI Navigation을 연결했습니다.",
-        "예를 들어 사용자가 \"백엔드 프로젝트가 궁금해요\"라고 질문하면 Projects 섹션이나 관련 프로젝트로 이동할 수 있도록 추천 섹션 정보를 함께 반환합니다. \"QA 경험이 궁금해요\"라는 질문에는 Experience 섹션으로 이어질 수 있도록 설계했습니다.",
-        "RAG 서버의 get_recommended_section() 함수가 질문 키워드와 검색된 문서의 소스 파일명(experience.md → Experience, projects.md → Projects 등)을 분석해 관련 섹션을 추천합니다. 프론트엔드의 PortfolioAskBar에서 '관련 섹션 보기' 버튼을 표시하고, 클릭 시 CustomEvent('slide-nav-goto')를 dispatch해 해당 섹션으로 이동합니다.",
-      ], code: { title: "AI Navigation 연결 코드 보기", code: "// portfolio-ask-bar.tsx (관련 섹션 이동)\nconst handleSectionMove = (sectionId: string) => {\n  window.dispatchEvent(\n    new CustomEvent(\"slide-nav-goto\", { detail: sectionId })\n  );\n};\n\n// Python RAG 서버 (섹션 추천 로직)\ndef get_recommended_section(question, sources):\n    # 70+ 키워드 매핑\n    # experience.md → Experience\n    # projects.md → Projects\n    # skills.md → Skills\n    return { \"label\": \"Experience\", \"section_id\": \"experience\" }" } },
+      { type: "feature-block", title: "4-4. 커스텀 커서", body: [
+        "기본 커서 대신 사이트 분위기에 맞춘 커스텀 커서를 적용해, 사용자가 어떤 요소와 상호작용 중인지 더 분명하게 느낄 수 있게 했습니다.",
+        "버튼, 네비게이션, 프로젝트 카드처럼 역할이 다른 요소는 data-cursor 속성으로 커서 모드를 다르게 전환했습니다.",
+        "모바일 터치 환경과 reduced-motion 설정에서는 커서 효과를 비활성화해 불필요한 모션 부담을 줄였습니다.",
+      ] },
+
+      { type: "feature-block", title: "4-5. About hover 설명 인터랙션", body: [
+        "About 섹션은 긴 자기소개를 한 번에 보여주기보다, 핵심 문장과 키워드를 먼저 읽게 만드는 방식으로 구성했습니다.",
+        "사용자가 특정 키워드에 hover, click, focus하면 보조 설명이 나타나도록 만들어 관심 있는 정보만 선택적으로 확인할 수 있게 했습니다.",
+        "툴팁은 뷰포트 위치에 따라 위아래 배치가 바뀌고, Enter, Space, Escape 키로도 조작할 수 있게 했습니다.",
+      ] },
+
+      { type: "feature-block", title: "4-6. AI Lab 콘텐츠 설계", body: [
+        "AI Lab은 AI 관련 링크를 모아두는 영역이 아니라, 학습한 자료와 개인적인 해석을 함께 기록하는 연구 노트처럼 설계했습니다.",
+        "Principles, Practices, Prompting, AI Tools, Media Notes로 카테고리를 나눠 원칙, 실험, 도구 사용 경험을 분리했습니다.",
+        "AI Tools와 Media Notes는 사용 목적, 장점, 한계, 적용 경험을 함께 보여주도록 구성해 단순한 도구 목록보다 맥락이 드러나게 했습니다.",
+      ] },
+
+      // ── 섹션 5: RAG AI Assistant (독립 섹션) ──
+      { type: "section-heading", title: "05 — RAG AI Assistant" },
+      { type: "rag-pipeline",
+        diagram: {
+          steps: [
+            "사용자 질문 입력",
+            "sentence-transformers 임베딩",
+            "FAISS 벡터 검색 (Top-4)",
+            "Groq LLM 답변 생성",
+            "추천 섹션 연결 (AI Navigation)",
+          ],
+        },
+        description: [
+          "포트폴리오 안에 AI Assistant를 넣은 이유는 단순히 챗봇 기능을 보여주기 위해서가 아니라, 사용자가 프로젝트와 경험을 질문 기반으로 탐색할 수 있게 만들기 위해서입니다. 일반 AI 챗봇은 실제 포트폴리오에 없는 내용을 그럴듯하게 생성할 위험이 있어, 포트폴리오 문서를 기반으로 검색한 뒤 관련 문맥으로 답변하는 RAG 구조를 적용했습니다.",
+          "Python FastAPI 서버에서 마크다운 문서를 로드하고, 500자 단위로 청크 분할한 뒤, sentence-transformers로 임베딩합니다. FAISS 벡터스토어에서 질문과 유사한 상위 4개를 검색하고, Groq LLM이 문맥 기반 답변을 생성합니다.",
+          "AI Assistant의 답변이 단순 텍스트에서 끝나지 않고, 관련 섹션으로 이동할 수 있도록 AI Navigation을 연결했습니다. get_recommended_section() 함수에서 질문 키워드와 검색된 문서의 소스 파일명을 분석해 관련 섹션을 추천하고, 프론트엔드에서 CustomEvent('slide-nav-goto')를 dispatch해 해당 섹션으로 이동합니다.",
+        ],
+        troubleshooting: "RAG 파이프라인을 Next.js 서버 안에 직접 구현하면 Python 의존성(sentence-transformers, FAISS)을 Node.js 환경에서 처리할 수 없었습니다. Python FastAPI 서버를 별도로 분리하고, Next.js API Route가 프록시 역할을 담당하는 구조로 설계해 각 레이어의 책임을 명확히 분리했습니다.",
+      },
 
       // ── 섹션 6: 기술 선택 이유 ──
       { type: "section-heading", title: "06 — 기술 선택 이유" },
@@ -136,35 +125,8 @@ export const notionProjectAssets = {
         "LLM은 Groq의 무료 티어를 활용합니다. llama-3.1-8b-instant 모델이 포트폴리오 Q&A에 충분한 품질을 제공하며, 응답 속도가 빨라 사용자 경험에 유리합니다.",
       ] },
 
-      // ── 섹션 7: 구현 중 겪은 문제와 해결 ──
-      { type: "section-heading", title: "07 — 구현 중 겪은 문제와 해결" },
-      { type: "callout", variant: "problem", title: "Three.js SSR 에러", body: [
-        "Three.js와 @react-three/fiber는 window/document에 의존하는데, Next.js SSR 환경에서 ReferenceError: window is not defined 에러가 발생했습니다.",
-      ] },
-      { type: "callout", variant: "solution", title: "dynamic import + ssr: false 적용", body: [
-        "Three.js 관련 컴포넌트를 next/dynamic으로 감싸고 ssr: false 옵션을 적용해, 서버에서는 렌더링하지 않고 클라이언트에서만 마운트되도록 처리했습니다.",
-      ] },
-      { type: "callout", variant: "problem", title: "스크롤과 슬라이드 내비게이션 충돌", body: [
-        "PPT 스타일 내비게이션은 wheel 이벤트로 섹션을 전환하는데, Projects와 AI Lab 섹션은 내부 콘텐츠가 길어서 일반 스크롤이 필요했습니다. 두 동작이 충돌하는 문제가 있었습니다.",
-      ] },
-      { type: "callout", variant: "solution", title: "wheel 이벤트 차단 + data-scroller 분리", body: [
-        "SCROLLABLE_SECTIONS Set으로 내부 스크롤이 필요한 섹션을 관리하고, 해당 섹션에서는 wheel 이벤트를 슬라이드 전환에 사용하지 않도록 분리했습니다. data-scroller 속성이 있는 요소 내부에서는 일반 스크롤이 동작합니다.",
-      ] },
-      { type: "callout", variant: "problem", title: "RAG 답변과 섹션 매핑", body: [
-        "RAG가 답변을 생성해도, 그 답변이 포트폴리오의 어떤 섹션과 관련 있는지 자동으로 판단할 방법이 없었습니다.",
-      ] },
-      { type: "callout", variant: "solution", title: "키워드 기반 섹션 추천 + CustomEvent dispatch", body: [
-        "get_recommended_section() 함수에서 질문 키워드와 검색된 문서의 source 파일명을 분석해 관련 섹션을 추천합니다. 프론트엔드에서 CustomEvent('slide-nav-goto')를 dispatch해 해당 섹션으로 이동하도록 연결했습니다.",
-      ] },
-      { type: "callout", variant: "problem", title: "contentBlocks에 개발일지 스타일 콘텐츠 표현 부재", body: [
-        "기존 ContentBlock 타입은 text, image, video, pdf, audio, file만 지원해서, 코드 블록이나 Problem/Solution 카드, 기술 그리드 같은 개발일지 스타일 콘텐츠를 표현할 수 없었습니다.",
-      ] },
-      { type: "callout", variant: "solution", title: "ContentBlock 타입 확장", body: [
-        "section-heading, code, callout, tech-grid, point-cards, design-rules, feature-block 등 신규 블록 타입을 추가하고, ContentBlockRenderer에 각각의 렌더링 로직을 구현해 자유롭게 콘텐츠를 구성할 수 있도록 확장했습니다.",
-      ] },
-
-      // ── 섹션 8: 배운 점과 다음 개선 방향 ──
-      { type: "section-heading", title: "08 — 배운 점과 다음 개선 방향" },
+      // ── 섹션 7: 배운 점과 다음 개선 방향 ──
+      { type: "section-heading", title: "07 — 배운 점과 다음 개선 방향" },
       { type: "text", body: [
         "AI Agent 협업 개발: Claude Code와 대화하며 설계 → 구현 → 디버깅을 반복하는 과정에서, 프롬프트를 잘 설계하면 복잡한 컴포넌트도 빠르게 구현할 수 있다는 것을 경험했습니다. 다만 AI가 생성한 코드를 그대로 사용하는 것이 아니라, 의도를 이해하고 검증하는 과정이 핵심이라는 점도 체감했습니다.",
         "풀스택 구조 설계: 프론트엔드(Next.js) + DB(Prisma/Neon) + RAG 백엔드(Python/FastAPI)를 하나의 프로젝트에서 설계하면서, 각 레이어의 책임 분리와 연동 인터페이스 설계 역량을 쌓았습니다.",
@@ -173,10 +135,6 @@ export const notionProjectAssets = {
       { type: "text", body: [
         "향후 개선 방향으로는 ISR/SSG 전환을 통한 성능 최적화, 영문 포트폴리오 버전(i18n) 추가, 키보드 내비게이션과 스크린 리더 지원을 포함한 접근성 강화, 그리고 RAG 파이프라인의 청크 전략 개선과 멀티턴 대화 지원을 계획하고 있습니다.",
       ] },
-
-      // ── 추가 이미지 ──
-      { type: "image", url: "/images/projects/portfolio-website/02-about.png", caption: "About 섹션 — hover 키워드 설명 인터랙션" },
-      { type: "image", url: "/images/projects/portfolio-website/05-skills.png", caption: "Skills 섹션 — 카테고리별 아이콘 그리드" },
     ],
   },
   joodevBlog: {

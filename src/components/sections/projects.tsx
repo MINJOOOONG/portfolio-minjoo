@@ -4,6 +4,7 @@ import { useState, useEffect, memo, useCallback, type CSSProperties } from "reac
 import Image, { type ImageProps } from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
+import { Github, ExternalLink, BookOpen } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { isArticleProject } from "@/lib/project-groups";
 
@@ -65,8 +66,9 @@ export type ContentBlock =
   | { type: "callout"; variant: "problem" | "solution" | "info"; title: string; body: string[] }
   | { type: "tech-grid"; items: { name: string; reason: string }[] }
   | { type: "point-cards"; items: { title: string; body: string }[] }
-  | { type: "design-rules"; image?: string; placeholder?: string; rules: { title: string; body: string }[] }
-  | { type: "feature-block"; title: string; body: string[]; code?: { title: string; code: string } };
+  | { type: "design-rules"; image?: string; images?: { url: string; title?: string }[]; placeholder?: string; rules: { title: string; body: string }[] }
+  | { type: "feature-block"; title: string; body: string[]; code?: { title: string; code: string } }
+  | { type: "rag-pipeline"; diagram: { steps: string[] }; description: string[]; troubleshooting?: string };
 
 export interface ProjectItem {
   title: string;
@@ -326,6 +328,49 @@ function CodeToggle({ title, code }: { title: string; code: string }) {
   );
 }
 
+function DesignRulesBlock({
+  block,
+}: {
+  block: Extract<ContentBlock, { type: "design-rules" }>;
+}) {
+  const image =
+    block.image
+      ? { url: block.image, title: "Design reference" }
+      : block.images?.[0];
+
+  return (
+    <div className={`pj-design-rules${image ? " pj-design-rules--with-image" : ""}`}>
+      {image && (
+        <div className="pj-design-rules__image-col">
+          <div className="pj-design-rules__carousel">
+            <SafeImage
+              src={image.url}
+              alt={image.title ? `${image.title} 화면 캡처` : "웹사이트 화면 캡처"}
+              width={1440}
+              height={900}
+              className="pj-design-rules__image"
+              sizes="(max-width: 900px) 92vw, 980px"
+              fallbackText="웹사이트 화면 캡처"
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="pj-design-rules__rules-col">
+        {block.rules.map((rule, j) => (
+          <div key={j} className="pj-design-rules__item">
+            <span className="pj-design-rules__number">{String(j + 1).padStart(2, "0")}.</span>
+            <div className="pj-design-rules__item-content">
+              <span className="pj-design-rules__item-title">{rule.title}</span>
+              <span className="pj-design-rules__item-body">{rule.body}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ── 콘텐츠 블록 렌더러 (블로그 스타일) ── */
 function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
   return (
@@ -580,39 +625,11 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <motion.div
                 key={`dr-${i}`}
-                className="pj-design-rules"
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
               >
-                <div className="pj-design-rules__image">
-                  {block.image ? (
-                    <SafeImage
-                      src={block.image}
-                      alt="Design reference"
-                      fill
-                      className="object-cover"
-                      sizes="240px"
-                    />
-                  ) : (
-                    <div className="pj-design-rules__placeholder">
-                      <span className="pj-design-rules__placeholder-text">
-                        {block.placeholder || "Design reference image"}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="pj-design-rules__list">
-                  {block.rules.map((rule, j) => (
-                    <div key={j} className="pj-design-rules__item">
-                      <span className="pj-design-rules__number">{j + 1}</span>
-                      <div className="pj-design-rules__item-content">
-                        <span className="pj-design-rules__item-title">{rule.title}</span>
-                        <span className="pj-design-rules__item-body">{rule.body}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <DesignRulesBlock block={block} />
               </motion.div>
             );
 
@@ -634,6 +651,43 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 {block.code && (
                   <div style={{ marginTop: 12 }}>
                     <CodeToggle title={block.code.title} code={block.code.code} />
+                  </div>
+                )}
+              </motion.div>
+            );
+
+          case "rag-pipeline":
+            return (
+              <motion.div
+                key={`rag-${i}`}
+                className="pj-rag-section"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <div className="pj-rag-grid">
+                  <div className="pj-rag-diagram">
+                    {block.diagram.steps.map((step, j) => (
+                      <div key={j}>
+                        <div className="pj-rag-step">{step}</div>
+                        {j < block.diagram.steps.length - 1 && (
+                          <div className="pj-rag-arrow">↓</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pj-rag-description">
+                    {block.description.map((p, j) => (
+                      <p key={j}>{p}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {block.troubleshooting && (
+                  <div className="pj-rag-troubleshooting">
+                    <span className="pj-rag-troubleshooting__label">TROUBLESHOOTING</span>
+                    <p>{block.troubleshooting}</p>
                   </div>
                 )}
               </motion.div>
@@ -757,6 +811,13 @@ function ProjectModal({
     : [];
   const shouldShowPrimaryMedia = Boolean(project.media?.url && project.media.type !== "image");
 
+  // Normalize techStack: handle edge case where DB returns a single comma-joined string
+  const techStackList = Array.isArray(project.techStack)
+    ? project.techStack.flatMap((t) => (typeof t === "string" && t.includes(",") ? t.split(",").map((s) => s.trim()) : [t]))
+    : typeof project.techStack === "string"
+      ? (project.techStack as string).split(",").map((s) => s.trim())
+      : [];
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -776,16 +837,19 @@ function ProjectModal({
       {/* Backdrop */}
       <motion.div
         className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px]"
+        data-modal-overlay
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
         onClick={onClose}
+        onWheel={(e) => e.stopPropagation()}
       />
 
       {/* Center wrapper (flex centering — no CSS transform on parent) */}
       <div
         className="fixed inset-0 z-51 flex items-center justify-center p-6 sm:p-10 pointer-events-none"
+        data-modal-overlay
         onClick={onClose}
       >
         <motion.div
@@ -852,8 +916,8 @@ function ProjectModal({
             </div>
           )}
 
-          {/* 프로젝트 번호 + 제목 */}
-          <div className="pj-modal__title-block">
+          {/* 1. 프로젝트 번호 + 제목 */}
+          <div className="pj-modal__title-block" style={{ marginBottom: 32 }}>
             <span className="pj-modal__title-number">
               {num}
             </span>
@@ -862,76 +926,183 @@ function ProjectModal({
             </h2>
           </div>
 
-          {/* 한 줄 설명 */}
-          {project.achievement && (
-            <p className="pj-modal__lead">
-              {project.achievement}
-            </p>
+          {/* 2. 메타 정보 (1줄: 개발일정 · 개발인원) */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap" as const,
+              alignItems: "center",
+              gap: 0,
+              fontSize: 13,
+              color: "rgba(33, 29, 25, 0.6)",
+              lineHeight: 1.6,
+            }}
+          >
+            <span style={{ fontWeight: 500 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
+                개발일정
+              </span>
+              {project.period}
+            </span>
+            <span style={{ margin: "0 10px", color: "rgba(33, 29, 25, 0.2)", userSelect: "none" as const }}>·</span>
+            <span style={{ fontWeight: 500 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
+                개발인원
+              </span>
+              {project.teamSize}
+            </span>
+          </div>
+
+          {/* 3. 링크 그룹 (2줄: GitHub · Live) */}
+          {(project.githubUrl || project.liveUrl || project.blogUrl) && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 24,
+                marginTop: 10,
+              }}
+            >
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: 1,
+                    color: "var(--foreground)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid transparent",
+                    transition: "border-color 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--foreground)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+                >
+                  <Github size={15} style={{ display: "block", flexShrink: 0, opacity: 0.5 }} />
+                  GitHub ↗
+                </a>
+              )}
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: 1,
+                    color: "var(--foreground)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid transparent",
+                    transition: "border-color 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--foreground)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+                >
+                  <ExternalLink size={15} style={{ display: "block", flexShrink: 0, opacity: 0.5 }} />
+                  Live ↗
+                </a>
+              )}
+              {project.blogUrl && (
+                <a
+                  href={project.blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    lineHeight: 1,
+                    color: "var(--foreground)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid transparent",
+                    transition: "border-color 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--foreground)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+                >
+                  <BookOpen size={15} style={{ display: "block", flexShrink: 0, opacity: 0.5 }} />
+                  Blog ↗
+                </a>
+              )}
+            </div>
           )}
+
+          {/* 4. 소개 문단 */}
           {project.summary && (
-            <p className="pj-modal__summary">
+            <p
+              style={{
+                maxWidth: 760,
+                margin: "40px 0 0",
+                color: "var(--muted-foreground)",
+                fontSize: 14,
+                lineHeight: 1.8,
+              }}
+            >
               {project.summary}
             </p>
           )}
 
-          {/* 기술스택 배지 */}
-          {project.techStack.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-5">
-              {project.techStack.map((t) => (
-                <span
-                  key={t}
-                  className="px-2.5 py-1 text-[11px] font-medium rounded-md text-foreground/80 bg-white border border-[var(--notion-hairline)]"
-                >
-                  {t}
-                </span>
-              ))}
+          {/* 5. 기술스택 라벨 + 뱃지 */}
+          {techStackList.length > 0 && (
+            <div style={{ marginTop: 36 }}>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: 10,
+                  fontWeight: 600,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase" as const,
+                  color: "rgba(33, 29, 25, 0.35)",
+                  marginBottom: 10,
+                }}
+              >
+                기술스택
+              </span>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap" as const,
+                  gap: 7,
+                }}
+              >
+                {techStackList.map((t) => (
+                  <span
+                    key={t}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      height: 30,
+                      padding: "0 12px",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      borderRadius: 999,
+                      color: "rgba(33, 29, 25, 0.8)",
+                      background: "#fff",
+                      border: "1px solid rgba(33, 29, 25, 0.15)",
+                      lineHeight: 1,
+                      whiteSpace: "nowrap" as const,
+                    }}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* 메타 정보 그리드 */}
-          <div className="pj-modal__meta-grid">
-            <div className="pj-modal__meta-cell">
-              <span className="pj-modal__meta-label">기간</span>
-              <span className="pj-modal__meta-value">{project.period}</span>
-            </div>
-            <div className="pj-modal__meta-cell">
-              <span className="pj-modal__meta-label">개발 인원</span>
-              <span className="pj-modal__meta-value">{project.teamSize}</span>
-            </div>
-            {project.githubUrl && (
-              <div className="pj-modal__meta-cell">
-                <span className="pj-modal__meta-label">GitHub</span>
-                <span className="pj-modal__meta-value">
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                    Repository ↗
-                  </a>
-                </span>
-              </div>
-            )}
-            {project.liveUrl && (
-              <div className="pj-modal__meta-cell">
-                <span className="pj-modal__meta-label">Live</span>
-                <span className="pj-modal__meta-value">
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                    Visit site ↗
-                  </a>
-                </span>
-              </div>
-            )}
-            {project.blogUrl && (
-              <div className="pj-modal__meta-cell">
-                <span className="pj-modal__meta-label">Blog</span>
-                <span className="pj-modal__meta-value">
-                  <a href={project.blogUrl} target="_blank" rel="noopener noreferrer">
-                    Read more ↗
-                  </a>
-                </span>
-              </div>
-            )}
-          </div>
-
           {/* 구분선 */}
-          <div className="h-px w-full bg-[var(--notion-hairline)] mb-8" />
+          <div style={{ height: 1, width: "100%", background: "var(--notion-hairline)", margin: "40px 0 32px" }} />
 
           {/* 콘텐츠: contentBlocks가 있으면 블로그 스타일, 없으면 기존 방식 */}
           {detailContentBlocks.length > 0 ? (
