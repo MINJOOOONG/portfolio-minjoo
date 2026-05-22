@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" fill="none">
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; fill: #211D19; }
+    .title { font-size: 13px; font-weight: 700; }
+    .label { font-size: 11px; font-weight: 600; }
+    .sublabel { font-size: 10px; fill: #5A5149; }
+    .step-num { font-size: 9px; font-weight: 700; fill: #7A7067; }
+    .box { stroke: #211D19; stroke-width: 1; rx: 6; fill: none; }
+    .box-filled { stroke: #211D19; stroke-width: 1; rx: 6; fill: #FAFAFA; }
+    .pipeline-box { stroke: rgba(33,29,25,0.15); stroke-width: 1; rx: 8; fill: none; stroke-dasharray: 4 3; }
+    .arrow { stroke: #211D19; stroke-width: 0.8; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <path d="M0,0 L7,2.5 L0,5" fill="none" stroke="#211D19" stroke-width="0.8"/>
+    </marker>
+  </defs>
+
+  <!-- Step 1: User Question -->
+  <text x="60" y="42" class="step-num">01</text>
+  <rect x="150" y="24" width="260" height="34" class="box"/>
+  <text x="280" y="46" text-anchor="middle" class="label">User Question</text>
+
+  <line x1="280" y1="58" x2="280" y2="82" class="arrow"/>
+
+  <!-- Step 2: PortfolioAskBar -->
+  <text x="60" y="102" class="step-num">02</text>
+  <rect x="130" y="82" width="300" height="34" class="box-filled"/>
+  <text x="280" y="104" text-anchor="middle" class="label">PortfolioAskBar (Next.js Frontend)</text>
+
+  <line x1="280" y1="116" x2="280" y2="140" class="arrow"/>
+
+  <!-- Step 3: API Route -->
+  <text x="60" y="162" class="step-num">03</text>
+  <rect x="120" y="140" width="320" height="34" class="box-filled"/>
+  <text x="280" y="162" text-anchor="middle" class="label">Next.js API Route (/api/portfolio-assistant)</text>
+
+  <line x1="280" y1="174" x2="280" y2="200" class="arrow"/>
+
+  <!-- Step 4: FastAPI -->
+  <text x="60" y="222" class="step-num">04</text>
+  <rect x="140" y="200" width="280" height="34" class="box-filled"/>
+  <text x="280" y="222" text-anchor="middle" class="label">Python FastAPI Server</text>
+
+  <line x1="280" y1="234" x2="280" y2="264" class="arrow"/>
+
+  <!-- Step 5: Pipeline -->
+  <text x="60" y="290" class="step-num">05</text>
+  <rect x="90" y="264" width="380" height="140" class="pipeline-box"/>
+  <text x="110" y="284" class="sublabel">RAG Pipeline</text>
+
+  <rect x="110" y="294" width="160" height="28" class="box-filled"/>
+  <text x="190" y="312" text-anchor="middle" class="sublabel">loader.py (Markdown)</text>
+
+  <rect x="290" y="294" width="160" height="28" class="box-filled"/>
+  <text x="370" y="312" text-anchor="middle" class="sublabel">chunker.py (500 chars)</text>
+
+  <rect x="110" y="334" width="160" height="28" class="box-filled"/>
+  <text x="190" y="352" text-anchor="middle" class="sublabel">embedder.py (MiniLM)</text>
+
+  <rect x="290" y="334" width="160" height="28" class="box-filled"/>
+  <text x="370" y="352" text-anchor="middle" class="sublabel">retriever.py (FAISS)</text>
+
+  <rect x="180" y="372" width="200" height="28" class="box-filled"/>
+  <text x="280" y="390" text-anchor="middle" class="sublabel">chain.py (Groq LLM)</text>
+
+  <line x1="280" y1="404" x2="280" y2="434" class="arrow"/>
+
+  <!-- Step 6: Response -->
+  <text x="60" y="454" class="step-num">06</text>
+  <rect x="110" y="434" width="340" height="34" class="box"/>
+  <text x="280" y="456" text-anchor="middle" class="label">Answer + Sources + Recommended Section</text>
+
+  <line x1="280" y1="468" x2="280" y2="498" class="arrow"/>
+
+  <!-- Step 7: UI -->
+  <text x="60" y="518" class="step-num">07</text>
+  <rect x="110" y="498" width="340" height="34" class="box"/>
+  <text x="280" y="520" text-anchor="middle" class="label">UI: Answer + Section Navigation Button</text>
+</svg>

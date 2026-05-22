@@ -59,7 +59,14 @@ export type ContentBlock =
   | { type: "video"; url: string; caption?: string }
   | { type: "pdf"; url: string; caption?: string }
   | { type: "audio"; url: string; caption?: string }
-  | { type: "file"; url: string; title: string };
+  | { type: "file"; url: string; title: string }
+  | { type: "section-heading"; title: string }
+  | { type: "code"; title: string; language: string; code: string }
+  | { type: "callout"; variant: "problem" | "solution" | "info"; title: string; body: string[] }
+  | { type: "tech-grid"; items: { name: string; reason: string }[] }
+  | { type: "point-cards"; items: { title: string; body: string }[] }
+  | { type: "design-rules"; image?: string; placeholder?: string; rules: { title: string; body: string }[] }
+  | { type: "feature-block"; title: string; body: string[]; code?: { title: string; code: string } };
 
 export interface ProjectItem {
   title: string;
@@ -298,6 +305,27 @@ function ProjectAttachmentList({ items }: { items?: ProjectAttachment[] }) {
   );
 }
 
+/* ── 토글 코드 블록 (접기/펼치기) ── */
+function CodeToggle({ title, code }: { title: string; code: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="pj-code-toggle">
+      <button
+        type="button"
+        className="pj-code-toggle__btn"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <span className={`pj-code-toggle__chevron${open ? " pj-code-toggle__chevron--open" : ""}`}>&#9656;</span>
+        {title}
+      </button>
+      <div className={`pj-code-toggle__body${open ? " pj-code-toggle__body--open" : ""}`}>
+        <pre><code>{code}</code></pre>
+      </div>
+    </div>
+  );
+}
+
 /* ── 콘텐츠 블록 렌더러 (블로그 스타일) ── */
 function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
   return (
@@ -318,23 +346,32 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                     {block.heading}
                   </h4>
                 )}
-                <ul className="space-y-2">
-                  {block.body.map((line, j) => (
-                    <li
-                      key={j}
-                      className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
-                    >
-                      {block.body.length > 1 && (
-                        <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
-                      )}
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
+                {block.heading ? (
+                  <ul className="space-y-2">
+                    {block.body.map((line, j) => (
+                      <li
+                        key={j}
+                        className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
+                      >
+                        {block.body.length > 1 && (
+                          <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
+                        )}
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="pj-content-paragraphs">
+                    {block.body.map((line, j) => (
+                      <p key={j}>{line}</p>
+                    ))}
+                  </div>
+                )}
               </motion.section>
             );
 
-          case "image":
+          case "image": {
+            const isDiagram = block.url.endsWith(".svg");
             return (
               <motion.figure
                 key={`img-${i}`}
@@ -346,10 +383,10 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 <SafeImage
                   src={block.url}
                   alt={block.caption || "프로젝트 이미지"}
-                  width={640}
-                  height={400}
-                  className="pj-content-image__img"
-                  sizes="(max-width: 768px) 90vw, 640px"
+                  width={isDiagram ? 760 : 640}
+                  height={isDiagram ? 670 : 400}
+                  className={`pj-content-image__img${isDiagram ? " pj-content-image__img--diagram" : ""}`}
+                  sizes="(max-width: 768px) 90vw, 760px"
                   fallbackText={block.caption}
                 />
                 {block.caption && (
@@ -357,6 +394,7 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 )}
               </motion.figure>
             );
+          }
 
           case "video":
             return (
@@ -435,6 +473,169 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                   <span className="pj-attachment-link__title">{block.title}</span>
                   <span className="pj-attachment-link__open">열기</span>
                 </a>
+              </motion.div>
+            );
+
+          case "section-heading": {
+            const headingMatch = block.title.match(/^(\d+)\s*—\s*(.+)$/);
+            return (
+              <motion.h3
+                key={`sh-${i}`}
+                className="pj-section-heading"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                {headingMatch ? (
+                  <>
+                    <span className="pj-section-heading__number">{headingMatch[1]}</span>
+                    <span className="pj-section-heading__dash">—</span>
+                    <span className="pj-section-heading__title">{headingMatch[2]}</span>
+                  </>
+                ) : (
+                  <span className="pj-section-heading__title">{block.title}</span>
+                )}
+              </motion.h3>
+            );
+          }
+
+          case "code":
+            return (
+              <motion.div
+                key={`code-${i}`}
+                className="pj-content-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <CodeToggle title={block.title} code={block.code} />
+              </motion.div>
+            );
+
+          case "callout":
+            const isInfoCallout = block.variant === "info";
+            return (
+              <motion.div
+                key={`callout-${i}`}
+                className={`pj-callout pj-callout--${block.variant}`}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <span className="pj-callout__label">
+                  {block.variant === "problem"
+                    ? "PROBLEM"
+                    : block.variant === "solution"
+                      ? "SOLUTION"
+                      : block.title}
+                </span>
+                {!isInfoCallout && (
+                  <strong className="pj-callout__title">{block.title}</strong>
+                )}
+                <ul className="pj-callout__body">
+                  {block.body.map((line, j) => (
+                    <li key={j}>{line}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            );
+
+          case "tech-grid":
+            return (
+              <motion.div
+                key={`tg-${i}`}
+                className="pj-tech-grid"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                {block.items.map((item, j) => (
+                  <div key={j} className="pj-tech-grid__card">
+                    <span className="pj-tech-grid__name">{item.name}</span>
+                    <span className="pj-tech-grid__reason">{item.reason}</span>
+                  </div>
+                ))}
+              </motion.div>
+            );
+
+          case "point-cards":
+            return (
+              <motion.div
+                key={`pc-${i}`}
+                className="pj-point-cards"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                {block.items.map((item, j) => (
+                  <div key={j} className="pj-point-cards__card">
+                    <span className="pj-point-cards__title">{item.title}</span>
+                    <span className="pj-point-cards__body">{item.body}</span>
+                  </div>
+                ))}
+              </motion.div>
+            );
+
+          case "design-rules":
+            return (
+              <motion.div
+                key={`dr-${i}`}
+                className="pj-design-rules"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <div className="pj-design-rules__image">
+                  {block.image ? (
+                    <SafeImage
+                      src={block.image}
+                      alt="Design reference"
+                      fill
+                      className="object-cover"
+                      sizes="240px"
+                    />
+                  ) : (
+                    <div className="pj-design-rules__placeholder">
+                      <span className="pj-design-rules__placeholder-text">
+                        {block.placeholder || "Design reference image"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="pj-design-rules__list">
+                  {block.rules.map((rule, j) => (
+                    <div key={j} className="pj-design-rules__item">
+                      <span className="pj-design-rules__number">{j + 1}</span>
+                      <div className="pj-design-rules__item-content">
+                        <span className="pj-design-rules__item-title">{rule.title}</span>
+                        <span className="pj-design-rules__item-body">{rule.body}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            );
+
+          case "feature-block":
+            return (
+              <motion.div
+                key={`fb-${i}`}
+                className="pj-feature-block"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
+              >
+                <h4 className="pj-feature-block__title">{block.title}</h4>
+                <div className="pj-feature-block__body">
+                  {block.body.map((p, j) => (
+                    <p key={j}>{p}</p>
+                  ))}
+                </div>
+                {block.code && (
+                  <div style={{ marginTop: 12 }}>
+                    <CodeToggle title={block.code.title} code={block.code.code} />
+                  </div>
+                )}
               </motion.div>
             );
 
@@ -662,8 +863,13 @@ function ProjectModal({
           </div>
 
           {/* 한 줄 설명 */}
+          {project.achievement && (
+            <p className="pj-modal__lead">
+              {project.achievement}
+            </p>
+          )}
           {project.summary && (
-            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+            <p className="pj-modal__summary">
               {project.summary}
             </p>
           )}
@@ -682,49 +888,45 @@ function ProjectModal({
             </div>
           )}
 
-          {/* 메타 정보 */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground mb-6">
-            <span><span className="font-semibold text-foreground/70">기간</span> {project.period}</span>
-            <span className="text-[var(--notion-hairline)]">|</span>
-            <span><span className="font-semibold text-foreground/70">개발 인원</span> {project.teamSize}</span>
+          {/* 메타 정보 그리드 */}
+          <div className="pj-modal__meta-grid">
+            <div className="pj-modal__meta-cell">
+              <span className="pj-modal__meta-label">기간</span>
+              <span className="pj-modal__meta-value">{project.period}</span>
+            </div>
+            <div className="pj-modal__meta-cell">
+              <span className="pj-modal__meta-label">개발 인원</span>
+              <span className="pj-modal__meta-value">{project.teamSize}</span>
+            </div>
             {project.githubUrl && (
-              <>
-                <span className="text-[var(--notion-hairline)]">|</span>
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-foreground transition-colors"
-                >
-                  GitHub ↗
-                </a>
-              </>
+              <div className="pj-modal__meta-cell">
+                <span className="pj-modal__meta-label">GitHub</span>
+                <span className="pj-modal__meta-value">
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                    Repository ↗
+                  </a>
+                </span>
+              </div>
             )}
             {project.liveUrl && (
-              <>
-                <span className="text-[var(--notion-hairline)]">|</span>
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-foreground transition-colors"
-                >
-                  Live ↗
-                </a>
-              </>
+              <div className="pj-modal__meta-cell">
+                <span className="pj-modal__meta-label">Live</span>
+                <span className="pj-modal__meta-value">
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                    Visit site ↗
+                  </a>
+                </span>
+              </div>
             )}
             {project.blogUrl && (
-              <>
-                <span className="text-[var(--notion-hairline)]">|</span>
-                <a
-                  href={project.blogUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-foreground transition-colors"
-                >
-                  Blog ↗
-                </a>
-              </>
+              <div className="pj-modal__meta-cell">
+                <span className="pj-modal__meta-label">Blog</span>
+                <span className="pj-modal__meta-value">
+                  <a href={project.blogUrl} target="_blank" rel="noopener noreferrer">
+                    Read more ↗
+                  </a>
+                </span>
+              </div>
             )}
           </div>
 
