@@ -50,7 +50,7 @@ async function main() {
       title: "포트폴리오 웹사이트",
       teamSize: "개인 / 1인 개발",
       period: "2026.05 - 진행중",
-      summary: "AI Agent를 활용해 기획, 디자인 설계, 프론트엔드, 백엔드, AI 검색 기능까지 직접 구현한 인터랙티브 포트폴리오 웹사이트입니다. Three.js 3D 배경, PPT 스타일 섹션 내비게이션, 커스텀 커서, RAG 기반 AI Assistant를 결합해 사용자가 프로젝트와 경험을 능동적으로 탐색할 수 있도록 설계했습니다.",
+      summary: "AI Agent를 활용해 기획, 디자인 설계, 프론트엔드, 백엔드, RAG 기반 AI 검색 기능까지 직접 구현한 인터랙티브 포트폴리오 웹사이트입니다. PPT 스타일 섹션 내비게이션, 커스텀 커서, Three.js 3D 배경, AI 검색과 섹션 이동을 결합해 사용자가 프로젝트와 경험을 능동적으로 탐색할 수 있도록 설계했습니다.",
       description: [
         "Next.js App Router와 React Server Component 기반으로 SSR과 클라이언트 인터랙션을 분리해 초기 로딩 성능과 사용자 경험을 동시에 확보",
         "Three.js + @react-three/fiber로 프로젝트별 3D 배경 씬을 구현하고 마우스 반응, 스크롤 패럴랙스 등 몰입형 인터랙션 적용",
@@ -59,8 +59,7 @@ async function main() {
         "Next.js 포트폴리오 상단에 AI 검색창(PortfolioAskBar)을 추가하고, Next.js API Route → Python FastAPI 프록시 구조로 RAG 시스템과 연동",
         "RAG 답변과 함께 관련 포트폴리오 섹션으로 이동하는 AI Navigation 기능을 추가하여 탐색 경험을 개선",
       ],
-      techStack: ["Next.js", "TypeScript", "Three.js", "Prisma", "Neon", "Python", "FastAPI", "FAISS", "Groq API", "LangChain"],
-      achievement: "Claude Code 기반 AI 에이전트 협업으로 프론트엔드·백엔드·RAG 파이프라인을 1인 풀스택 구현. PPT 내비게이션, 커스텀 커서, Three.js 3D 배경, AI 검색+섹션 이동까지 포함.",
+      techStack: ["Next.js", "TypeScript", "Three.js", "React Three Fiber", "Framer Motion", "GSAP", "Tailwind CSS", "Prisma", "Neon", "Python", "FastAPI", "FAISS", "Groq API", "LangChain"],
       role: "프론트엔드 구현, RAG 파이프라인 설계, Python 백엔드 구현",
       githubUrl: "https://github.com/MINJOOOONG/portfolio-minjoo",
       liveUrl: "https://portfolio-minjoo.vercel.app",
@@ -449,12 +448,11 @@ API 엔드포인트의 상태와 응답 시간을 실시간으로 모니터링�
   ];
 
   for (const project of projects) {
-    const existing = await prisma.project.findUnique({
+    await prisma.project.upsert({
       where: { slug: project.slug },
+      create: project,
+      update: project,
     });
-    if (!existing) {
-      await prisma.project.create({ data: project });
-    }
   }
   console.log("✓ Projects seeded");
 

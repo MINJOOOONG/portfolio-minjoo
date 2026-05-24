@@ -25,9 +25,8 @@
 ### 3D 사용 현황
 
 **진입 페이지 (`/`)**
-- `three-background.tsx` — 와이어프레임 Icosahedron + 80개 파티클
-- 마우스 반응형 회전, 파티클 밀려남 효과
-- 클릭 시 카메라 줌인 전환
+- 현재: 정적 이미지 배지 (`entry-page.png`)
+- 이전: `three-background.tsx` — 와이어프레임 Icosahedron + 80개 파티클
 
 **포트폴리오 페이지 (`/portfolio`)**
 - `three-portfolio-bg.tsx` — 5개 와이어프레임 도형 + 120개 파티클 + 연결선
@@ -73,6 +72,7 @@ npm run db:studio     # Prisma Studio 실행
 | tailwind-merge | Tailwind 클래스 병합 |
 | clsx | 조건부 클래스명 |
 | Lucide React | 아이콘 |
+| react-icons | 기술 스택 아이콘 (Simple Icons, Font Awesome) |
 | @tailwindcss/typography | 마크다운 prose 스타일 |
 
 ---
@@ -86,6 +86,7 @@ npm run db:studio     # Prisma Studio 실행
 | rehype-highlight | 코드 구문 강조 |
 | rehype-raw | HTML 허용 |
 | @react-pdf/renderer | 이력서 PDF 내보내기 |
+| react-pdf | PDF 뷰어 (프로젝트 모달 내) |
 
 ---
 
@@ -99,6 +100,48 @@ npm run db:studio     # Prisma Studio 실행
 
 ---
 
+## 포트폴리오 Skills 섹션 전체 스킬 목록
+
+`src/components/sections/skills.tsx`에 하드코딩된 전체 기술 스택 (45개):
+
+### Frontend (7개)
+JavaScript, React, Next.js, TypeScript, Zustand, Tailwind CSS, Three.js
+
+### Backend (9개)
+Java, Spring Boot, Python, FastAPI, Prisma, PostgreSQL, Redis, Kafka, REST API
+
+### Library (11개)
+React Query, Recoil, Redux, LangChain, FAISS, Storybook, GraphQL, GSAP, Sass, Webpack, Vite
+
+### QA (5개)
+Jira, TestRail, Redmine, Regression Test, TC 설계
+
+### Environment & Deploy (8개)
+GitHub, Vercel, AWS, Docker, Gradle, Testcontainers, Slack, Notion
+
+### Design (5개)
+Photoshop, Illustrator, Premiere Pro, Figma, Adobe XD
+
+상세 아이콘/컬러 매핑은 `docs/sections.md`의 Skills 섹션 참조
+
+---
+
+## seed.ts 기준 프로젝트별 기술 스택
+
+| 프로젝트 | 기술 스택 |
+|----------|-----------|
+| 포트폴리오 웹사이트 | Next.js, TypeScript, Three.js, Prisma, Neon, Python, FastAPI, FAISS, Groq API, LangChain |
+| 개인 기술 블로그 joodev | Next.js, TypeScript, Prisma, PostgreSQL, TipTap, Vercel Blob |
+| E-commerce Backend | Java, Spring Boot, Kafka, Redis, PostgreSQL, REST API |
+| 아두이노 사회적 제품 | Arduino, Python, OpenCV, Hardware Prototype |
+| FSM/BT 게임 AI 분석 | Unity, C#, FSM, Behavior Tree, Profiler |
+| UNIST 해상 물류 창업 | Unity, Arduino, PM, UI/UX, Product Validation |
+| K-HTML 해커톤 | Python, HTML, Azure OpenAI, AWS, UI Design |
+| 미니 캡스톤 | AWS, Cloud, Azure OpenAI, Generative AI |
+| 폴가이즈 레고 파티클 게임 | Unreal Engine 5, Blueprints, C++, Multiplayer |
+
+---
+
 ## Project Structure
 
 ```
@@ -109,34 +152,58 @@ src/
 │   │   ├── portfolio/     # 포트폴리오 (/portfolio)
 │   │   └── blog/          # 블로그 (/blog)
 │   ├── admin/             # Admin 대시보드
+│   │   ├── login/         # 로그인
+│   │   ├── settings/      # 설정 관리
+│   │   ├── projects/      # 프로젝트 관리
+│   │   ├── posts/         # 포스트 관리
+│   │   └── messages/      # 메시지 관리
 │   ├── api/               # API 라우트
 │   ├── globals.css        # CSS 변수, 글로벌 스타일
 │   └── layout.tsx         # 루트 레이아웃
 ├── components/
 │   ├── sections/          # 포트폴리오 섹션 컴포넌트
-│   │   ├── hero.tsx
-│   │   ├── about.tsx
-│   │   ├── experience.tsx
-│   │   ├── projects.tsx
-│   │   ├── skills.tsx
-│   │   └── education.tsx
+│   │   ├── about.tsx              # About + SlideHeading
+│   │   ├── about-section-row.tsx  # About 네비게이션 항목
+│   │   ├── about-detail-panel.tsx # About 상세 패널
+│   │   ├── about-keyword-annotation.tsx # 키워드 주석
+│   │   ├── experience.tsx         # Experience (보기/편집)
+│   │   ├── projects.tsx           # Projects (카드/모달)
+│   │   ├── articles.tsx           # Articles (논문/연구)
+│   │   ├── skills.tsx             # Skills (아이콘 그리드)
+│   │   ├── ai-lab.tsx             # AI Lab (탭 UI)
+│   │   ├── profile.tsx            # Contact/Profile
+│   │   └── education.tsx          # Education/Certifications
 │   ├── shared/            # 공유 컴포넌트
 │   │   ├── entry-loader.tsx        # 진입 페이지
-│   │   ├── three-background.tsx    # 진입 3D 배경
+│   │   ├── three-background.tsx    # 진입 3D 배경 (이전)
 │   │   ├── three-portfolio-bg.tsx  # 포트폴리오 3D 배경
 │   │   ├── scene-layout.tsx        # 포트폴리오 레이아웃
 │   │   ├── scene-navbar.tsx        # 네비게이션
 │   │   ├── scroll-progress.tsx     # 스크롤 진행 표시
 │   │   ├── smooth-scroll-provider.tsx
-│   │   └── pdf-export-button.tsx
+│   │   ├── portfolio-page.tsx      # 데이터 로딩 + 섹션 조합 (RSC)
+│   │   ├── pdf-viewer.tsx          # PDF 뷰어
+│   │   └── pdf-export-button.tsx   # PDF 내보내기 버튼
+│   ├── three/             # Three.js 3D 씬
+│   │   └── project-scenes/        # 프로젝트별 미니 3D 씬
 │   └── ui/                # shadcn 기본 UI
+├── data/                  # 정적 데이터
+│   ├── about-sections.ts          # About 5개 항목 + 키워드 주석
+│   ├── profile-data.ts            # Contact 프로필 + 링크
+│   └── ai-lab-data.ts             # AI Lab 전체 데이터
 ├── hooks/                 # 커스텀 훅
+│   ├── use-scroll-reveal.ts
+│   ├── use-stagger-reveal.ts
+│   └── use-parallax.ts
 ├── lib/                   # 유틸리티, 설정
 │   ├── prisma.ts
 │   ├── settings.ts
 │   ├── auth.ts
+│   ├── project-groups.ts
 │   └── pdf/               # PDF 생성
-└── ...
+│       └── types.ts       # ResumeData 타입
+└── generated/             # Prisma 생성 파일
+    └── prisma/client/
 ```
 
 ---
@@ -153,3 +220,4 @@ Portfolio Page ← getSettings() ← prisma.siteSetting.findMany()
 
 - 모든 포트폴리오 데이터(경력, 프로젝트, 스킬 등)는 DB `SiteSetting` 테이블에 JSON 문자열로 저장
 - Admin에서 수정 → DB 반영 → 포트폴리오 페이지 서버 렌더링 시 반영
+- 일부 데이터(About, Contact, AI Lab, Skills UI)는 `src/data/` 또는 컴포넌트 내 정적 데이터 사용
