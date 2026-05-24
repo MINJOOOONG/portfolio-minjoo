@@ -50,6 +50,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://portfolio-minjoo.vercel.app",
     ],
     allow_methods=["POST"],
     allow_headers=["*"],

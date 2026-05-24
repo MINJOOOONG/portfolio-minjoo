@@ -7,7 +7,7 @@ from langchain_community.vectorstores import FAISS
 def retrieve_documents(
     vectorstore: FAISS,
     query: str,
-    top_k: int = 4,
+    top_k: int = 6,
 ) -> list[Document]:
     """질문을 임베딩하여 벡터스토어에서 유사도 기반으로 관련 문서를 검색합니다.
 

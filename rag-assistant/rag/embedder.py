@@ -14,7 +14,7 @@ VECTORSTORE_DIR = "vectorstore"
 def get_embeddings() -> HuggingFaceEmbeddings:
     """sentence-transformers 로컬 임베딩 모델을 반환합니다."""
     model_name = os.getenv(
-        "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+        "EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     )
     return HuggingFaceEmbeddings(model_name=model_name)
 
