@@ -333,40 +333,34 @@ function DesignRulesBlock({
 }: {
   block: Extract<ContentBlock, { type: "design-rules" }>;
 }) {
-  const image =
-    block.image
-      ? { url: block.image, title: "Design reference" }
-      : block.images?.[0];
+  const images = block.images ?? (block.image ? [{ url: block.image }] : []);
 
   return (
-    <div className={`pj-design-rules${image ? " pj-design-rules--with-image" : ""}`}>
-      {image && (
-        <div className="pj-design-rules__image-col">
-          <div className="pj-design-rules__carousel">
-            <SafeImage
-              src={image.url}
-              alt={image.title ? `${image.title} 화면 캡처` : "웹사이트 화면 캡처"}
-              width={1440}
-              height={900}
-              className="pj-design-rules__image"
-              sizes="(max-width: 900px) 92vw, 980px"
-              fallbackText="웹사이트 화면 캡처"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="pj-design-rules__rules-col">
-        {block.rules.map((rule, j) => (
-          <div key={j} className="pj-design-rules__item">
+    <div className="pj-design-rules-rows">
+      {block.rules.map((rule, j) => (
+        <div key={j} className="pj-design-rules-row">
+          {images[j] && (
+            <div className="pj-design-rules-row__image-col">
+              <SafeImage
+                src={images[j].url}
+                alt={images[j].title ? `${images[j].title} 화면 캡처` : `디자인 규칙 ${j + 1} 참고 화면`}
+                width={720}
+                height={450}
+                className="pj-design-rules__image"
+                sizes="240px"
+                fallbackText="화면 캡처"
+              />
+            </div>
+          )}
+          <div className="pj-design-rules-row__text-col">
             <span className="pj-design-rules__number">{String(j + 1).padStart(2, "0")}.</span>
             <div className="pj-design-rules__item-content">
               <span className="pj-design-rules__item-title">{rule.title}</span>
               <span className="pj-design-rules__item-body">{rule.body}</span>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -387,7 +381,7 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 transition={{ duration: 0.3, delay: 0.1 + i * 0.04 }}
               >
                 {block.heading && (
-                  <h4 className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold mb-3">
+                  <h4 className="pj-content-heading">
                     {block.heading}
                   </h4>
                 )}
@@ -1123,7 +1117,7 @@ function ProjectModal({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
                   >
-                    <h4 className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold mb-3">
+                    <h4 className="pj-content-heading">
                       {block.heading}
                     </h4>
                     <ul className="space-y-2">

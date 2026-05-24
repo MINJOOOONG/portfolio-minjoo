@@ -9,5 +9,3 @@ services:
         sync: false
       - key: GROQ_MODEL
         value: llama-3.1-8b-instant
-      - key: EMBEDDING_MODEL
-        value: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2

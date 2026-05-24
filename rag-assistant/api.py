@@ -1,12 +1,11 @@
-"""Portfolio RAG API — FastAPI 서버
+"""Portfolio RAG API — FastAPI 서버 (경량 키워드 검색 버전)
 
 Next.js 포트폴리오 사이트에서 호출하는 RAG 백엔드입니다.
-POST /ask 엔드포인트로 질문을 받아 벡터스토어 검색 + LLM 답변을 반환합니다.
+POST /ask 엔드포인트로 질문을 받아 키워드 검색 + LLM 답변을 반환합니다.
 """
 
 import os
 from contextlib import asynccontextmanager
-from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -16,29 +15,25 @@ from pydantic import BaseModel
 
 from rag.loader import load_documents
 from rag.chunker import split_documents
-from rag.embedder import build_vectorstore, load_vectorstore
+from rag.embedder import build_index, KeywordIndex
 from rag.retriever import retrieve_documents, format_context, get_source_list
 from rag.chain import generate_answer
 
 load_dotenv()
 
-# ── 벡터스토어를 앱 전역에서 공유 ──
-vectorstore = None
+# ── 검색 인덱스를 앱 전역에서 공유 ──
+search_index: Optional[KeywordIndex] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """서버 시작 시 벡터스토어를 로드합니다. 없으면 자동 빌드합니다."""
-    global vectorstore
-    try:
-        vectorstore = load_vectorstore()
-        print("[RAG API] 벡터스토어 로드 완료")
-    except FileNotFoundError:
-        print("[RAG API] 벡터스토어 없음 → 자동 빌드 시작...")
-        docs = load_documents("data")
-        chunks = split_documents(docs)
-        vectorstore = build_vectorstore(chunks)
-        print(f"[RAG API] 벡터스토어 빌드 완료 (문서 {len(docs)}개 → 청크 {len(chunks)}개)")
+    """서버 시작 시 키워드 검색 인덱스를 빌드합니다."""
+    global search_index
+    print("[RAG API] 키워드 인덱스 빌드 시작...")
+    docs = load_documents("data")
+    chunks = split_documents(docs)
+    search_index = build_index(chunks)
+    print(f"[RAG API] 인덱스 빌드 완료 (문서 {len(docs)}개 → 청크 {len(chunks)}개)")
     yield
 
 
@@ -118,10 +113,7 @@ SECTION_RULES: list[tuple[list[str], list[str], str, str]] = [
 def get_recommended_section(
     question: str, sources: list[str]
 ) -> Optional[RecommendedSection]:
-    """질문과 source 파일명을 기반으로 관련 섹션을 추천합니다.
-
-    질문 키워드를 먼저 전체 스캔한 뒤, 매칭되지 않으면 source 기반으로 판단합니다.
-    """
+    """질문과 source 파일명을 기반으로 관련 섹션을 추천합니다."""
     q_lower = question.lower()
 
     # 1차: 질문 키워드 매칭 (우선)
@@ -141,14 +133,14 @@ def get_recommended_section(
 @app.post("/ask", response_model=AskResponse)
 async def ask(req: AskRequest):
     """질문을 받아 RAG 파이프라인으로 답변을 생성합니다."""
-    if vectorstore is None:
+    if search_index is None:
         return AskResponse(
-            answer="벡터스토어가 아직 준비되지 않았습니다.",
+            answer="검색 인덱스가 아직 준비되지 않았습니다.",
             sources=[],
         )
 
-    # 1. 질문 → 벡터스토어에서 관련 문서 검색
-    retrieved_docs = retrieve_documents(vectorstore, req.question)
+    # 1. 질문 → 키워드 인덱스에서 관련 문서 검색
+    retrieved_docs = retrieve_documents(search_index, req.question)
 
     # 2. 검색된 문서 → context 구성
     context = format_context(retrieved_docs)

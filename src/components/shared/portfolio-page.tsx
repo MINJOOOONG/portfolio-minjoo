@@ -16,7 +16,7 @@ const portfolioDesignRulesBlock = notionProjectAssets.portfolioWebsite.contentBl
   (block) => block.type === "design-rules"
 ) as ContentBlock | undefined;
 
-const portfolioImplementationBlocks = getPortfolioSectionBlocks("04 — 주요 기능");
+const portfolioImplementationBlocks = getPortfolioSectionBlocks("04 — 주요 기능 구현");
 
 function getPortfolioSectionBlocks(title: string) {
   const blocks = notionProjectAssets.portfolioWebsite.contentBlocks as unknown as ContentBlock[];
@@ -38,7 +38,8 @@ function replacePortfolioImplementationBlocks(blocks: ContentBlock[]) {
       block.type === "section-heading" &&
       (block.title === "04 — 주요 기능 상세" ||
         block.title === "04 — 주요 구현" ||
-        block.title === "04 — 주요 기능")
+        block.title === "04 — 주요 기능" ||
+        block.title === "04 — 주요 기능 구현")
   );
   if (start < 0) return blocks;
 
@@ -58,7 +59,7 @@ function removePortfolioLearningImages(blocks: ContentBlock[]) {
 
   return blocks.filter((block) => {
     if (block.type === "section-heading") {
-      isLearningSection = block.title === "07 — 배운 점과 다음 개선 방향";
+      isLearningSection = block.title === "07 — 배운 점과 다음 개선 방향" || block.title === "07 — 주요 성과";
       return true;
     }
 

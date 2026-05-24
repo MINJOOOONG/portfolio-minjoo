@@ -1,10 +1,8 @@
-"""LLM 체인: Groq를 사용하여 검색된 context 기반으로 답변을 생성합니다."""
+"""LLM 체인: Groq API를 직접 호출하여 답변을 생성합니다. (LangChain 제거)"""
 
 import os
 
-from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+import httpx
 
 SYSTEM_PROMPT = """당신은 서민주(Minjoo Suh)의 포트폴리오 AI 어시스턴트입니다.
 
@@ -25,41 +23,38 @@ SYSTEM_PROMPT = """당신은 서민주(Minjoo Suh)의 포트폴리오 AI 어시�
 {context}
 """
 
-USER_PROMPT = "{question}"
-
-
-def create_chain() -> ChatPromptTemplate:
-    """RAG 체인에 사용할 프롬프트 템플릿을 생성합니다."""
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        ("human", USER_PROMPT),
-    ])
-    return prompt
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
 def generate_answer(context: str, question: str) -> str:
-    """검색된 context와 질문을 기반으로 Groq LLM 답변을 생성합니다.
+    """검색된 context와 질문을 기반으로 Groq LLM 답변을 생성합니다."""
+    api_key = os.getenv("GROQ_API_KEY")
+    model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-    Args:
-        context: 검색된 문서를 조합한 텍스트
-        question: 사용자 질문
+    if not api_key:
+        return "GROQ_API_KEY가 설정되지 않았습니다."
 
-    Returns:
-        LLM이 생성한 답변 문자열
-    """
-    llm = ChatGroq(
-        model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
-        api_key=os.getenv("GROQ_API_KEY"),
-        temperature=0.2,
+    system_message = SYSTEM_PROMPT.replace("{context}", context)
+
+    response = httpx.post(
+        GROQ_API_URL,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": question},
+            ],
+            "temperature": 0.2,
+        },
+        timeout=30.0,
     )
-    prompt = create_chain()
-    output_parser = StrOutputParser()
 
-    chain = prompt | llm | output_parser
+    if response.status_code != 200:
+        return f"LLM 호출 실패 (status: {response.status_code})"
 
-    answer = chain.invoke({
-        "context": context,
-        "question": question,
-    })
-
-    return answer
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
