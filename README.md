@@ -66,7 +66,19 @@ npm run dev
 3. 환경변수 설정:
    - `DATABASE_URL`: Neon DB 연결 문자열
    - `ADMIN_PASSWORD`: 관리자 비밀번호
+   - `RAG_API_URL`: 별도 배포한 RAG API 주소
 4. 배포
+
+### AI 검색 기능 배포
+
+상단 검색창의 AI 어시스턴트는 Next.js 앱 안에서 직접 실행되지 않고, `rag-assistant/`의 FastAPI 서버를 호출합니다. Vercel에는 Python RAG 서버가 같이 뜨지 않으므로 아래 설정이 필요합니다.
+
+1. `rag-assistant/`를 Render, Railway, Fly.io 같은 서버 환경에 별도로 배포
+2. RAG 서버 환경변수 설정:
+   - `GROQ_API_KEY`: Groq API 키
+   - `GROQ_MODEL`: `llama-3.1-8b-instant`
+3. 배포된 RAG API 주소를 Vercel의 `RAG_API_URL`에 등록
+   - 예: `https://portfolio-rag-api.onrender.com`
 
 ## 폴더 구조
 
