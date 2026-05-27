@@ -68,7 +68,13 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
         }
         if (best) {
           const idx = sectionIds.indexOf(best.id);
-          if (idx >= 0) setCurrentIndex(idx);
+          if (idx >= 0) {
+            setCurrentIndex(idx);
+            const hash = `#${best.id}`;
+            if (window.location.hash !== hash) {
+              window.history.replaceState(null, "", `/portfolio${hash}`);
+            }
+          }
         }
       },
       { threshold: [0, 0.25, 0.5, 0.75] }
@@ -92,6 +98,12 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       isScrolling.current = true;
       cooldownRef.current = true;
       setCurrentIndex(clamped);
+
+      // Sync URL hash with current section
+      const hash = `#${sectionIds[clamped]}`;
+      if (window.location.hash !== hash) {
+        window.history.replaceState(null, "", `/portfolio${hash}`);
+      }
 
       const top = el.offsetTop;
       window.scrollTo({ top, behavior: "smooth" });
@@ -259,6 +271,19 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       document.removeEventListener("touchmove", blockTouchMove);
     };
   }, [sectionIds]);
+
+  /* ── Navigate to section from URL hash on initial load ── */
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash) {
+      const idx = sectionIds.indexOf(hash);
+      if (idx >= 0) {
+        // Delay slightly to ensure DOM sections are rendered
+        requestAnimationFrame(() => goTo(idx));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* ── Listen for nav requests from other components (e.g. SceneNavbar) ── */
   useEffect(() => {
