@@ -87,6 +87,7 @@ export interface ProjectItem {
   contentBlocks?: ContentBlock[];
   achievement?: string;
   role?: string;
+  category?: "project" | "activity";
 }
 
 interface ProjectsProps {
@@ -1147,12 +1148,21 @@ function ProjectModal({
 
 /* ── 메인 컴포넌트 ── */
 export const Projects = memo(function Projects({ items }: ProjectsProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedModal, setSelectedModal] = useState<{
+    source: "project" | "activity";
+    index: number;
+  } | null>(null);
   const [displayItems] = useState(items);
   const viewItems = displayItems.filter((item) => !isArticleProject(item));
-  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
 
-  const selectedProject = selectedIndex !== null ? viewItems[selectedIndex] : null;
+  const projectItems = viewItems.filter((item) => item.category !== "activity");
+  const activityItems = viewItems.filter((item) => item.category === "activity");
+
+  const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+  const activitiesHeadingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+
+  const currentList = selectedModal?.source === "activity" ? activityItems : projectItems;
+  const selectedProject = selectedModal ? currentList[selectedModal.index] : null;
 
   if (viewItems.length === 0) return null;
 
@@ -1181,7 +1191,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
           boxSizing: "border-box",
         }}
       >
-        {/* ── 섹션 헤딩 ── */}
+        {/* ── Project 섹션 헤딩 ── */}
         <div ref={headingRef} className="mb-12 text-center">
           <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-3">
             프로젝트 상세
@@ -1195,35 +1205,79 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
           <div className="mt-6 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
         </div>
 
-        {/* ── 카드 그리드 ── */}
-        <div className="pj-grid">
-          {viewItems.map((item, i) => (
-            <ProjectCard
-              key={item.title}
-              item={item}
-              index={i}
-              onSelect={() => setSelectedIndex(i)}
-            />
-          ))}
-        </div>
+        {/* ── Project 카드 그리드 ── */}
+        {projectItems.length > 0 && (
+          <div className="pj-grid">
+            {projectItems.map((item, i) => (
+              <ProjectCard
+                key={item.title}
+                item={item}
+                index={i}
+                onSelect={() => setSelectedModal({ source: "project", index: i })}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ── Activities 섹션 ── */}
+        {activityItems.length > 0 && (
+          <>
+            <div
+              ref={activitiesHeadingRef}
+              className="mb-12 text-center"
+              style={{ marginTop: 100 }}
+            >
+              <div className="h-px w-24 bg-[var(--notion-hairline)] mx-auto mb-10" />
+              <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-3">
+                대외활동
+              </span>
+              <h2 className="font-display text-[clamp(2rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-4">
+                ACTIVITIES
+              </h2>
+              <p className="text-sm text-muted-foreground/70 max-w-md mx-auto leading-relaxed">
+                창업, 해커톤, 교육, 대회 등 다양한 외부 활동을 통해 쌓은 경험들입니다.
+              </p>
+              <div className="mt-6 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
+            </div>
+
+            <div className="pj-grid">
+              {activityItems.map((item, i) => (
+                <ProjectCard
+                  key={item.title}
+                  item={item}
+                  index={i}
+                  onSelect={() => setSelectedModal({ source: "activity", index: i })}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* ── 플로팅 상세 모달 ── */}
       <AnimatePresence>
-        {selectedProject && selectedIndex !== null && (
+        {selectedProject && selectedModal !== null && (
           <ProjectModal
             key={selectedProject.title}
             project={selectedProject}
-            index={selectedIndex}
-            onClose={() => setSelectedIndex(null)}
-            onPrev={() => setSelectedIndex((p) => (p !== null && p > 0 ? p - 1 : p))}
-            onNext={() =>
-              setSelectedIndex((p) =>
-                p !== null && p < viewItems.length - 1 ? p + 1 : p
+            index={selectedModal.index}
+            onClose={() => setSelectedModal(null)}
+            onPrev={() =>
+              setSelectedModal((prev) =>
+                prev && prev.index > 0
+                  ? { ...prev, index: prev.index - 1 }
+                  : prev
               )
             }
-            hasPrev={selectedIndex > 0}
-            hasNext={selectedIndex < viewItems.length - 1}
+            onNext={() =>
+              setSelectedModal((prev) =>
+                prev && prev.index < currentList.length - 1
+                  ? { ...prev, index: prev.index + 1 }
+                  : prev
+              )
+            }
+            hasPrev={selectedModal.index > 0}
+            hasNext={selectedModal.index < currentList.length - 1}
           />
         )}
       </AnimatePresence>

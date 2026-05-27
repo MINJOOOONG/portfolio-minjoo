@@ -15,26 +15,46 @@ import { SlideHeading } from "./about";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   AI_TOOL_FILTERS,
+  agentBestPractices,
   agentFlowSteps,
-  agentImplementationCards,
   aiLabArchiveNavItems,
   aiTools,
-  claudeWorkflowCards,
+  companyGuides,
+  euAiActFinesTable,
+  euAiActRiskTable,
+  frameworkSelectionTable,
   getYouTubeId,
+  governanceReferenceChips,
+  imagePromptCards,
+  koreaAiLawOverview,
+  koreaVsEuTable,
   mediaNotes,
-  operatingPrinciples,
+  nistRmfSteps,
   overviewSummaryCards,
+  projectChecklist,
+  promptAdvancedCards,
+  promptCautionCards,
   promptComparison,
+  promptDesignCards,
   promptPatternCards,
   promptStructureCards,
-  responsibleAiChecks,
-  responsibleAiReferenceChips,
+  promptTermsTable,
+  ragImplementationCards,
+  ragSearchTable,
+  skillAdvantageCards,
   skillChecklist,
+  skillComparisonTable,
+  skillCreationSteps,
+  skillFaqItems,
+  structuredOutputCards,
+  unifiedTemplate,
   type AILabArchiveSectionId,
   type AILabSummaryCard,
   type AILabTextCard,
   type AITool,
   type AIToolFilter,
+  type CompanyGuide,
+  type DataTableData,
   type MediaNote,
 } from "@/data/ai-lab-data";
 
@@ -93,11 +113,12 @@ export const AILab = memo(function AILab() {
           <ArchiveNavigation onSelect={scrollToSection} />
 
           <main className="space-y-20 min-w-0">
+            {/* 01 — Overview */}
             <ArchiveSection
               id="overview"
               eyebrow="개요"
               title="AI Lab"
-              description="AI를 어떻게 학습하고 사용하는지 정리한 공간입니다. 프롬프트 규칙, Claude 작업 방식, RAG 패턴, 책임 있는 AI 점검, 도구 비교, Media Note를 한 흐름으로 묶었습니다."
+              description="프롬프트 엔지니어링, Claude Skills, AI 에이전트 구현 패턴, AI 관련 법률, 공공기관 AI 가이드, 주요 AI 회사별 사용 가이드를 정리한 공간입니다."
             >
               <LineGrid>
                 {overviewSummaryCards.map((card, index) => (
@@ -106,34 +127,40 @@ export const AILab = memo(function AILab() {
               </LineGrid>
             </ArchiveSection>
 
+            {/* 02 — Prompt Engineering */}
             <ArchiveSection
-              id="operating-principles"
-              eyebrow="운영 원칙"
-              title="AI를 쓰기 전에 지키는 기준"
-              description="짧은 원칙들을 하나의 운영 방식으로 묶었습니다. AI는 빠르게 쓰되, 검증과 책임은 사람에게 남기는 기준입니다."
+              id="prompt-engineering"
+              eyebrow="프롬프트 엔지니어링"
+              title="AI에게 명확한 지시를 전달하는 방법"
+              description="프롬프트 엔지니어링은 LLM에게 무엇을, 왜, 어떻게 할지 명확히 전달하는 방법입니다. 업무 지시서에 가깝다고 이해하면 됩니다."
             >
-              <LineGrid>
-                {operatingPrinciples.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-            </ArchiveSection>
+              <SubsectionLabel title="용어 정리" />
+              <DataTable data={promptTermsTable} />
 
-            <ArchiveSection
-              id="prompt-playbook"
-              eyebrow="프롬프트"
-              title="추측을 줄이는 프롬프트 규칙"
-              description="긴 프롬프트 문서를 그대로 보여주기보다, 실제로 자주 쓰는 구조와 비교 예시만 화면용으로 요약했습니다."
-            >
+              <SubsectionLabel title="좋은 예시 vs 나쁜 예시" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 border-y border-[var(--notion-hairline)]">
                 <PromptComparisonItem label="나쁜 예시" body={promptComparison.bad} tone="muted" />
                 <PromptComparisonItem label="좋은 예시" body={promptComparison.better} tone="strong" />
               </div>
 
-              <SubsectionLabel title="프롬프트 구조" />
+              <SubsectionLabel title="프롬프트 작성 시 주의사항" />
+              <LineGrid>
+                {promptCautionCards.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="좋은 프롬프트의 기본 구조" />
               <LineGrid compact>
                 {promptStructureCards.map((card, index) => (
                   <TextItem key={card.title} card={card} index={index} compact />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="고도화 기법" />
+              <LineGrid>
+                {promptAdvancedCards.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
 
@@ -143,53 +170,177 @@ export const AILab = memo(function AILab() {
                   <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
+
+              <SubsectionLabel title="이미지 생성 프롬프트 팁" />
+              <LineGrid compact>
+                {imagePromptCards.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} compact />
+                ))}
+              </LineGrid>
             </ArchiveSection>
 
+            {/* 03 — Claude Skills */}
             <ArchiveSection
               id="claude-skills"
-              eyebrow="Claude & Skills"
+              eyebrow="Claude Skills"
               title="반복 프롬프트를 재사용 가능한 Skill로 바꾸기"
-              description="Claude Skills는 반복 업무를 위한 온보딩 매뉴얼처럼 사용합니다. 매번 설명하던 작업 방식을 SKILL.md로 자산화합니다."
+              description="Skill은 Claude에게 특정 업무를 반복적이고 일관되게 수행하는 방법을 가르쳐주는 맞춤형 지침 패키지입니다. 신입사원에게 주는 업무 온보딩 매뉴얼이라고 생각하면 됩니다."
             >
+              <SubsectionLabel title="프롬프트 vs Skill 비교" />
+              <DataTable data={skillComparisonTable} />
+
+              <SubsectionLabel title="Skill의 장점" />
               <LineGrid>
-                {claudeWorkflowCards.map((card, index) => (
+                {skillAdvantageCards.map((card, index) => (
                   <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
 
-              <SubsectionLabel title="Skill 작성 체크리스트" />
+              <SubsectionLabel title="Skill 만드는 방법" />
+              <LineGrid>
+                {skillCreationSteps.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="작성 체크리스트" />
               <LineGrid>
                 {skillChecklist.map((card, index) => (
                   <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
+
+              <SubsectionLabel title="FAQ" />
+              <div className="border-y border-[var(--notion-hairline)]">
+                {skillFaqItems.map((item) => (
+                  <FaqItem key={item.question} question={item.question} answer={item.answer} />
+                ))}
+              </div>
             </ArchiveSection>
 
+            {/* 04 — Agent Patterns */}
             <ArchiveSection
-              id="agent-rag"
-              eyebrow="Agent / RAG"
+              id="agent-patterns"
+              eyebrow="에이전트 구현 패턴"
               title="출처 기반 AI 답변을 만드는 방식"
-              description="일반 챗봇은 포트폴리오에 없는 내용도 그럴듯하게 생성할 수 있습니다. 그래서 AI Assistant는 문서를 먼저 검색하고, 검색된 문맥 안에서 답변하도록 설계합니다."
+              description="AI 에이전트는 단순히 LLM에게 긴 프롬프트를 주는 것이 아니라, 입력 → 판단 → 도구 사용 → 중간 결과 저장 → 검증 → 최종 응답의 흐름을 설계하는 일입니다."
             >
               <AgentFlow />
 
-              <SubsectionLabel title="구현 메모" />
+              <SubsectionLabel title="프롬프트 설계" />
               <LineGrid>
-                {agentImplementationCards.map((card, index) => (
+                {promptDesignCards.map((card, index) => (
                   <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
+
+              <SubsectionLabel title="구조화된 출력" />
+              <LineGrid>
+                {structuredOutputCards.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="RAG 검색 전략" />
+              <DataTable data={ragSearchTable} />
+
+              <SubsectionLabel title="구현 메모" />
+              <LineGrid>
+                {ragImplementationCards.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="선택 가이드" />
+              <DataTable data={frameworkSelectionTable} />
+
+              <SubsectionLabel title="Best Practice" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 border-y border-[var(--notion-hairline)]">
+                {agentBestPractices.map((item) => (
+                  <div
+                    key={item}
+                    className="flex gap-3 py-4 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)]" strokeWidth={1.5} />
+                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{item}</p>
+                  </div>
+                ))}
+              </div>
             </ArchiveSection>
 
+            {/* 05 — AI Governance */}
             <ArchiveSection
-              id="responsible-ai"
-              eyebrow="책임 있는 AI"
+              id="ai-governance"
+              eyebrow="법률 & 거버넌스"
               title="AI 답변을 신뢰하거나 배포하기 전 확인할 것"
-              description="법률 원문과 공공기관 자료는 화면에서는 긴 문단 대신 체크리스트로 압축했습니다. 실제 작업에서는 이 기준으로 개인정보, 고위험 영역, 출처, 승인 흐름을 확인합니다."
+              description="한국 인공지능기본법과 EU AI Act를 중심으로, 어떤 의무가 있고 무엇을 준비해야 하는지 정리했습니다."
             >
-              <ResponsibleChecklist />
+              <SubsectionLabel title="한국 인공지능기본법" />
+              <LineGrid>
+                {koreaAiLawOverview.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="EU AI Act 위험 분류" />
+              <DataTable data={euAiActRiskTable} />
+
+              <SubsectionLabel title="EU AI Act 벌금 체계" />
+              <DataTable data={euAiActFinesTable} />
+
+              <SubsectionLabel title="한국 vs EU 비교" />
+              <DataTable data={koreaVsEuTable} />
+
+              <SubsectionLabel title="NIST AI RMF" />
+              <LineGrid>
+                {nistRmfSteps.map((card, index) => (
+                  <TextItem key={card.title} card={card} index={index} />
+                ))}
+              </LineGrid>
+
+              <SubsectionLabel title="개인 프로젝트 체크리스트" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 border-y border-[var(--notion-hairline)]">
+                {projectChecklist.map((item) => (
+                  <div
+                    key={item}
+                    className="flex gap-3 py-4 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0"
+                  >
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)]" strokeWidth={1.5} />
+                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                {governanceReferenceChips.map((chip) => (
+                  <span
+                    key={chip}
+                    className="text-[10px] px-2.5 py-1 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
             </ArchiveSection>
 
+            {/* 06 — Company Guides */}
+            <ArchiveSection
+              id="company-guides"
+              eyebrow="회사별 가이드"
+              title="AI 회사별 공식 사용 가이드"
+              description="AI 회사들이 공통적으로 말하는 사용법은 비슷합니다. 명확한 목표를 주고, 필요한 맥락을 넣고, 원하는 형식을 지정하고, 결과를 검증하라는 것입니다."
+            >
+              <div className="space-y-4">
+                {companyGuides.map((guide) => (
+                  <CompanyGuideCard key={guide.name} guide={guide} />
+                ))}
+              </div>
+
+              <SubsectionLabel title="통합 실전 템플릿" />
+              <CodeBlock code={unifiedTemplate} />
+            </ArchiveSection>
+
+            {/* 07 — AI Tools (unchanged) */}
             <ArchiveSection
               id="ai-tool-stack"
               eyebrow="AI 도구"
@@ -203,6 +354,7 @@ export const AILab = memo(function AILab() {
               />
             </ArchiveSection>
 
+            {/* 08 — Media Note (unchanged) */}
             <ArchiveSection
               id="media-note"
               eyebrow="Media Note"
@@ -218,7 +370,7 @@ export const AILab = memo(function AILab() {
   );
 });
 
-/* ── Layout ── */
+/* ── Layout Components ── */
 
 function ArchiveNavigation({
   onSelect,
@@ -300,7 +452,6 @@ function SubsectionLabel({ title }: { title: string }) {
 
 function TagList({ tags }: { tags?: string[] }) {
   if (!tags?.length) return null;
-
   return (
     <div className="flex flex-wrap gap-1.5 mt-4">
       {tags.map((tag) => (
@@ -314,6 +465,8 @@ function TagList({ tags }: { tags?: string[] }) {
     </div>
   );
 }
+
+/* ── Content Items ── */
 
 function SummaryItem({ card, index }: { card: AILabSummaryCard; index: number }) {
   return (
@@ -382,6 +535,137 @@ function PromptComparisonItem({
   );
 }
 
+/* ── New Components ── */
+
+function DataTable({ data }: { data: DataTableData }) {
+  return (
+    <div className="overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
+            {data.headers.map((header) => (
+              <th
+                key={header}
+                className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]"
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.rows.map((row, i) => (
+            <tr
+              key={i}
+              className="border-b border-[var(--notion-hairline)] last:border-b-0"
+            >
+              {row.cells.map((cell, j) => (
+                <td
+                  key={j}
+                  className={`px-4 py-3 leading-[1.7] ${
+                    j === 0 ? "font-medium text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"
+                  }`}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CodeBlock({ code }: { code: string }) {
+  return (
+    <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] overflow-x-auto">
+      <pre className="px-5 py-4 text-xs leading-[1.8] text-[var(--notion-ink)] whitespace-pre-wrap">
+        <code>{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+function CompanyGuideCard({ guide }: { guide: CompanyGuide }) {
+  const [expanded, setExpanded] = useState(false);
+  const toggle = useCallback(() => setExpanded((p) => !p), []);
+
+  return (
+    <article className="border border-[var(--notion-hairline)] rounded-md">
+      <button
+        type="button"
+        onClick={toggle}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <h4 className="text-sm font-bold text-[var(--notion-ink)]">{guide.name}</h4>
+        <ChevronDown
+          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4 border-t border-[var(--notion-hairline)] pt-4">
+          <div className="overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">원칙</th>
+                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">사용 방식</th>
+                </tr>
+              </thead>
+              <tbody>
+                {guide.principles.map((p) => (
+                  <tr key={p.principle} className="border-b border-[var(--notion-hairline)] last:border-b-0">
+                    <td className="px-4 py-2.5 font-medium text-[var(--notion-ink)] leading-[1.7]">{p.principle}</td>
+                    <td className="px-4 py-2.5 text-[var(--notion-slate)] leading-[1.7]">{p.usage}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
+              프롬프트 구조
+            </h5>
+            <CodeBlock code={guide.promptTemplate} />
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-[var(--notion-hairline)] last:border-b-0">
+      <button
+        type="button"
+        onClick={() => setOpen((p) => !p)}
+        className="w-full flex items-start justify-between gap-3 px-0 py-4 text-left"
+      >
+        <span className="text-xs font-medium text-[var(--notion-ink)] leading-relaxed">
+          {question}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+      {open && (
+        <p className="text-xs leading-[1.8] text-[var(--notion-slate)] pb-4">
+          {answer}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── Agent Flow ── */
+
 function AgentFlow() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-x-6 border-y border-[var(--notion-hairline)]">
@@ -407,36 +691,7 @@ function AgentFlow() {
   );
 }
 
-function ResponsibleChecklist() {
-  return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 border-y border-[var(--notion-hairline)]">
-        {responsibleAiChecks.map((check) => (
-          <div
-            key={check}
-            className="flex gap-3 py-4 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0"
-          >
-            <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)]" strokeWidth={1.5} />
-            <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{check}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap gap-2 pt-1">
-        {responsibleAiReferenceChips.map((chip) => (
-          <span
-            key={chip}
-            className="text-[10px] px-2.5 py-1 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── AI Tools List ── */
+/* ── AI Tools List (unchanged) ── */
 
 const toolIconSrcMap: Record<string, string> = {
   "Claude Code": "/images/ai-tools/claude.png",
@@ -493,7 +748,6 @@ function ToolsGrid({
 function ToolCard({ tool }: { tool: AITool }) {
   const [expanded, setExpanded] = useState(false);
   const iconSrc = toolIconSrcMap[tool.name] ?? "/globe.svg";
-
   const toggle = useCallback(() => setExpanded((p) => !p), []);
 
   return (
@@ -501,39 +755,19 @@ function ToolCard({ tool }: { tool: AITool }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <span className="relative mt-0.5 h-8 w-8 shrink-0 overflow-hidden rounded-md bg-white">
-            <Image
-              src={iconSrc}
-              alt={`${tool.name} logo`}
-              fill
-              sizes="32px"
-              className="object-contain"
-            />
+            <Image src={iconSrc} alt={`${tool.name} logo`} fill sizes="32px" className="object-contain" />
           </span>
           <div className="min-w-0">
-            <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug">
-              {tool.name}
-            </h4>
+            <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug">{tool.name}</h4>
             <p className="text-[11px] text-[var(--notion-stone)] mt-1">{tool.category}</p>
           </div>
         </div>
-        <button
-          onClick={toggle}
-          className="shrink-0 p-1 text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors"
-          aria-label={expanded ? "Collapse" : "Expand"}
-        >
-          <ChevronDown
-            className={`w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-            strokeWidth={1.5}
-          />
+        <button onClick={toggle} className="shrink-0 p-1 text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors" aria-label={expanded ? "Collapse" : "Expand"}>
+          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} strokeWidth={1.5} />
         </button>
       </div>
-
-      <p className="text-xs text-[var(--notion-slate)] mt-3 leading-relaxed">
-        {tool.usedFor}
-      </p>
-
+      <p className="text-xs text-[var(--notion-slate)] mt-3 leading-relaxed">{tool.usedFor}</p>
       <TagList tags={tool.tags} />
-
       {expanded && (
         <div className="mt-4 pt-4 border-t border-[var(--notion-hairline)] space-y-4">
           <ToolDetail title="사용 방식" body={tool.useCase} strong />
@@ -546,47 +780,22 @@ function ToolCard({ tool }: { tool: AITool }) {
   );
 }
 
-function ToolDetail({
-  title,
-  body,
-  strong = false,
-}: {
-  title: string;
-  body: string;
-  strong?: boolean;
-}) {
+function ToolDetail({ title, body, strong = false }: { title: string; body: string; strong?: boolean }) {
   return (
     <div>
-      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
-        {title}
-      </h5>
-      <p className={`text-xs leading-[1.8] ${strong ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"}`}>
-        {body}
-      </p>
+      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">{title}</h5>
+      <p className={`text-xs leading-[1.8] ${strong ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"}`}>{body}</p>
     </div>
   );
 }
 
-function ToolList({
-  title,
-  items,
-  marker,
-}: {
-  title: string;
-  items: string[];
-  marker: string;
-}) {
+function ToolList({ title, items, marker }: { title: string; items: string[]; marker: string }) {
   return (
     <div>
-      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
-        {title}
-      </h5>
+      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">{title}</h5>
       <ul className="space-y-1.5">
         {items.map((item) => (
-          <li
-            key={item}
-            className="text-xs leading-relaxed text-[var(--notion-slate)] flex gap-2"
-          >
+          <li key={item} className="text-xs leading-relaxed text-[var(--notion-slate)] flex gap-2">
             <span className="text-[var(--notion-muted)] shrink-0">{marker}</span>
             {item}
           </li>
@@ -596,7 +805,7 @@ function ToolList({
   );
 }
 
-/* ── Media Notes ── */
+/* ── Media Notes (unchanged) ── */
 
 const sourceIcon = {
   YouTube: Play,
@@ -632,45 +841,24 @@ function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
         </span>
       </div>
 
-      <h4 className="text-base font-bold text-[var(--notion-ink)] leading-snug mb-1">
-        {note.title}
-      </h4>
+      <h4 className="text-base font-bold text-[var(--notion-ink)] leading-snug mb-1">{note.title}</h4>
       <p className="text-[11px] text-[var(--notion-stone)] mb-6">{note.topic}</p>
 
       <div className="grid gap-10 grid-cols-1 lg:grid-cols-[480px_1fr]">
         <div>
           {embedUrl ? (
             <div style={{ maxWidth: 520 }}>
-              <div
-                className="relative w-full overflow-hidden rounded-lg border border-[var(--notion-hairline)] bg-black"
-                style={{ aspectRatio: "16 / 9" }}
-              >
-                <iframe
-                  src={embedUrl}
-                  title={note.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 h-full w-full"
-                />
+              <div className="relative w-full overflow-hidden rounded-lg border border-[var(--notion-hairline)] bg-black" style={{ aspectRatio: "16 / 9" }}>
+                <iframe src={embedUrl} title={note.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="absolute inset-0 h-full w-full" />
               </div>
             </div>
           ) : (
             <div style={{ maxWidth: 520 }}>
-              <div
-                className="relative w-full overflow-hidden rounded-lg border border-[var(--notion-hairline)] bg-[var(--notion-surface)] flex items-center justify-center"
-                style={{ aspectRatio: "16 / 9" }}
-              >
+              <div className="relative w-full overflow-hidden rounded-lg border border-[var(--notion-hairline)] bg-[var(--notion-surface)] flex items-center justify-center" style={{ aspectRatio: "16 / 9" }}>
                 <div className="text-center">
                   <Icon className="w-6 h-6 text-[var(--notion-muted)] mx-auto mb-2" strokeWidth={1} />
                   <p className="text-[10px] text-[var(--notion-muted)] mb-1">미리보기를 표시할 수 없습니다</p>
-                  <a
-                    href={note.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors underline underline-offset-2"
-                  >
-                    원문 보기
-                  </a>
+                  <a href={note.url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors underline underline-offset-2">원문 보기</a>
                 </div>
               </div>
             </div>
@@ -678,18 +866,11 @@ function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
 
           <div className="flex flex-wrap gap-2 mt-4">
             {note.keywords.map((kw) => (
-              <span key={kw} className="text-[10px] text-[var(--notion-slate)]">
-                {kw}
-              </span>
+              <span key={kw} className="text-[10px] text-[var(--notion-slate)]">{kw}</span>
             ))}
           </div>
 
-          <a
-            href={note.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 mt-2 text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors"
-          >
+          <a href={note.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors">
             <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
             원문 보기
           </a>
@@ -708,23 +889,11 @@ function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
   );
 }
 
-function MediaNoteText({
-  title,
-  body,
-  strong = false,
-}: {
-  title: string;
-  body: string;
-  strong?: boolean;
-}) {
+function MediaNoteText({ title, body, strong = false }: { title: string; body: string; strong?: boolean }) {
   return (
     <div>
-      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
-        {title}
-      </h5>
-      <p className={`text-sm leading-[1.9] ${strong ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"}`}>
-        {body}
-      </p>
+      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">{title}</h5>
+      <p className={`text-sm leading-[1.9] ${strong ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"}`}>{body}</p>
     </div>
   );
 }

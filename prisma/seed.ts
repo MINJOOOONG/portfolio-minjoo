@@ -105,6 +105,7 @@ async function main() {
     },
     {
       title: "아두이노를 이용한 사회적 제품 제작",
+      category: "activity" as const,
       teamSize: "4명",
       period: "2023.09 - 2023.12",
       summary: "Arduino, OpenCV, Python을 활용해 일상 속 사회 문제를 개선하는 제품 아이디어를 프로토타입으로 구현한 팀 프로젝트입니다.",
@@ -143,6 +144,7 @@ async function main() {
     },
     {
       title: "UNIST 해상 물류 창업 오디션",
+      category: "activity" as const,
       teamSize: "팀 프로젝트",
       period: "2024.03 - 2024.12",
       summary: "1년간 창업 아이템을 기획, 검증하고 최종 선발 및 창업 지원금을 수주한 제품 실행 경험입니다.",
@@ -159,6 +161,7 @@ async function main() {
     },
     {
       title: "2024 K-HTML 대학대항전 해커톤",
+      category: "activity" as const,
       teamSize: "팀 프로젝트",
       period: "2024.07",
       summary: "용인시 사회문제 개선을 주제로 Python, HTML, Azure OpenAI, AWS를 활용해 제한 시간 안에 서비스 형태로 구현한 해커톤 프로젝트입니다.",
@@ -177,6 +180,7 @@ async function main() {
     },
     {
       title: "미니 산학 연계 캡스톤 프로젝트",
+      category: "activity" as const,
       teamSize: "개인",
       period: "2024.06 - 2024.08",
       summary: "클라우드와 생성형 AI 교육 과정을 바탕으로 AWS, Azure OpenAI 기반 서비스 아이디어를 정리하고 구현 실험을 진행한 프로젝트입니다.",
@@ -194,6 +198,7 @@ async function main() {
     },
     {
       title: "폴가이즈 기반 레고 파티클 게임",
+      category: "activity" as const,
       teamSize: "팀 프로젝트",
       period: "2025.01 - 2025.02",
       summary: "Unreal Engine 5로 Fall Guys의 파티 게임 감각을 참고해 레고 파티클 콘셉트의 멀티플레이 미니게임을 구현한 부트캠프 팀 프로젝트입니다.",
@@ -211,6 +216,7 @@ async function main() {
     },
     {
       title: "AWS DeepRacer 경진 대회 1등",
+      category: "activity" as const,
       teamSize: "팀 프로젝트",
       period: "2024.09",
       summary: "강화학습 기반 자율주행 모델을 실험하고 로그 기반으로 개선해 AWS DeepRacer 대회 1위를 달성했습니다.",
