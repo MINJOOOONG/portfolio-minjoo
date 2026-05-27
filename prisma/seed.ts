@@ -101,6 +101,7 @@ async function main() {
       achievement: "Redis 기반 대기열, Kafka 이벤트 흐름, 실시간 랭킹, Spring Batch 일간 스냅샷 구현",
       role: "백엔드 구조 설계 및 기능 구현",
       githubUrl: "https://github.com/MINJOOOONG",
+      ...notionProjectAssets.ecommerceBackend,
     },
     {
       title: "아두이노를 이용한 사회적 제품 제작",
@@ -222,6 +223,7 @@ async function main() {
       techStack: ["AWS DeepRacer", "Reinforcement Learning", "Python", "AWS"],
       achievement: "강화학습 모델 최적화로 AWS DeepRacer 대회 1위 달성",
       role: "모델 설계, 로그 분석, 파라미터 튜닝",
+      ...notionProjectAssets.awsDeepRacer,
     },
     {
       title: "QA Minjoo Helper",
@@ -238,6 +240,7 @@ async function main() {
       techStack: ["Next.js", "TypeScript", "Supabase", "Zustand", "Vercel"],
       achievement: "테스트 중 수정/추가/삭제 이력 기록 및 공유 가능한 요약 자동 정리",
       role: "기획, UI 설계, 프론트엔드 구현, 데이터 구조 설계",
+      ...notionProjectAssets.qaMinjooHelper,
     },
   ];
 

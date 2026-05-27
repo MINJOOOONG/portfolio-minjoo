@@ -64,7 +64,248 @@ export const designRules: AIRule[] = [
   { text: "모바일에서도 동일한 정보 계층과 가독성을 유지한다." },
 ];
 
+/* ── Archive Sections ── */
+
+export type AILabArchiveSectionId =
+  | "overview"
+  | "operating-principles"
+  | "prompt-playbook"
+  | "claude-skills"
+  | "agent-rag"
+  | "responsible-ai"
+  | "ai-tool-stack"
+  | "media-note";
+
+export interface AILabArchiveNavItem {
+  id: AILabArchiveSectionId;
+  label: string;
+  eyebrow: string;
+}
+
+export const aiLabArchiveNavItems: AILabArchiveNavItem[] = [
+  { id: "overview", label: "개요", eyebrow: "01" },
+  { id: "operating-principles", label: "운영 원칙", eyebrow: "02" },
+  { id: "prompt-playbook", label: "프롬프트", eyebrow: "03" },
+  { id: "claude-skills", label: "Claude & Skills", eyebrow: "04" },
+  { id: "agent-rag", label: "Agent / RAG", eyebrow: "05" },
+  { id: "responsible-ai", label: "책임 있는 AI", eyebrow: "06" },
+  { id: "ai-tool-stack", label: "AI 도구", eyebrow: "07" },
+  { id: "media-note", label: "Media Note", eyebrow: "08" },
+];
+
+export interface AILabSummaryCard {
+  title: string;
+  description: string;
+  tags: string[];
+}
+
+export const overviewSummaryCards: AILabSummaryCard[] = [
+  {
+    title: "지식 영역",
+    description: "프롬프트 · Skills · Agent · RAG · 거버넌스 · 도구",
+    tags: ["프롬프트", "Skills", "RAG"],
+  },
+  {
+    title: "작업 규칙",
+    description: "AI를 안전하고 효과적으로 사용하기 위한 개인 운영 원칙",
+    tags: ["규칙", "검토", "안전"],
+  },
+  {
+    title: "AI 도구 스택",
+    description: "실제로 사용하고 비교해본 AI 도구 기록",
+    tags: ["코딩", "글쓰기", "리서치"],
+  },
+  {
+    title: "RAG 지식 베이스",
+    description: "AI Assistant가 검색할 수 있도록 정리한 장문 노트",
+    tags: ["문서", "출처", "Assistant"],
+  },
+];
+
+export interface AILabTextCard {
+  title: string;
+  description: string;
+  tags?: string[];
+}
+
+export const operatingPrinciples: AILabTextCard[] = [
+  {
+    title: "구조를 갖춰 질문하기",
+    description: "목표, 맥락, 출력 형식을 함께 준다.",
+    tags: ["목표", "맥락", "출력"],
+  },
+  {
+    title: "불확실성을 드러내기",
+    description: "모르면 추측하지 않고 확인되지 않은 내용을 분리한다.",
+    tags: ["불확실성", "검토"],
+  },
+  {
+    title: "AI 결과를 최종본이 아닌 초안으로 보기",
+    description: "AI 결과는 초안으로 보고 사람이 검토한다.",
+    tags: ["초안", "사람 검토"],
+  },
+  {
+    title: "민감한 데이터는 넣지 않기",
+    description: "회사 자료, 개인정보, 민감정보는 외부 AI에 넣지 않는다.",
+    tags: ["개인정보", "보안"],
+  },
+  {
+    title: "반복 지시는 자산화하기",
+    description: "반복되는 지시는 템플릿, Claude Skill, 문서로 자산화한다.",
+    tags: ["템플릿", "Skill"],
+  },
+  {
+    title: "출처 기반 답변을 우선하기",
+    description: "중요한 답변은 RAG나 출처 기반으로 검증한다.",
+    tags: ["RAG", "출처"],
+  },
+];
+
+export const promptComparison = {
+  bad: "이거 정리해줘",
+  better:
+    "아래 문서를 읽고, 채용 담당자가 30초 안에 이해할 수 있도록 핵심 결론 3개와 근거 경험을 불릿으로 정리해줘.",
+};
+
+export const promptStructureCards: AILabTextCard[] = [
+  { title: "목표", description: "무엇을 얻고 싶은지 한 문장으로 정의한다." },
+  { title: "역할", description: "어떤 관점에서 판단해야 하는지 지정한다." },
+  { title: "맥락", description: "배경, 대상 사용자, 참고 자료를 함께 제공한다." },
+  { title: "제약", description: "하지 말아야 할 것과 유지할 기준을 분리한다." },
+  { title: "출력 형식", description: "표, 불릿, JSON, 보고서 등 결과 형태를 고정한다." },
+  { title: "검증", description: "불확실한 내용과 추가 확인 사항을 표시하게 한다." },
+];
+
+export const promptPatternCards: AILabTextCard[] = [
+  {
+    title: "초안 → 자기 점검 → 개선",
+    description: "초안을 만들고, 부족한 점을 스스로 점검한 뒤 개선 버전을 요청한다.",
+  },
+  {
+    title: "Few-shot 예시 제공",
+    description: "원하는 톤과 형식을 보여주는 입출력 예시를 함께 제공한다.",
+  },
+  {
+    title: "검증 가능한 답변만 요구",
+    description: "문서에 있는 내용만 사용하고, 확인되지 않은 내용은 분리하게 한다.",
+  },
+  {
+    title: "복잡한 작업을 단계로 나누기",
+    description: "분석, 생성, 검토, 수정처럼 복잡한 작업을 단계로 나눈다.",
+  },
+];
+
+export const claudeWorkflowCards: AILabTextCard[] = [
+  {
+    title: "프롬프트만 사용하는 방식",
+    description: "매번 같은 규칙과 톤을 다시 설명한다. 빠르지만 결과가 흔들릴 수 있다.",
+    tags: ["일회성", "수동"],
+  },
+  {
+    title: "Skill 기반 작업 방식",
+    description: "반복 업무의 절차, 금지사항, 출력 형식을 SKILL.md로 고정한다.",
+    tags: ["재사용", "일관성"],
+  },
+];
+
+export const skillChecklist: AILabTextCard[] = [
+  {
+    title: "사용 조건이 명확한가",
+    description: "description에 언제 사용하는 Skill인지 명확하게 적었는가.",
+  },
+  {
+    title: "반복 가능한 절차가 있는가",
+    description: "SKILL.md에 절차, 금지사항, 출력 형식이 들어 있는가.",
+  },
+  {
+    title: "참고 자료가 안전한가",
+    description: "참고 자료나 스크립트의 안전성과 접근 범위를 확인했는가.",
+  },
+  {
+    title: "반복 작업을 줄이는가",
+    description: "반복 작업을 실제로 줄이고 결과 품질을 안정화하는가.",
+  },
+];
+
+export const agentFlowSteps = [
+  "사용자 질문",
+  "의도 확인",
+  "문서 검색",
+  "관련 문맥 구성",
+  "LLM 답변 생성",
+  "출처 기반 답변",
+] as const;
+
+export const agentImplementationCards: AILabTextCard[] = [
+  {
+    title: "검색 전략",
+    description: "BM25, Vector, Hybrid 중 데이터 성격에 맞는 검색 방식을 선택한다.",
+    tags: ["BM25", "Vector", "Hybrid"],
+  },
+  {
+    title: "인덱스 관리",
+    description: "문서 인덱스를 build → save → load 흐름으로 관리한다.",
+    tags: ["Build", "Save", "Load"],
+  },
+  {
+    title: "Lazy Loading",
+    description: "초기 로딩을 줄이기 위해 첫 요청 시점에 인덱스를 로드한다.",
+    tags: ["성능"],
+  },
+  {
+    title: "Top-k 조절",
+    description: "속도와 문맥 품질 사이의 균형을 조절한다.",
+    tags: ["검색", "품질"],
+  },
+  {
+    title: "추적 가능성",
+    description: "source, chunk id, score를 남겨 답변 근거를 추적한다.",
+    tags: ["출처", "점수"],
+  },
+  {
+    title: "사람 검토",
+    description: "외부 발송, 삭제, 고위험 판단은 사람이 승인하도록 설계한다.",
+    tags: ["승인", "안전"],
+  },
+];
+
+export const responsibleAiChecks: string[] = [
+  "AI 사용 사실을 사용자에게 알렸는가?",
+  "의료, 금융, 채용, 교육처럼 고위험 영역인지 확인했는가?",
+  "개인정보나 회사 내부자료가 입력되지 않는가?",
+  "답변의 출처나 근거를 보여줄 수 있는가?",
+  "사용자가 AI 답변을 최종 판단으로 오해하지 않게 했는가?",
+  "외부 발송, 삭제, 결제, 평가 작업은 사람 승인 후 실행되는가?",
+  "프롬프트 인젝션과 민감정보 노출 가능성을 점검했는가?",
+  "모델, 프롬프트 버전, 참조 문서, 응답 로그를 기록할 수 있는가?",
+];
+
+export const responsibleAiReferenceChips = [
+  "Korea AI Basic Act",
+  "EU AI Act",
+  "NIST AI RMF",
+  "OWASP LLM Top 10",
+  "Public AI Ethics Guidelines",
+];
+
 /* ── AI Tools ── */
+
+export type AIToolFilter =
+  | "All"
+  | "Coding"
+  | "Writing"
+  | "Research"
+  | "Design"
+  | "Automation";
+
+export const AI_TOOL_FILTERS: AIToolFilter[] = [
+  "All",
+  "Coding",
+  "Writing",
+  "Research",
+  "Design",
+  "Automation",
+];
 
 export interface AITool {
   name: string;
@@ -75,13 +316,14 @@ export interface AITool {
   limitations: string[];
   review: string;
   tags: string[];
+  groups: Exclude<AIToolFilter, "All">[];
 }
 
 export const aiTools: AITool[] = [
   {
     name: "Claude Code",
-    category: "Coding Agent",
-    usedFor: "Portfolio development, UI refactoring, component structure analysis",
+    category: "코딩 에이전트",
+    usedFor: "포트폴리오 개발, UI 리팩터링, 컴포넌트 구조 분석",
     useCase:
       "포트폴리오 사이트의 섹션 구조를 분석하고, UI/UX 개선 사항을 코드에 반영하는 데 사용했습니다. 특히 기존 구조를 먼저 탐색하게 하고, Plan Mode로 설계한 뒤 수정하도록 사용하는 방식이 효과적이었습니다.",
     strengths: [
@@ -95,12 +337,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Claude Code는 단순 코드 생성기보다, 개발 흐름을 함께 설계하는 페어 프로그래밍 도구에 가깝다고 느꼈습니다. 하지만 좋은 결과를 얻으려면 \"무엇을 바꾸지 말아야 하는지\"까지 명확히 말해야 했습니다.",
-    tags: ["Claude Code", "Coding Agent", "Refactoring", "Portfolio"],
+    tags: ["Claude Code", "코딩 에이전트", "리팩터링", "포트폴리오"],
+    groups: ["Coding", "Automation"],
   },
   {
     name: "ChatGPT",
-    category: "Thinking Partner / Prompt Design",
-    usedFor: "Prompt writing, concept refinement, portfolio strategy, technical explanation",
+    category: "생각 정리 / 프롬프트 설계",
+    usedFor: "프롬프트 작성, 개념 구체화, 포트폴리오 전략, 기술 설명 정리",
     useCase:
       "Claude에게 전달할 개발 프롬프트를 정리하거나, 포트폴리오 섹션의 방향성, 문구, 구조를 구체화하는 데 사용했습니다.",
     strengths: [
@@ -114,12 +357,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "ChatGPT는 제가 하고 싶은 말을 개발자가 이해할 수 있는 요구사항으로 바꾸는 데 가장 많이 사용한 도구입니다.",
-    tags: ["Prompt", "Planning", "Writing", "Portfolio"],
+    tags: ["프롬프트", "기획", "글쓰기", "포트폴리오"],
+    groups: ["Writing", "Research"],
   },
   {
     name: "Cursor",
-    category: "AI Code Editor",
-    usedFor: "Code editing, inline suggestions, codebase Q&A",
+    category: "AI 코드 에디터",
+    usedFor: "코드 수정, 인라인 제안, 코드베이스 질의응답",
     useCase:
       "VS Code 기반의 AI 코드 에디터로, 코드 작성 중 인라인 제안과 코드베이스에 대한 질문을 통해 개발 속도를 높이는 데 활용했습니다.",
     strengths: [
@@ -132,12 +376,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Cursor는 빠른 코드 수정과 탐색에 좋지만, 구조적인 리팩토링에는 Claude Code와 병행하는 것이 효과적이었습니다.",
-    tags: ["Code Editor", "AI IDE", "Inline Suggestion"],
+    tags: ["코드 에디터", "AI IDE", "자동완성"],
+    groups: ["Coding"],
   },
   {
     name: "GitHub Copilot",
-    category: "Code Autocomplete",
-    usedFor: "Code completion, boilerplate generation, test writing",
+    category: "코드 자동완성",
+    usedFor: "코드 자동완성, 보일러플레이트 생성, 테스트 초안 작성",
     useCase:
       "반복적인 코드 패턴이나 보일러플레이트를 빠르게 생성하고, 테스트 코드 초안을 작성하는 데 사용했습니다.",
     strengths: [
@@ -150,12 +395,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Copilot은 타이핑 속도를 줄이는 데는 좋지만, 코드의 의도를 이해하고 설계하는 것은 여전히 개발자 몫입니다.",
-    tags: ["Autocomplete", "VS Code", "GitHub"],
+    tags: ["자동완성", "VS Code", "GitHub"],
+    groups: ["Coding"],
   },
   {
     name: "Perplexity",
-    category: "AI Search Engine",
-    usedFor: "Technical research, documentation lookup, comparison analysis",
+    category: "AI 검색 엔진",
+    usedFor: "기술 리서치, 공식 문서 확인, 비교 분석",
     useCase:
       "기술 비교, 라이브러리 선택, 에러 해결 시 빠르게 최신 정보를 검색하고 요약된 답변을 얻는 데 활용했습니다.",
     strengths: [
@@ -168,12 +414,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Perplexity는 Google 검색을 대체하기보다, 기술 리서치의 첫 단계를 빠르게 만들어주는 도구입니다.",
-    tags: ["Search", "Research", "Documentation"],
+    tags: ["검색", "리서치", "문서 확인"],
+    groups: ["Research"],
   },
   {
     name: "Suno",
-    category: "Music Generation",
-    usedFor: "Portfolio background music exploration",
+    category: "음악 생성",
+    usedFor: "포트폴리오 배경음악과 분위기 탐색",
     useCase:
       "포트폴리오에 어울리는 동물의 숲 같은 분위기의 BGM이나 감성적인 배경음악을 실험하기 위해 사용했습니다.",
     strengths: [
@@ -186,12 +433,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Suno는 포트폴리오를 단순한 웹페이지가 아니라 하나의 경험으로 만들 수 있는 가능성을 보여준 도구였습니다.",
-    tags: ["Music AI", "Mood", "Portfolio Experience"],
+    tags: ["음악 AI", "무드", "포트폴리오 경험"],
+    groups: ["Design"],
   },
   {
     name: "Midjourney",
-    category: "Image Generation",
-    usedFor: "Concept art, UI mood board, visual exploration",
+    category: "이미지 생성",
+    usedFor: "컨셉 아트, UI 무드보드, 비주얼 방향 탐색",
     useCase:
       "포트폴리오의 비주얼 방향성을 탐색하거나, 섹션별 분위기를 시각적으로 실험하는 데 사용했습니다.",
     strengths: [
@@ -204,12 +452,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Midjourney는 '이런 느낌이었으면 좋겠다'를 시각화하는 데 가장 빠른 도구였습니다.",
-    tags: ["Image AI", "Design", "Visual"],
+    tags: ["이미지 AI", "디자인", "비주얼"],
+    groups: ["Design"],
   },
   {
     name: "v0 by Vercel",
-    category: "UI Generation",
-    usedFor: "React component prototyping, UI design to code",
+    category: "UI 생성",
+    usedFor: "React 컴포넌트 프로토타이핑, UI 디자인을 코드로 변환",
     useCase:
       "UI 컴포넌트의 초안을 빠르게 생성하고, shadcn/ui 기반의 디자인 패턴을 탐색하는 데 사용했습니다.",
     strengths: [
@@ -222,12 +471,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "v0는 UI 초안을 만들고 아이디어를 빠르게 검증하는 데 유용하지만, 프로덕션 코드로 바로 쓰기엔 추가 작업이 필요합니다.",
-    tags: ["UI", "Vercel", "Prototyping", "React"],
+    tags: ["UI", "Vercel", "프로토타이핑", "React"],
+    groups: ["Design", "Coding"],
   },
   {
     name: "Image to Code Tool",
-    category: "UI Generation / Image to Code",
-    usedFor: "Reference image to React + Tailwind UI conversion",
+    category: "이미지 기반 UI 생성",
+    usedFor: "레퍼런스 이미지를 React + Tailwind UI로 변환",
     useCase:
       "실사 ID badge 이미지나 포트폴리오 UI 레퍼런스를 코드로 변환하는 실험에 사용했습니다.",
     strengths: [
@@ -240,12 +490,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       'Image to Code 도구는 "초안 생성"에는 좋지만, 완성도 높은 UI를 만들기 위해서는 사람이 디자인 감각과 디테일을 계속 조정해야 한다고 느꼈습니다.',
-    tags: ["Image to Code", "React", "Tailwind", "UI Experiment"],
+    tags: ["이미지 to 코드", "React", "Tailwind", "UI 실험"],
+    groups: ["Design", "Coding"],
   },
   {
     name: "Notion AI",
-    category: "Productivity / Writing",
-    usedFor: "Documentation, meeting notes summarization, task management",
+    category: "생산성 / 글쓰기",
+    usedFor: "문서 정리, 회의록 요약, 작업 관리",
     useCase:
       "프로젝트 문서 정리, 회의록 요약, 작업 항목 관리를 Notion AI로 보조하여 효율을 높였습니다.",
     strengths: [
@@ -258,12 +509,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Notion AI는 생각을 정리하는 도구로는 훌륭하지만, 기술 작업에는 보조적인 역할에 가깝습니다.",
-    tags: ["Notion", "Productivity", "Documentation"],
+    tags: ["Notion", "생산성", "문서화"],
+    groups: ["Writing", "Automation"],
   },
   {
     name: "Wrtn / 뤼튼",
-    category: "Korean AI Writing Tool",
-    usedFor: "Korean writing, idea drafting, content refinement",
+    category: "한국어 AI 글쓰기 도구",
+    usedFor: "한국어 문장 정리, 아이디어 초안, 콘텐츠 다듬기",
     useCase:
       "한국어 기반의 문장 정리, 아이디어 초안, 지원서나 포트폴리오 문구를 다듬는 데 사용했습니다.",
     strengths: [
@@ -276,12 +528,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "뤼튼은 한국어 초안 작성에는 편하지만, 기술 포트폴리오나 개발 맥락에서는 제 경험과 생각을 직접 더해야 완성도가 올라간다고 느꼈습니다.",
-    tags: ["Korean Writing", "Drafting", "AI Writing"],
+    tags: ["한국어 글쓰기", "초안", "AI 글쓰기"],
+    groups: ["Writing"],
   },
   {
     name: "Claude (Web)",
-    category: "AI Assistant",
-    usedFor: "Long-form analysis, code review, architecture discussion",
+    category: "AI 어시스턴트",
+    usedFor: "장문 분석, 코드 리뷰, 아키텍처 논의",
     useCase:
       "긴 코드를 분석하거나, 아키텍처 설계에 대한 장문의 토론, 복잡한 기술 개념 설명에 사용했습니다.",
     strengths: [
@@ -294,12 +547,13 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Claude Web은 깊이 있는 사고가 필요한 작업에 적합하고, Claude Code와 역할을 분리해서 사용하면 효과적입니다.",
-    tags: ["Claude", "Analysis", "Architecture", "Code Review"],
+    tags: ["Claude", "분석", "아키텍처", "코드 리뷰"],
+    groups: ["Writing", "Research"],
   },
   {
     name: "Gemini",
-    category: "Multimodal AI",
-    usedFor: "Image analysis, multimodal tasks, Google ecosystem integration",
+    category: "멀티모달 AI",
+    usedFor: "이미지 분석, 멀티모달 작업, Google 생태계 연동",
     useCase:
       "이미지와 텍스트를 함께 분석하거나, Google 생태계와 연동된 작업에 활용했습니다.",
     strengths: [
@@ -312,7 +566,8 @@ export const aiTools: AITool[] = [
     ],
     review:
       "Gemini는 멀티모달 작업에서 가능성을 보여주지만, 코드 중심 작업에서는 Claude나 ChatGPT가 더 효율적이었습니다.",
-    tags: ["Multimodal", "Google", "Image Analysis"],
+    tags: ["멀티모달", "Google", "이미지 분석"],
+    groups: ["Research", "Design"],
   },
 ];
 

@@ -2,7 +2,7 @@
 
 ## 개요
 
-서민주의 개인 포트폴리오 웹사이트입니다. 3D 배경, 부드러운 스크롤, 애니메이션을 활용하여 단순한 웹페이지가 아닌 "탐색하는 포트폴리오"를 목표로 구현했습니다.
+서민주의 개인 포트폴리오 웹사이트입니다. AI Agent를 활용해 기획부터 디자인 설계, 프론트엔드, 백엔드, RAG 기반 AI 검색 기능까지 직접 구현한 인터랙티브 포트폴리오입니다. PPT 스타일 섹션 내비게이션, 커스텀 커서, Three.js 3D 배경을 적용했습니다.
 
 ## 기술 스택
 
@@ -10,45 +10,52 @@
 - **스타일링**: Tailwind CSS v4 + shadcn/ui
 - **3D/애니메이션**: Three.js + @react-three/fiber + @react-three/drei + Framer Motion + GSAP + Lenis
 - **데이터베이스**: Prisma + Neon PostgreSQL (서버리스)
-- **배포**: Vercel
+- **AI/RAG**: Python FastAPI + sentence-transformers (로컬 임베딩) + FAISS (벡터 검색) + Groq API (Llama 3.1 LLM)
+- **배포**: Vercel (프론트엔드) + Render (RAG 서버)
+
+## 아키텍처
+
+3-레이어 독립 아키텍처로 설계되어 있습니다:
+
+1. **Frontend (Vercel)**: Next.js App Router, RSC 기반 서버 렌더링, Three.js 3D 배경
+2. **Data/CMS (Neon PostgreSQL)**: Prisma ORM, Admin 페이지에서 재배포 없이 콘텐츠 수정 가능
+3. **AI/RAG (Render)**: Python FastAPI 서버, 순수 Python TF-IDF 기반 검색 + Groq LLM 답변 생성
+
+## RAG AI Assistant
+
+포트폴리오 안에 AI Assistant가 내장되어 있습니다. 사용자가 질문을 입력하면:
+
+1. 마크다운 문서를 500자 단위로 청크 분할
+2. TF-IDF 기반 유사도 검색으로 관련 문서를 찾음
+3. Groq LLM(Llama 3.1-8b-instant)이 문맥 기반 답변 생성
+4. 관련 섹션으로 자동 이동하는 AI Navigation 연결
+
+RAG 서버는 순수 Python 기반으로 경량화되어 있으며, 외부 유료 서비스 없이 비용 0원으로 운영됩니다. 기존에는 sentence-transformers + FAISS를 사용했으나, Render 무료 티어의 메모리 제한(512MB)으로 인해 순수 Python TF-IDF 기반으로 변경했습니다.
 
 ## 핵심 기능
 
-### 3D 배경
-- 진입 페이지: 와이어프레임 Icosahedron + 80개 파티클, 마우스 반응형 회전, 클릭 시 카메라 줌인 전환
-- 포트폴리오 페이지: 5개 와이어프레임 도형 + 120개 파티클 + 연결선, 스크롤 패럴랙스
+### PPT 스타일 섹션 내비게이션
+- 7개 섹션(About, Experience, Projects, AI Lab, Articles, Skills, Contact)을 독립 화면 단위로 구성
+- 상단 메뉴, 좌우 버튼, 슬라이드 인디케이터로 이동
+- Projects·AI Lab은 내부 스크롤로 분리해 콘텐츠 스크롤과 섹션 이동이 충돌하지 않도록 처리
 
-### 데이터 관리
-- Admin Dashboard에서 포트폴리오 데이터(경력, 프로젝트, 스킬 등)를 JSON으로 관리
-- Prisma ORM + Neon PostgreSQL로 서버리스 DB 사용
-- Admin → Prisma → Neon DB → getSettings() → 섹션 컴포넌트 데이터 흐름
+### 프로젝트 상세 모달
+- contentBlocks 배열을 순회하며 블록 타입별 렌더링 (text, image, video, pdf, code, section-heading 등 14가지 타입)
+- 모달 배경 스크롤 잠금, 키보드(Escape, ←→) 조작 지원
 
-### 디자인 원칙
-- Clean Document 미학 — 종이 위 이력서, 노트 위 스케치 느낌
-- Notion 디자인 토큰 기반 라이트 모드 전용
-- 흰 배경 + 미세한 모눈 격자, 그레이 계열 위주
-- 미니멀 타이포, 충분한 여백
+### Three.js 3D 배경
+- React Three Fiber로 와이어프레임 도형 + 파티클 + 연결선 렌더링
+- 섹션 전환에 따라 도형 밀도, 회전 속도가 React 상태와 연동
 
-### 섹션 구성
-1. Hero - 랜딩 섹션
-2. About - 핵심 강점 5가지와 키워드 어노테이션
-3. Experience - 타임라인 형식 경력사항
-4. Projects - 프로젝트 쇼케이스 (이미지, 비디오, PDF 지원)
-5. Skills - 기술 스택 시각화
-6. Education - 학력 및 자격증
-7. AI Lab - AI 도구 활용 방식과 원칙
-8. Articles - 블로그/기술 글
-
-### 애니메이션
-- IntersectionObserver 기반 스크롤 등장 애니메이션 (useScrollReveal)
-- 자식 요소 순차 등장 (useStaggerReveal)
-- 스크롤 패럴랙스 (useParallax)
-- 스프링 바운스 이징
+### 디자인 시스템
+- design.md에 색상, 여백, 타이포그래피, 모션 규칙을 먼저 정의
+- 섹션별 md 파일로 레이아웃을 분리해 일관된 디자인 유지
 
 ## 이 프로젝트에서 보여주는 역량
 
-- React/Next.js 풀스택 개발 능력
-- Three.js를 활용한 3D 웹 구현
-- Prisma + PostgreSQL 데이터베이스 설계
-- 디자인 시스템 구축 및 적용
-- AI 도구(Claude Code)를 활용한 개발 워크플로우
+- AI Agent(Claude Code) 협업 개발 — 기획, 설계, 구현, 디버깅에 AI를 활용하고 QA 관점에서 검증
+- Next.js 풀스택 개발 — RSC, App Router, Prisma CMS, Admin 페이지
+- Three.js 3D 웹 구현 — React Three Fiber, 섹션 연동 애니메이션
+- Python RAG 파이프라인 — TF-IDF 검색, Groq LLM, FastAPI
+- 디자인 시스템 문서화 — design.md 기반 일관된 UI/UX 유지
+- 비용 0원 AI 인프라 — 로컬 검색 + Groq 무료 티어 조합

@@ -101,11 +101,11 @@ interface AboutSection {
 
 | 번호 | 한국어 | 영어 | 요약 |
 |------|--------|------|------|
-| 01 | 빠른 적응력 | Fast Adaptability | 카페 창업 -> 편입 -> 개발 -> 토스까지 빠른 환경 적응 |
-| 02 | 본질 이해 | Essence First | 일의 본질을 먼저 이해하려는 태도, 백엔드 부트캠프 자비 수강 |
-| 03 | 개선 지향 | Improvement Driven | 반복 업무에서도 개선점을 찾음, Tossion 자동화 도구 제작 |
-| 04 | 협업과 기록 | Collaborative Growth | 매일 상세 업무보고, 동료와 피드백 교환 |
-| 05 | AI 활용력 | AI Lab | AI를 협업 도구로 활용, 검증 습관화 -> AI Lab 섹션 링크 |
+| 01 | 빠른 적응력 | Fast Adaptability | 낯선 환경에 먼저 뛰어들어 구조를 파악, 토스 QA에서 빠른 변화 대응, AI 기술 선제 도입 |
+| 02 | 본질 이해 | Essence First | '왜 필요한 일인지' 먼저 파고드는 태도, 백엔드 부트캠프 자비 수강으로 입체적 문제 이해 |
+| 03 | 개선 지향 | Improvement Driven | 반복 업무의 불편함을 개선의 형태로 전환, Tossion 유사 자체 페이지 제작 |
+| 04 | 협업과 기록 | Collaborative Growth | 기록과 공유 중심의 업무 방식, 매일 상세 업무보고, 동료와 피드백 교환 |
+| 05 | AI 활용력 | AI-Loving Builder | AI를 협업 파트너로 활용, 검증 습관화, 더 나은 일하는 방식 실험 -> AI Lab 섹션 링크 |
 
 #### 키워드 주석 (`keywordAnnotations`)
 
