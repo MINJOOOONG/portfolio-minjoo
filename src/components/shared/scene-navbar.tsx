@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState, memo } from "react";
 import { cn } from "@/lib/utils";
-import { PdfExportButton } from "@/components/shared/pdf-export-button";
 import { PortfolioAskBar } from "@/components/shared/portfolio-ask-bar";
-import type { ResumeData } from "@/lib/pdf/types";
 
 const SECTION_IDS = ["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"];
 
@@ -18,11 +16,7 @@ const navItems = [
   { id: "contact", label: "Contact" },
 ];
 
-interface SceneNavbarProps {
-  resumeData?: ResumeData;
-}
-
-export const SceneNavbar = memo(function SceneNavbar({ resumeData }: SceneNavbarProps) {
+export const SceneNavbar = memo(function SceneNavbar() {
   const [activeSection, setActiveSection] = useState("about");
   const [scrolled, setScrolled] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -93,7 +87,7 @@ export const SceneNavbar = memo(function SceneNavbar({ resumeData }: SceneNavbar
                 {item.label}
               </button>
             ))}
-            {resumeData && <PdfExportButton resumeData={resumeData} />}
+
           </nav>
         </div>
       </div>

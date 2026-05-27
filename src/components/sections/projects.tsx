@@ -108,7 +108,7 @@ const DEFAULT_MEDIA_RATIO = 4 / 3;
 const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
 
 /* ── 카드 심볼 (이미지 없을 때 기하학 아이콘) ── */
-const SYMBOLS = ["◆", "○", "△", "□", "◇", "▽", "⬡", "✦"];
+const SYMBOLS = ["◇", "○", "△", "□", "◆", "▽", "⬡", "✦"];
 
 function normalizeMediaUrl(url?: string) {
   return url?.split("#")[0].split("?")[0];
@@ -741,7 +741,7 @@ function ProjectCard({
             alt=""
             fill
             className="pj-card__poster-image"
-            sizes="280px"
+            sizes="300px"
           />
         )}
         <span className="pj-card__poster-number">
@@ -755,12 +755,12 @@ function ProjectCard({
       </div>
 
       <div className="pj-card__content">
-        <h3 className="font-display text-[20px] font-black leading-tight mb-2">
+        <h3 className="font-display text-[18px] font-black leading-tight mb-1.5">
           {item.title}
         </h3>
 
         {item.summary && (
-          <p className="pj-card__summary text-[13px] text-muted-foreground leading-relaxed mb-2">
+          <p className="pj-card__summary text-[12.5px] text-muted-foreground/70 leading-relaxed mb-1">
             {item.summary}
           </p>
         )}
@@ -774,6 +774,12 @@ function ProjectCard({
 
         <div className="pj-card__meta">
           <span>{item.period}</span>
+          {item.teamSize && (
+            <>
+              <span style={{ color: "rgba(33,29,25,0.2)", userSelect: "none" }}>·</span>
+              <span>{item.teamSize}</span>
+            </>
+          )}
         </div>
       </div>
     </div>

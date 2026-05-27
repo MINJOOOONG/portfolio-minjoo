@@ -718,35 +718,46 @@
   }
 }
 
-/* ─── Project Card ─── */
+/* ─── Project Card (Glassmorphism) ─── */
 .pj-card {
   display: flex !important;
   flex-direction: column !important;
   width: 300px !important;
   max-width: 300px !important;
   min-width: 300px !important;
-  height: 360px !important;
-  min-height: 360px !important;
+  height: 380px !important;
+  min-height: 380px !important;
   box-sizing: border-box !important;
   justify-self: center !important;
   align-self: start !important;
-  padding: 18px;
-  background: #fff;
-  border: 1px solid var(--notion-hairline);
-  border-radius: 8px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
   cursor: none;
   overflow: hidden;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transition:
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.3s ease,
-    box-shadow 0.35s ease;
+    box-shadow 0.4s ease,
+    background 0.3s ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .pj-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(33, 29, 25, 0.35);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.08),
+      0 4px 12px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
 }
 
@@ -763,76 +774,77 @@
     width: 100% !important;
     max-width: 360px !important;
     min-width: 0 !important;
-    height: 320px !important;
-    min-height: 320px !important;
-    padding: 24px 22px 20px;
+    height: 340px !important;
+    min-height: 340px !important;
   }
 }
 
 .pj-card__poster {
   position: relative;
-  height: 100px;
-  min-height: 100px;
+  height: 140px;
+  min-height: 140px;
   overflow: hidden;
-  border: 1px solid rgba(33, 29, 25, 0.14);
-  border-radius: 6px;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.22)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1)),
     var(--poster-tint, var(--notion-tint-cream));
 }
 
 .pj-card__poster:not(.pj-card__poster--media)::before {
   content: "";
   position: absolute;
-  inset: 14px;
-  border: 1px solid rgba(33, 29, 25, 0.13);
-  border-radius: 50%;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .pj-card__poster--media::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 44%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15), transparent 50%, rgba(0, 0, 0, 0.05));
   pointer-events: none;
 }
 
 .pj-card__poster-image {
   object-fit: cover;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pj-card:hover .pj-card__poster-image {
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
 .pj-card__poster-number {
   position: absolute;
-  left: 16px;
-  top: 16px;
+  left: 18px;
+  top: 14px;
   z-index: 1;
-  color: rgba(33, 29, 25, 0.12);
+  color: rgba(33, 29, 25, 0.1);
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   line-height: 1;
   user-select: none;
 }
 
 .pj-card__poster--media .pj-card__poster-number {
-  color: rgba(255, 255, 255, 0.84);
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .pj-card__poster-symbol {
   position: absolute;
-  right: 16px;
-  bottom: 10px;
-  color: rgba(33, 29, 25, 0.18);
+  right: 18px;
+  bottom: 12px;
+  color: rgba(33, 29, 25, 0.1);
   font-family: var(--font-display);
-  font-size: 56px;
+  font-size: 48px;
   font-weight: 900;
   line-height: 1;
+  filter: blur(0.5px);
 }
 
 .pj-card__content {
@@ -840,7 +852,7 @@
   flex: 1 1 auto;
   min-height: 0;
   flex-direction: column;
-  padding-top: 16px;
+  padding: 18px 20px 16px;
 }
 
 .pj-card__summary {
@@ -866,20 +878,21 @@
   margin-right: 4px;
   font-weight: 700;
   color: var(--foreground, #211d19);
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 .pj-card__meta {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid var(--notion-hairline, rgba(33, 29, 25, 0.08));
+  padding-top: 12px;
+  border-top: 1px solid rgba(33, 29, 25, 0.06);
   font-size: 11px;
   color: var(--muted-foreground, rgba(33, 29, 25, 0.45));
   flex-wrap: wrap;
 }
+
 
 .pj-media-section {
   margin-bottom: 28px;

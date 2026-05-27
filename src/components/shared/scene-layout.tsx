@@ -35,7 +35,7 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
     <ActiveSectionProvider sectionIds={SECTION_IDS}>
       <div className="min-h-screen bg-white">
         <ThreePortfolioBg />
-        <SceneNavbar resumeData={resumeData} />
+        <SceneNavbar />
         <SlideIndicator sectionIds={SECTION_IDS} />
         <main className="relative z-10 bg-white">
           {sections.map((content, i) => (
