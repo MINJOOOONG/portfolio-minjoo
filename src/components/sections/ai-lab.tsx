@@ -2,60 +2,50 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import {
-  ArrowRight,
   CheckCircle2,
   ChevronDown,
   ExternalLink,
   FileText,
   Link2,
   Play,
+  Search,
 } from "lucide-react";
 import Image from "next/image";
 import { SlideHeading } from "./about";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import {
   AI_TOOL_FILTERS,
-  agentBestPractices,
-  agentFlowSteps,
+  GLOSSARY_CATEGORIES,
   aiLabArchiveNavItems,
   aiTools,
-  companyGuides,
-  euAiActFinesTable,
+  automationIdeas,
+  companyPrinciples,
   euAiActRiskTable,
-  frameworkSelectionTable,
+  evaluationCriteria,
+  evaluationQaConnection,
   getYouTubeId,
-  governanceReferenceChips,
-  imagePromptCards,
-  koreaAiLawOverview,
-  koreaVsEuTable,
+  glossaryTerms,
   mediaNotes,
+  modelFamilies,
+  modelSelectionGuide,
   nistRmfSteps,
   overviewSummaryCards,
-  projectChecklist,
-  promptAdvancedCards,
-  promptCautionCards,
-  promptComparison,
-  promptDesignCards,
-  promptPatternCards,
-  promptStructureCards,
-  promptTermsTable,
-  ragImplementationCards,
-  ragSearchTable,
-  skillAdvantageCards,
-  skillChecklist,
-  skillComparisonTable,
-  skillCreationSteps,
-  skillFaqItems,
-  structuredOutputCards,
-  unifiedTemplate,
+  policyItems,
+  safetyRiskCards,
   type AILabArchiveSectionId,
   type AILabSummaryCard,
   type AILabTextCard,
   type AITool,
   type AIToolFilter,
-  type CompanyGuide,
+  type CompanyPrinciple,
   type DataTableData,
+  type EvaluationCriterion,
+  type GlossaryCategory,
+  type GlossaryTerm,
   type MediaNote,
+  type ModelFamily,
+  type PolicyItem,
+  type SafetyRiskCard,
 } from "@/data/ai-lab-data";
 
 const sectionDomId = (id: AILabArchiveSectionId) => `ai-lab-${id}`;
@@ -66,6 +56,13 @@ const toolFilterLabels: Record<AIToolFilter, string> = {
   Research: "리서치",
   Design: "디자인",
   Automation: "자동화",
+};
+const glossaryCategoryLabels: Record<GlossaryCategory, string> = {
+  All: "전체",
+  Safety: "Safety",
+  Evaluation: "Evaluation",
+  Architecture: "Architecture",
+  Technique: "Technique",
 };
 
 /* ── Main Component ── */
@@ -107,7 +104,7 @@ export const AILab = memo(function AILab() {
           </div>
 
           <p className="text-sm leading-[1.8] text-[var(--notion-slate)] max-w-lg mb-10">
-            AI와 일하고, 배우고, 만드는 방식을 정리한 개인 작업 노트입니다.
+            AI 품질, 안전성, 평가, 정책을 공부하고 정리하는 개인 작업 노트입니다.
           </p>
 
           <ArchiveNavigation onSelect={scrollToSection} />
@@ -116,9 +113,9 @@ export const AILab = memo(function AILab() {
             {/* 01 — Overview */}
             <ArchiveSection
               id="overview"
-              eyebrow="개요"
-              title="AI Lab"
-              description="프롬프트 엔지니어링, Claude Skills, AI 에이전트 구현 패턴, AI 관련 법률, 공공기관 AI 가이드, 주요 AI 회사별 사용 가이드를 정리한 공간입니다."
+              eyebrow="Overview"
+              title="AI Quality & Safety Lab"
+              description="AI를 많이 써본 것이 아니라, AI 서비스를 안전하게 출시하기 위해 품질·안전성·평가·정책·모델 특성을 공부하고 나만의 기준으로 정리해온 공간입니다."
             >
               <LineGrid>
                 {overviewSummaryCards.map((card, index) => (
@@ -127,223 +124,116 @@ export const AILab = memo(function AILab() {
               </LineGrid>
             </ArchiveSection>
 
-            {/* 02 — Prompt Engineering */}
+            {/* 02 — Safety Framework */}
             <ArchiveSection
-              id="prompt-engineering"
-              eyebrow="프롬프트 엔지니어링"
-              title="AI에게 명확한 지시를 전달하는 방법"
-              description="프롬프트 엔지니어링은 LLM에게 무엇을, 왜, 어떻게 할지 명확히 전달하는 방법입니다. 업무 지시서에 가깝다고 이해하면 됩니다."
+              id="safety-framework"
+              eyebrow="Safety Framework"
+              title="AI 서비스 출시 전 안전성 기준"
+              description="금융 서비스 관점에서 AI 답변의 7가지 리스크를 정의하고, 각 리스크별 평가 규칙을 정리했습니다. QA에서 TC를 먼저 정의하듯, 안전성도 기준이 먼저입니다."
             >
-              <SubsectionLabel title="용어 정리" />
-              <DataTable data={promptTermsTable} />
-
-              <SubsectionLabel title="좋은 예시 vs 나쁜 예시" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 border-y border-[var(--notion-hairline)]">
-                <PromptComparisonItem label="나쁜 예시" body={promptComparison.bad} tone="muted" />
-                <PromptComparisonItem label="좋은 예시" body={promptComparison.better} tone="strong" />
-              </div>
-
-              <SubsectionLabel title="프롬프트 작성 시 주의사항" />
               <LineGrid>
-                {promptCautionCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
+                {safetyRiskCards.map((card, index) => (
+                  <SafetyRiskItem key={card.risk} card={card} index={index} />
                 ))}
               </LineGrid>
 
-              <SubsectionLabel title="좋은 프롬프트의 기본 구조" />
-              <LineGrid compact>
-                {promptStructureCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} compact />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="고도화 기법" />
-              <LineGrid>
-                {promptAdvancedCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="자주 쓰는 패턴" />
-              <LineGrid>
-                {promptPatternCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="이미지 생성 프롬프트 팁" />
-              <LineGrid compact>
-                {imagePromptCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} compact />
-                ))}
-              </LineGrid>
-            </ArchiveSection>
-
-            {/* 03 — Claude Skills */}
-            <ArchiveSection
-              id="claude-skills"
-              eyebrow="Claude Skills"
-              title="반복 프롬프트를 재사용 가능한 Skill로 바꾸기"
-              description="Skill은 Claude에게 특정 업무를 반복적이고 일관되게 수행하는 방법을 가르쳐주는 맞춤형 지침 패키지입니다. 신입사원에게 주는 업무 온보딩 매뉴얼이라고 생각하면 됩니다."
-            >
-              <SubsectionLabel title="프롬프트 vs Skill 비교" />
-              <DataTable data={skillComparisonTable} />
-
-              <SubsectionLabel title="Skill의 장점" />
-              <LineGrid>
-                {skillAdvantageCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="Skill 만드는 방법" />
-              <LineGrid>
-                {skillCreationSteps.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="작성 체크리스트" />
-              <LineGrid>
-                {skillChecklist.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="FAQ" />
-              <div className="border-y border-[var(--notion-hairline)]">
-                {skillFaqItems.map((item) => (
-                  <FaqItem key={item.question} question={item.question} answer={item.answer} />
-                ))}
-              </div>
-            </ArchiveSection>
-
-            {/* 04 — Agent Patterns */}
-            <ArchiveSection
-              id="agent-patterns"
-              eyebrow="에이전트 구현 패턴"
-              title="출처 기반 AI 답변을 만드는 방식"
-              description="AI 에이전트는 단순히 LLM에게 긴 프롬프트를 주는 것이 아니라, 입력 → 판단 → 도구 사용 → 중간 결과 저장 → 검증 → 최종 응답의 흐름을 설계하는 일입니다."
-            >
-              <AgentFlow />
-
-              <SubsectionLabel title="프롬프트 설계" />
-              <LineGrid>
-                {promptDesignCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="구조화된 출력" />
-              <LineGrid>
-                {structuredOutputCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="RAG 검색 전략" />
-              <DataTable data={ragSearchTable} />
-
-              <SubsectionLabel title="구현 메모" />
-              <LineGrid>
-                {ragImplementationCards.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="선택 가이드" />
-              <DataTable data={frameworkSelectionTable} />
-
-              <SubsectionLabel title="Best Practice" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 border-y border-[var(--notion-hairline)]">
-                {agentBestPractices.map((item) => (
-                  <div
-                    key={item}
-                    className="flex gap-3 py-4 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0"
-                  >
-                    <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)]" strokeWidth={1.5} />
-                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </ArchiveSection>
-
-            {/* 05 — AI Governance */}
-            <ArchiveSection
-              id="ai-governance"
-              eyebrow="법률 & 거버넌스"
-              title="AI 답변을 신뢰하거나 배포하기 전 확인할 것"
-              description="한국 인공지능기본법과 EU AI Act를 중심으로, 어떤 의무가 있고 무엇을 준비해야 하는지 정리했습니다."
-            >
-              <SubsectionLabel title="한국 인공지능기본법" />
-              <LineGrid>
-                {koreaAiLawOverview.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="EU AI Act 위험 분류" />
-              <DataTable data={euAiActRiskTable} />
-
-              <SubsectionLabel title="EU AI Act 벌금 체계" />
-              <DataTable data={euAiActFinesTable} />
-
-              <SubsectionLabel title="한국 vs EU 비교" />
-              <DataTable data={koreaVsEuTable} />
-
-              <SubsectionLabel title="NIST AI RMF" />
+              <SubsectionLabel title="NIST AI RMF 4단계" />
               <LineGrid>
                 {nistRmfSteps.map((card, index) => (
                   <TextItem key={card.title} card={card} index={index} />
                 ))}
               </LineGrid>
-
-              <SubsectionLabel title="개인 프로젝트 체크리스트" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 border-y border-[var(--notion-hairline)]">
-                {projectChecklist.map((item) => (
-                  <div
-                    key={item}
-                    className="flex gap-3 py-4 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0"
-                  >
-                    <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)]" strokeWidth={1.5} />
-                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{item}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-2 pt-1">
-                {governanceReferenceChips.map((chip) => (
-                  <span
-                    key={chip}
-                    className="text-[10px] px-2.5 py-1 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]"
-                  >
-                    {chip}
-                  </span>
-                ))}
-              </div>
             </ArchiveSection>
 
-            {/* 06 — Company Guides */}
+            {/* 03 — Evaluation Playbook */}
             <ArchiveSection
-              id="company-guides"
-              eyebrow="회사별 가이드"
-              title="AI 회사별 공식 사용 가이드"
-              description="AI 회사들이 공통적으로 말하는 사용법은 비슷합니다. 명확한 목표를 주고, 필요한 맥락을 넣고, 원하는 형식을 지정하고, 결과를 검증하라는 것입니다."
+              id="evaluation-playbook"
+              eyebrow="Evaluation Playbook"
+              title="AI 답변 평가 체크리스트"
+              description="Toss QA에서 TC 기반으로 체크하듯, AI 답변도 평가 기준을 먼저 정의하고 반복 검증합니다."
+            >
+              <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] px-5 py-4 mb-6">
+                <p className="text-xs leading-[1.8] text-[var(--notion-ink)]">
+                  {evaluationQaConnection}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {evaluationCriteria.map((item, index) => (
+                  <EvaluationItem key={item.criterion} item={item} index={index} />
+                ))}
+              </div>
+
+              <SubsectionLabel title="자동화 아이디어" />
+              <LineGrid>
+                {automationIdeas.map((idea, index) => (
+                  <TextItem key={idea.title} card={idea} index={index} />
+                ))}
+              </LineGrid>
+            </ArchiveSection>
+
+            {/* 04 — AI Glossary */}
+            <ArchiveSection
+              id="ai-glossary"
+              eyebrow="AI Dictionary"
+              title="AI 용어 정리"
+              description="교과서 정의가 아니라, 내가 이해한 방식으로 정리한 용어집입니다. 각 용어에 실무 관점의 메모를 달았습니다."
+            >
+              <GlossaryTable />
+            </ArchiveSection>
+
+            {/* 05 — Policy & Regulation */}
+            <ArchiveSection
+              id="ai-policy"
+              eyebrow="Policy & Regulation"
+              title="AI 법·정책 핵심 정리"
+              description="EU AI Act, 한국 AI 기본법, 개인정보보호법 등 AI 관련 법·정책을 금융 서비스 관점에서 정리했습니다."
             >
               <div className="space-y-4">
-                {companyGuides.map((guide) => (
-                  <CompanyGuideCard key={guide.name} guide={guide} />
+                {policyItems.map((item, index) => (
+                  <PolicyCard key={item.title} item={item} index={index} />
                 ))}
               </div>
 
-              <SubsectionLabel title="통합 실전 템플릿" />
-              <CodeBlock code={unifiedTemplate} />
+              <SubsectionLabel title="EU AI Act 위험 분류" />
+              <DataTable data={euAiActRiskTable} />
             </ArchiveSection>
 
-            {/* 07 — AI Tools (unchanged) */}
+            {/* 06 — Company AI Principles */}
+            <ArchiveSection
+              id="company-principles"
+              eyebrow="Company AI Principles"
+              title="AI 회사별 안전 원칙 비교"
+              description="OpenAI, Anthropic, Google, Microsoft가 AI 안전을 어떻게 정의하는지 비교하고, QA 경험과 연결해 배운 점을 정리했습니다."
+            >
+              <div className="space-y-4">
+                {companyPrinciples.map((cp) => (
+                  <CompanyPrincipleCard key={cp.company} data={cp} />
+                ))}
+              </div>
+            </ArchiveSection>
+
+            {/* 07 — Model Comparison */}
+            <ArchiveSection
+              id="model-comparison"
+              eyebrow="Model Comparison"
+              title="모델별 특성과 선택 기준"
+              description="모델 이름을 외우는 것이 아니라, 작업 유형에 따라 어떤 모델 계열을 선택할지 기준을 정리했습니다."
+            >
+              <div className="space-y-6">
+                {modelFamilies.map((family) => (
+                  <ModelFamilyCard key={family.provider} family={family} />
+                ))}
+              </div>
+
+              <SubsectionLabel title="작업별 모델 선택 가이드" />
+              <DataTable data={modelSelectionGuide} />
+            </ArchiveSection>
+
+            {/* 08 — AI Tools (unchanged) */}
             <ArchiveSection
               id="ai-tool-stack"
-              eyebrow="AI 도구"
+              eyebrow="AI Tools"
               title="실제로 쓰고 비교한 도구들"
               description="AI 도구는 유행이 아니라 사용 목적 기준으로 비교합니다. 어디에 쓰는지, 무엇에 강한지, 어디서 조심해야 하는지를 함께 기록합니다."
             >
@@ -354,7 +244,7 @@ export const AILab = memo(function AILab() {
               />
             </ArchiveSection>
 
-            {/* 08 — Media Note (unchanged) */}
+            {/* 09 — Media Notes (LOCKED — unchanged) */}
             <ArchiveSection
               id="media-note"
               eyebrow="Media Note"
@@ -377,20 +267,41 @@ function ArchiveNavigation({
 }: {
   onSelect: (id: AILabArchiveSectionId) => void;
 }) {
+  // Group items by their group label
+  const groups = useMemo(() => {
+    const result: { group: string; items: typeof aiLabArchiveNavItems }[] = [];
+    for (const item of aiLabArchiveNavItems) {
+      const g = item.group ?? "";
+      const last = result[result.length - 1];
+      if (last && last.group === g) {
+        last.items.push(item);
+      } else {
+        result.push({ group: g, items: [item] });
+      }
+    }
+    return result;
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-10 -mx-1 mb-16 border-y border-[var(--notion-hairline)] bg-white/95 py-3 backdrop-blur-sm">
-      <div className="flex gap-2 overflow-x-auto px-1 pb-1">
-        {aiLabArchiveNavItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onSelect(item.id)}
-            className="group shrink-0 px-3 py-2 rounded-md transition-colors text-left text-[11px] text-[var(--notion-stone)] hover:bg-[var(--notion-surface)] hover:text-[var(--notion-ink)]"
-          >
-            <span className="block text-[9px] font-semibold tracking-[0.18em] text-[var(--notion-muted)] group-hover:text-[var(--notion-stone)]">
-              {item.eyebrow}
+    <nav className="sticky top-0 z-10 -mx-1 mb-16 bg-white/95 py-4 backdrop-blur-sm">
+      <div className="flex gap-6 overflow-x-auto px-1 pb-1">
+        {groups.map((g) => (
+          <div key={g.group} className="shrink-0">
+            <span className="block text-[9px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-muted)] mb-2 pl-1">
+              {g.group}
             </span>
-            <span className="block mt-0.5 whitespace-nowrap">{item.label}</span>
-          </button>
+            <div className="flex gap-1">
+              {g.items.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onSelect(item.id)}
+                  className="shrink-0 px-3.5 py-2 rounded-lg border border-[var(--notion-hairline)] bg-white text-[11px] font-medium text-[var(--notion-stone)] hover:bg-[var(--notion-ink)] hover:text-white hover:border-[var(--notion-ink)] transition-all duration-150 whitespace-nowrap"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </nav>
@@ -510,32 +421,310 @@ function TextItem({
   );
 }
 
-function PromptComparisonItem({
-  label,
-  body,
-  tone,
-}: {
-  label: string;
-  body: string;
-  tone: "muted" | "strong";
-}) {
+/* ── New Section Components ── */
+
+function SafetyRiskItem({ card, index }: { card: SafetyRiskCard; index: number }) {
   return (
-    <article className="py-5 border-b border-[var(--notion-hairline)] last:border-b-0 md:border-b-0">
-      <span className="text-[10px] font-semibold tracking-[0.15em] text-[var(--notion-stone)]">
-        {label}
+    <article className="py-5 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0">
+      <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
+        {String(index + 1).padStart(2, "0")}
       </span>
-      <p
-        className={`text-sm leading-[1.9] mt-4 ${
-          tone === "strong" ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"
-        }`}
-      >
-        {body}
-      </p>
+      <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug mt-1">
+        {card.risk}
+      </h4>
+      <div className="mt-3 space-y-3">
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+            Why it matters
+          </span>
+          <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{card.whyItMatters}</p>
+        </div>
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+            My evaluation rule
+          </span>
+          <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{card.myEvaluationRule}</p>
+        </div>
+      </div>
+      {card.source && (
+        <span className="inline-block mt-3 text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
+          Ref: {card.source}
+        </span>
+      )}
     </article>
   );
 }
 
-/* ── New Components ── */
+function EvaluationItem({ item, index }: { item: EvaluationCriterion; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <article className="border border-[var(--notion-hairline)] rounded-md">
+      <button
+        type="button"
+        onClick={() => setExpanded((p) => !p)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <h4 className="text-sm font-bold text-[var(--notion-ink)]">{item.criterion}</h4>
+        </div>
+        <ChevronDown
+          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4 border-t border-[var(--notion-hairline)] pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-600">
+                Good response
+              </span>
+              <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{item.goodResponse}</p>
+            </div>
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-red-500">
+                Risky response
+              </span>
+              <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{item.riskyResponse}</p>
+            </div>
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+              How to verify
+            </span>
+            <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{item.howToVerify}</p>
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function GlossaryTable() {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<GlossaryCategory>("All");
+
+  const filtered = useMemo(() => {
+    return glossaryTerms.filter((t) => {
+      const matchCategory = category === "All" || t.category === category;
+      const matchSearch =
+        !search ||
+        t.term.toLowerCase().includes(search.toLowerCase()) ||
+        t.definition.toLowerCase().includes(search.toLowerCase());
+      return matchCategory && matchSearch;
+    });
+  }, [search, category]);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--notion-muted)]" strokeWidth={1.5} />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="용어 검색..."
+            className="w-full pl-9 pr-3 py-2 text-xs border border-[var(--notion-hairline)] rounded-md bg-white text-[var(--notion-ink)] placeholder:text-[var(--notion-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--notion-stone)]"
+          />
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {GLOSSARY_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`px-3 py-1.5 text-[11px] font-medium rounded-md transition-all duration-150 ${
+                category === cat
+                  ? "bg-[var(--notion-ink)] text-white"
+                  : "text-[var(--notion-stone)] hover:text-[var(--notion-ink)] hover:bg-[var(--notion-surface)]"
+              }`}
+            >
+              {glossaryCategoryLabels[cat]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
+              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] w-[180px]">용어</th>
+              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">설명</th>
+              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] hidden lg:table-cell">My Note</th>
+              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] w-[100px]">분류</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((term) => (
+              <tr key={term.term} className="border-b border-[var(--notion-hairline)] last:border-b-0 hover:bg-[var(--notion-surface)]/50 transition-colors">
+                <td className="px-4 py-3 font-medium text-[var(--notion-ink)] leading-[1.7] align-top">{term.term}</td>
+                <td className="px-4 py-3 text-[var(--notion-slate)] leading-[1.7] align-top">{term.definition}</td>
+                <td className="px-4 py-3 text-[var(--notion-ink)] leading-[1.7] align-top hidden lg:table-cell">{term.myNote}</td>
+                <td className="px-4 py-3 align-top">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
+                    {term.category}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="text-xs text-[var(--notion-muted)] text-center py-8">
+          검색 결과가 없습니다.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PolicyCard({ item, index }: { item: PolicyItem; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <article className="border border-[var(--notion-hairline)] rounded-md">
+      <button
+        type="button"
+        onClick={() => setExpanded((p) => !p)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <h4 className="text-sm font-bold text-[var(--notion-ink)]">{item.title}</h4>
+        </div>
+        <ChevronDown
+          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+      {expanded && (
+        <div className="px-5 pb-5 space-y-4 border-t border-[var(--notion-hairline)] pt-4">
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+              What it says
+            </span>
+            <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{item.whatItSays}</p>
+          </div>
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+              Why it matters
+            </span>
+            <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{item.whyItMatters}</p>
+          </div>
+          <div className="border-l-2 border-[var(--notion-hairline)] pl-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+              My takeaway
+            </span>
+            <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{item.myTakeaway}</p>
+          </div>
+          <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
+            Ref: {item.source}
+          </span>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function CompanyPrincipleCard({ data }: { data: CompanyPrinciple }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <article className="border border-[var(--notion-hairline)] rounded-md">
+      <button
+        type="button"
+        onClick={() => setExpanded((p) => !p)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <h4 className="text-sm font-bold text-[var(--notion-ink)]">{data.company}</h4>
+        <ChevronDown
+          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+      {expanded && (
+        <div className="px-5 pb-5 space-y-5 border-t border-[var(--notion-hairline)] pt-4">
+          {data.principles.map((p) => (
+            <div key={p.principle} className="space-y-2">
+              <h5 className="text-xs font-bold text-[var(--notion-ink)]">{p.principle}</h5>
+              <div>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+                  Key idea
+                </span>
+                <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{p.keyIdea}</p>
+              </div>
+              <div className="border-l-2 border-[var(--notion-hairline)] pl-3">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
+                  What I learned
+                </span>
+                <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{p.whatILearned}</p>
+              </div>
+            </div>
+          ))}
+          <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
+            Ref: {data.source}
+          </span>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function ModelFamilyCard({ family }: { family: ModelFamily }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <article className="border border-[var(--notion-hairline)] rounded-md">
+      <button
+        type="button"
+        onClick={() => setExpanded((p) => !p)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left"
+      >
+        <h4 className="text-sm font-bold text-[var(--notion-ink)]">{family.provider}</h4>
+        <ChevronDown
+          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.5}
+        />
+      </button>
+      {expanded && (
+        <div className="px-5 pb-5 border-t border-[var(--notion-hairline)] pt-4">
+          <div className="space-y-6">
+            {family.models.map((model) => (
+              <div key={model.model} className="space-y-2">
+                <h5 className="text-xs font-bold text-[var(--notion-ink)]">{model.model}</h5>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Strength</span>
+                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{model.strength}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Best use case</span>
+                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{model.bestUseCase}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Limitation</span>
+                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{model.limitation}</p>
+                  </div>
+                  <div className="border-l-2 border-[var(--notion-hairline)] pl-3">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">My usage rule</span>
+                    <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{model.myUsageRule}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+/* ── Data Table ── */
 
 function DataTable({ data }: { data: DataTableData }) {
   return (
@@ -573,120 +762,6 @@ function DataTable({ data }: { data: DataTableData }) {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function CodeBlock({ code }: { code: string }) {
-  return (
-    <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] overflow-x-auto">
-      <pre className="px-5 py-4 text-xs leading-[1.8] text-[var(--notion-ink)] whitespace-pre-wrap">
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-}
-
-function CompanyGuideCard({ guide }: { guide: CompanyGuide }) {
-  const [expanded, setExpanded] = useState(false);
-  const toggle = useCallback(() => setExpanded((p) => !p), []);
-
-  return (
-    <article className="border border-[var(--notion-hairline)] rounded-md">
-      <button
-        type="button"
-        onClick={toggle}
-        className="w-full flex items-center justify-between px-5 py-4 text-left"
-      >
-        <h4 className="text-sm font-bold text-[var(--notion-ink)]">{guide.name}</h4>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-
-      {expanded && (
-        <div className="px-5 pb-5 space-y-4 border-t border-[var(--notion-hairline)] pt-4">
-          <div className="overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">원칙</th>
-                  <th className="text-left px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">사용 방식</th>
-                </tr>
-              </thead>
-              <tbody>
-                {guide.principles.map((p) => (
-                  <tr key={p.principle} className="border-b border-[var(--notion-hairline)] last:border-b-0">
-                    <td className="px-4 py-2.5 font-medium text-[var(--notion-ink)] leading-[1.7]">{p.principle}</td>
-                    <td className="px-4 py-2.5 text-[var(--notion-slate)] leading-[1.7]">{p.usage}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div>
-            <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
-              프롬프트 구조
-            </h5>
-            <CodeBlock code={guide.promptTemplate} />
-          </div>
-        </div>
-      )}
-    </article>
-  );
-}
-
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-[var(--notion-hairline)] last:border-b-0">
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        className="w-full flex items-start justify-between gap-3 px-0 py-4 text-left"
-      >
-        <span className="text-xs font-medium text-[var(--notion-ink)] leading-relaxed">
-          {question}
-        </span>
-        <ChevronDown
-          className={`w-4 h-4 mt-0.5 shrink-0 text-[var(--notion-stone)] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {open && (
-        <p className="text-xs leading-[1.8] text-[var(--notion-slate)] pb-4">
-          {answer}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/* ── Agent Flow ── */
-
-function AgentFlow() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-x-6 border-y border-[var(--notion-hairline)]">
-      {agentFlowSteps.map((step, index) => (
-        <div key={step} className="relative">
-          <div className="min-h-[86px] py-4 border-b border-[var(--notion-hairline)] sm:last:border-b-0 xl:border-b-0">
-            <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <p className="text-xs leading-[1.6] font-semibold text-[var(--notion-ink)] mt-3">
-              {step}
-            </p>
-          </div>
-          {index < agentFlowSteps.length - 1 && (
-            <ArrowRight
-              className="hidden xl:block absolute -right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--notion-muted)]"
-              strokeWidth={1.5}
-            />
-          )}
-        </div>
-      ))}
     </div>
   );
 }
@@ -805,7 +880,7 @@ function ToolList({ title, items, marker }: { title: string; items: string[]; ma
   );
 }
 
-/* ── Media Notes (unchanged) ── */
+/* ── Media Notes (LOCKED — DO NOT MODIFY) ── */
 
 const sourceIcon = {
   YouTube: Play,

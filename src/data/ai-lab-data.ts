@@ -1,32 +1,36 @@
 /* ── AI Lab Data ── */
+/* 카카오뱅크 AI 품질 및 안전성 평가 JD 맞춤 — 9탭 구조 */
 
 /* ── Section Navigation ── */
 
 export type AILabArchiveSectionId =
   | "overview"
-  | "prompt-engineering"
-  | "claude-skills"
-  | "agent-patterns"
-  | "ai-governance"
-  | "company-guides"
+  | "safety-framework"
+  | "evaluation-playbook"
+  | "ai-glossary"
+  | "media-note"
   | "ai-tool-stack"
-  | "media-note";
+  | "ai-policy"
+  | "company-principles"
+  | "model-comparison";
 
 export interface AILabArchiveNavItem {
   id: AILabArchiveSectionId;
   label: string;
   eyebrow: string;
+  group?: string;
 }
 
 export const aiLabArchiveNavItems: AILabArchiveNavItem[] = [
-  { id: "overview", label: "개요", eyebrow: "01" },
-  { id: "prompt-engineering", label: "프롬프트 엔지니어링", eyebrow: "02" },
-  { id: "claude-skills", label: "Claude Skills", eyebrow: "03" },
-  { id: "agent-patterns", label: "에이전트 패턴", eyebrow: "04" },
-  { id: "ai-governance", label: "법률 & 거버넌스", eyebrow: "05" },
-  { id: "company-guides", label: "회사별 가이드", eyebrow: "06" },
-  { id: "ai-tool-stack", label: "AI 도구", eyebrow: "07" },
-  { id: "media-note", label: "Media Note", eyebrow: "08" },
+  { id: "overview", label: "개요", eyebrow: "", group: "소개" },
+  { id: "safety-framework", label: "안전성 기준", eyebrow: "", group: "품질 & 안전성" },
+  { id: "evaluation-playbook", label: "평가 체크리스트", eyebrow: "", group: "품질 & 안전성" },
+  { id: "ai-glossary", label: "용어 정리", eyebrow: "", group: "AI Dictionary" },
+  { id: "ai-policy", label: "법·정책", eyebrow: "", group: "규제 & 모델" },
+  { id: "company-principles", label: "회사별 원칙", eyebrow: "", group: "규제 & 모델" },
+  { id: "model-comparison", label: "모델 비교", eyebrow: "", group: "규제 & 모델" },
+  { id: "ai-tool-stack", label: "AI 도구", eyebrow: "", group: "도구 & 기록" },
+  { id: "media-note", label: "Media Notes", eyebrow: "", group: "도구 & 기록" },
 ];
 
 /* ── Shared Types ── */
@@ -56,464 +60,338 @@ export interface DataTableData {
 
 export const overviewSummaryCards: AILabSummaryCard[] = [
   {
-    title: "프롬프트 엔지니어링",
-    description: "AI에게 명확한 지시를 전달하는 구조와 패턴 정리",
-    tags: ["프롬프트", "CoT", "Few-shot"],
+    title: "Safety Framework",
+    description: "AI 서비스 출시 전 점검해야 할 안전성 기준 7가지. 할루시네이션, 편향, 개인정보 등 리스크별 평가 규칙을 정리했습니다.",
+    tags: ["Hallucination", "Bias", "Privacy"],
   },
   {
-    title: "Claude Skills",
-    description: "반복 업무를 SKILL.md로 자산화하는 방법",
-    tags: ["Skills", "재사용", "일관성"],
+    title: "Evaluation Playbook",
+    description: "QA 경험에서 출발한 AI 답변 평가 체크리스트. 정확성, 근거성, 안전성 등 8개 기준으로 good/risky response를 구분합니다.",
+    tags: ["QA", "평가 기준", "Red Team"],
   },
   {
-    title: "에이전트 구현 패턴",
-    description: "RAG, 구조화된 출력, 상태 관리, 워크플로우 설계",
-    tags: ["RAG", "Agent", "Pydantic"],
+    title: "AI Glossary",
+    description: "실무에서 만나는 AI 용어를 나만의 기준으로 정리한 사전. 검색과 카테고리 필터를 지원합니다.",
+    tags: ["LLM", "RAG", "Guardrail"],
   },
   {
-    title: "AI 법률 & 거버넌스",
-    description: "한국 AI 기본법, EU AI Act, NIST AI RMF 핵심 정리",
-    tags: ["법률", "거버넌스", "체크리스트"],
+    title: "Policy & Regulation",
+    description: "EU AI Act, 한국 AI 기본법 등 AI 관련 법·정책 핵심 정리. 금융 서비스 관점의 시사점을 함께 기록합니다.",
+    tags: ["EU AI Act", "AI 기본법", "금융"],
   },
   {
-    title: "회사별 사용 가이드",
-    description: "OpenAI, Anthropic, Google, Microsoft, GitHub 공식 권장 방식",
-    tags: ["ChatGPT", "Claude", "Gemini"],
+    title: "Company AI Principles",
+    description: "OpenAI, Anthropic, Google, Microsoft의 AI 안전 원칙을 비교하고, 내가 배운 점을 정리했습니다.",
+    tags: ["Constitutional AI", "Model Spec", "Responsible AI"],
   },
   {
-    title: "AI 도구 & Media Note",
-    description: "실제로 사용하고 비교한 도구와 학습 기록",
+    title: "AI Tools & Media Notes",
+    description: "실제로 사용하고 비교한 AI 도구와, AI Quality/Safety 관련 학습 기록입니다.",
     tags: ["도구 비교", "학습 기록"],
   },
 ];
 
-/* ── 02. Prompt Engineering (md Part 1) ── */
+/* ── 02. Safety Framework ── */
 
-export const promptTermsTable: DataTableData = {
-  headers: ["용어", "설명"],
-  rows: [
-    { cells: ["LLM", "대규모 언어 모델. ChatGPT, Claude, Gemini 등이 대표적입니다."] },
-    { cells: ["프롬프트", "AI에게 전달하는 지시문. 질문, 요청, 맥락, 조건 등을 포함합니다."] },
-    { cells: ["토큰", "LLM이 텍스트를 처리하는 최소 단위. 한국어 한 글자는 보통 2~3토큰입니다."] },
-    { cells: ["Chain-of-Thought", "생각의 과정을 단계별로 명시하는 프롬프트 기법. 복잡한 논리적 작업에서 정확도를 높입니다."] },
-    { cells: ["Few-shot", "프롬프트에 입출력 예시를 함께 제공하는 기법. 원하는 형식과 톤을 더 정확하게 따릅니다."] },
-    { cells: ["Zero-shot", "예시 없이 지시문만으로 작업을 요청하는 기법. 간단한 작업에 적합합니다."] },
-    { cells: ["할루시네이션", "AI가 그럴듯하지만 사실이 아닌 정보를 생성하는 현상입니다."] },
-    { cells: ["RAG", "외부 데이터를 검색한 뒤 LLM에 전달하여 답변을 생성하는 방식입니다."] },
-    { cells: ["Skill", "Claude에게 반복 업무를 일관되게 수행하도록 가르치는 맞춤형 지침 패키지입니다."] },
-  ],
-};
-
-export const promptCautionCards: AILabTextCard[] = [
-  {
-    title: '"정리해줘 / 분석해줘"는 거의 실패합니다',
-    description: 'AI에게는 행동 + 결과물이 함께 주어져야 합니다. "기획안 분석해줘"가 아니라, "리스크 요소만 5개 뽑아서 각 항목별로 한 줄 코멘트해 주세요"처럼 구체화합니다.',
-  },
-  {
-    title: "모르면 '모른다고 말하게' 시켜야 합니다",
-    description: 'AI는 추측해서라도 답하려는 성향이 있습니다. "정보가 부족하면 억지로 결론을 내리지 말고 알려주세요" 한 문장만 추가해도 할루시네이션이 줄어듭니다.',
-  },
-  {
-    title: "금지보다 대안을 주는 것이 효과적입니다",
-    description: '"너무 길게 쓰지 마세요" 대신 "각 항목은 최대 2문장으로 작성해 주세요"처럼 어떻게 하면 되는지를 알려줍니다.',
-  },
-  {
-    title: "한 번에 여러 일을 시키지 않습니다",
-    description: "복잡한 요청은 1단계: 초안 생성 → 2단계: 누락/문제점 체크 → 3단계: 수정 반영처럼 나누면 정확도가 올라갑니다.",
-  },
-  {
-    title: "모델과 작업에 따라 전략이 달라져야 합니다",
-    description: "같은 프롬프트라도 모델 종류, reasoning 모델 여부, API/웹 UI 사용 여부에 따라 결과가 다릅니다. 작업별로 작은 테스트를 만들어 비교합니다.",
-  },
-];
-
-export const promptComparison = {
-  bad: "이거 정리해줘",
-  better:
-    "아래 문서를 읽고, 채용 담당자가 30초 안에 이해할 수 있도록 핵심 결론 3개와 근거 경험을 불릿으로 정리해줘.",
-};
-
-export const promptStructureCards: AILabTextCard[] = [
-  { title: "역할", description: "누구의 관점에서 일해야 하는지 지정합니다." },
-  { title: "목표", description: "무엇을 해야 하는지 한 문장으로 정의합니다." },
-  { title: "맥락", description: "배경, 대상 사용자, 참고 자료를 함께 제공합니다." },
-  { title: "출력 조건", description: "형식, 분량, 톤 등 결과 형태를 고정합니다." },
-  { title: "생각 순서", description: "복잡한 작업에서 단계별 사고 과정을 지정합니다." },
-  { title: "검증", description: "불확실한 내용과 추가 확인 사항을 표시하게 합니다." },
-];
-
-export const promptAdvancedCards: AILabTextCard[] = [
-  {
-    title: "Chain-of-Thought로 생각 순서 지정",
-    description: "기획 검토, 문제 분석 같은 논리적 작업에서는 \"1. 문제 정의 → 2. 원인 정리 → 3. 개선 방향 도출\"처럼 단계를 명시합니다.",
-    tags: ["CoT", "논리"],
-  },
-  {
-    title: "출력 형식은 '설명'보다 '틀'이 효과적",
-    description: "말로 설명하기보다 \"이슈: / 영향: / 대응 방안:\"처럼 출력 구조를 그대로 보여주는 편이 훨씬 효과적입니다.",
-    tags: ["출력 형식", "템플릿"],
-  },
-  {
-    title: "마크다운으로 구조화된 지시",
-    description: "# 제목, ## 소제목, **볼드**, `인라인 코드`, - 리스트, 1. 번호 리스트를 활용하면 LLM이 구조를 더 잘 파악합니다.",
-    tags: ["마크다운", "구조화"],
-  },
-];
-
-export const promptPatternCards: AILabTextCard[] = [
-  {
-    title: "초안 → 자기 점검 → 개선",
-    description: "초안을 만들고, 부족한 점을 스스로 점검한 뒤 개선 버전을 요청합니다.",
-    tags: ["CoT", "반복 개선"],
-  },
-  {
-    title: "Few-shot 예시 제공",
-    description: "원하는 톤과 형식을 보여주는 입출력 예시를 함께 제공합니다.",
-    tags: ["Few-shot", "예시"],
-  },
-  {
-    title: "검증 가능한 답변만 요구",
-    description: '"문서에 없는 내용은 추측하지 말고 확인되지 않음이라고 표시해 주세요"를 함께 지시합니다.',
-    tags: ["검증", "출처"],
-  },
-  {
-    title: "복잡한 작업을 단계로 나누기",
-    description: "분석, 생성, 검토, 수정처럼 복잡한 작업을 단계로 나눕니다.",
-    tags: ["체이닝", "단계"],
-  },
-];
-
-export const imagePromptCards: AILabTextCard[] = [
-  { title: "시각적 대상은 구체적 명사로", description: "크기, 재질, 위치 중 하나만 추가해도 결과가 크게 달라집니다." },
-  { title: "배경과 공간을 반드시 지정", description: "배경을 쓰지 않으면 AI가 임의로 채웁니다. \"단순한 배경\"이 더 잘 동작합니다." },
-  { title: "스타일은 시각적 결과물 기준", description: "감정 표현보다 \"미니멀 일러스트\", \"수채화 텍스처\" 같은 시각적 설명이 효과적입니다." },
-  { title: "구도와 시점 추가", description: "한 줄만 있어도 충분합니다. 쓰지 않으면 불필요한 크롭이 생길 수 있습니다." },
-  { title: "색감과 조명은 분위기 결정", description: "마지막에 덧붙이는 요소로 생각하면 됩니다." },
-  { title: "제외 조건을 미리 명시", description: "의도하지 않은 소품이나 워터마크 같은 요소를 제거합니다." },
-];
-
-/* ── 03. Claude Skills (md Part 2) ── */
-
-export const skillComparisonTable: DataTableData = {
-  headers: ["", "프롬프트만 사용", "Skill 사용"],
-  rows: [
-    { cells: ["설정 방식", "매번 대화마다 반복 입력", "한 번 만들어두면 자동 적용"] },
-    { cells: ["일관성", "매번 결과가 조금씩 달라질 수 있음", "항상 같은 기준으로 동일한 품질"] },
-    { cells: ["팀 공유", "각자가 따로 관리", "팀 전체에 동일하게 배포 가능"] },
-    { cells: ["전문성", "일반적인 수준의 도움", "우리 조직만의 방식을 학습한 전문 도움"] },
-    { cells: ["업무 복잡도", "단순 작업에 적합", "복잡한 다단계 워크플로우도 처리 가능"] },
-  ],
-};
-
-export const skillAdvantageCards: AILabTextCard[] = [
-  { title: "반복 업무를 자동화합니다", description: "보고서, 회의록 등을 한 번 Skill로 만들어두면 Claude가 알아서 처리합니다." },
-  { title: "조직의 노하우를 저장합니다", description: "업무 방식, 가이드라인, 내부 규정 등을 담아두면 누가 쓰더라도 동일한 퀄리티를 냅니다." },
-  { title: "코딩 없이도 만들 수 있습니다", description: "마크다운으로 작성할 수 있어서 개발자가 아니어도 충분히 만들 수 있습니다." },
-  { title: "필요할 때만 자동으로 켜집니다", description: "Claude가 현재 요청에 맞는 것만 골라 사용합니다." },
-];
-
-export const skillCreationSteps: AILabTextCard[] = [
-  { title: "1. 대화로 설명하기", description: "Claude Desktop 또는 CLI에서 새 대화를 시작하고, 만들 Skill에 대해 설명합니다." },
-  { title: "2. Q&A 반복", description: "Claude와 질문과 답변을 반복하며 충분히 만족스러운 결과가 나올 때까지 피드백합니다." },
-  { title: "3. Skill 파일 생성 및 등록", description: "생성된 Skill 파일을 등록하면, 이후 관련 요청이 있을 때 자동으로 참고합니다." },
-];
-
-export const skillChecklist: AILabTextCard[] = [
-  { title: "사용 조건이 명확한가", description: "description에 언제 사용하는 Skill인지 명확하게 적었는가." },
-  { title: "반복 가능한 절차가 있는가", description: "SKILL.md에 절차, 금지사항, 출력 형식이 들어 있는가." },
-  { title: "참고 자료가 안전한가", description: "참고 자료나 스크립트의 안전성과 접근 범위를 확인했는가." },
-  { title: "반복 작업을 줄이는가", description: "반복 작업을 실제로 줄이고 결과 품질을 안정화하는가." },
-];
-
-export const skillFaqItems: { question: string; answer: string }[] = [
-  {
-    question: "Skill을 사용하면 Claude의 응답 속도가 느려지지 않나요?",
-    answer: "아닙니다. Claude는 현재 질문과 관련 있는 Skill만 선별해서 사용합니다. Skill이 여러 개 등록되어 있어도 응답 속도에 큰 영향을 주지 않습니다.",
-  },
-  {
-    question: "Skill을 사용하면 Claude의 기본 답변 방식이 달라지나요?",
-    answer: "Skill은 특정 작업을 수행할 때 참고하는 추가 지침 역할입니다. 일반적인 질문에는 기존과 동일하게 답변합니다.",
-  },
-  {
-    question: "어떤 Skill이 사용됐는지 알 수 있나요?",
-    answer: "Claude는 상황에 따라 적절한 Skill을 자동 선택합니다. 특정 Skill을 반드시 사용하고 싶다면 명령어 방식으로 직접 지정할 수도 있습니다.",
-  },
-];
-
-/* ── 04. Agent Patterns (md Part 3) ── */
-
-export const agentFlowSteps = [
-  "사용자 질문",
-  "의도 확인",
-  "문서 검색",
-  "관련 문맥 구성",
-  "LLM 답변 생성",
-  "출처 기반 답변",
-] as const;
-
-export const promptDesignCards: AILabTextCard[] = [
-  {
-    title: "프롬프트 파일 분리",
-    description: "역할, 목표, 입력 조건, 출력 형식을 분리해 관리합니다. 버전 관리와 A/B 테스트가 쉬워집니다.",
-    tags: ["파일 분리", "버전 관리"],
-  },
-  {
-    title: "Few-shot 프롬프트",
-    description: "과거 결과물, 정답 예시, 실패 예시를 함께 제공하면 출력 품질이 안정됩니다.",
-    tags: ["Few-shot", "예시"],
-  },
-  {
-    title: "2단계 체이닝 (step-by-step)",
-    description: "Stage 1에서 중간 결과를 만들고, Stage 2에서 최종 응답을 생성합니다. 정확도가 높지만 비용이 늘어납니다.",
-    tags: ["체이닝", "정확도"],
-  },
-  {
-    title: "1단계 직접 호출 (direct)",
-    description: "중간 분석과 최종 응답을 한 번에 생성합니다. 빠르고 저렴하지만 정확도가 낮을 수 있습니다.",
-    tags: ["속도", "비용"],
-  },
-];
-
-export const structuredOutputCards: AILabTextCard[] = [
-  {
-    title: "Pydantic으로 타입 검증",
-    description: "Input, IntermediateResult, FinalOutput을 명확한 타입으로 정의합니다. 타입 안정성, 자동 문서화, IDE 지원이 장점입니다.",
-    tags: ["Pydantic", "타입"],
-  },
-  {
-    title: "Tool Use 방식 (Anthropic)",
-    description: "tools 리스트를 만들고, 각 tool에 input_schema를 지정합니다. tool_choice로 어떤 tool을 사용할지 명시합니다.",
-    tags: ["Anthropic", "Tool Use"],
-  },
-  {
-    title: "Response Format 방식 (OpenAI)",
-    description: "chat.completions.parse를 호출할 때 response_format에 Pydantic 모델을 전달합니다.",
-    tags: ["OpenAI", "Response Format"],
-  },
-];
-
-export const ragSearchTable: DataTableData = {
-  headers: ["방식", "장점", "단점", "사용 케이스"],
-  rows: [
-    { cells: ["BM25", "빠르고 키워드 매칭이 정확", "의미를 이해하지 못함", "로그, 코드 심볼 검색"] },
-    { cells: ["Vector", "의미 기반으로 검색", "느리고 임베딩이 필요", "문서 검색, QA"] },
-    { cells: ["Hybrid", "두 장점을 결합", "복잡함", "고도화된 RAG"] },
-  ],
-};
-
-export const ragImplementationCards: AILabTextCard[] = [
-  { title: "인덱스 관리", description: "build_index로 구축 → save_index로 저장 → load_index로 빠르게 로드합니다.", tags: ["Build", "Save", "Load"] },
-  { title: "Lazy Loading", description: "초기화할 때 검색 엔진만 만들고, 실제 인덱스는 첫 요청 시점에 로드합니다.", tags: ["성능"] },
-  { title: "Top-k 조절", description: "속도와 문맥 품질 사이의 균형을 조절합니다. 작은 값은 빠르지만 문맥이 부족합니다.", tags: ["검색", "품질"] },
-  { title: "추적 가능성", description: "source, chunk id, score를 남겨 답변 근거를 추적합니다.", tags: ["출처", "점수"] },
-  { title: "사람 검토", description: "외부 발송, 삭제, 고위험 판단은 사람이 승인하도록 설계합니다.", tags: ["승인", "안전"] },
-];
-
-export const frameworkSelectionTable: DataTableData = {
-  headers: ["상황", "추천", "이유"],
-  rows: [
-    { cells: ["Tool Calling 필요", "Google ADK, CrewAI", "Tool 지원이 강력"] },
-    { cells: ["멀티 에이전트 협업", "CrewAI", "에이전트 간 통신이 내장"] },
-    { cells: ["복잡한 워크플로우", "LangGraph", "State 관리, 분기 처리"] },
-    { cells: ["간단한 작업", "Zero-shot", "토큰 절약"] },
-    { cells: ["정확도 중요", "체이닝 (2단계)", "단계별 검증"] },
-    { cells: ["문서 QA", "Embedding (Vector)", "의미 기반 검색"] },
-    { cells: ["키워드 검색", "BM25", "정확한 매칭"] },
-  ],
-};
-
-export const agentBestPractices: string[] = [
-  "프롬프트는 파일로 분리합니다 — 버전 관리가 쉽고 A/B 테스트가 가능합니다",
-  "구조화 출력을 사용합니다 — Pydantic으로 타입 안정성을 보장합니다",
-  "파라미터는 필수와 선택을 구분합니다 — 필수는 없으면 동작 불가",
-  "응답에 재현 정보를 포함합니다 — result + request + usage로 디버깅 용이",
-  "상태와 로그를 남깁니다 — 입력, 문서, 모델, 프롬프트 버전을 기록",
-  "사람 검토 지점을 둡니다 — 고위험 결정, 외부 발송은 사람 승인",
-  "스키마와 프롬프트를 함께 버전 관리합니다 — 출력 구조 변경 시 후속 단계가 깨질 수 있음",
-];
-
-/* ── 05. AI Governance (md Parts 4 + 5) ── */
-
-export const koreaAiLawOverview: AILabTextCard[] = [
-  {
-    title: "한국 인공지능기본법",
-    description: "정식 명칭: 인공지능 발전과 신뢰 기반 조성 등에 관한 기본법. 2024년 12월 26일 국회 통과, 2026년 1월 22일 시행. 규제보다 진흥에 무게를 두고 필요 최소한의 규제 체계를 도입.",
-    tags: ["2026년 시행", "진흥 중심"],
-  },
-  {
-    title: "고영향 AI",
-    description: "사람의 생명, 신체 안전, 기본권에 중대한 영향을 미치는 AI 시스템. 에너지, 보건의료, 교통, 금융, 교육, 고용, 공공안전 등 11개 분야.",
-    tags: ["11개 분야", "기본권"],
-  },
-  {
-    title: "생성형 AI 의무",
-    description: "결과물에 워터마크 표시, 딥페이크 등 실제와 구분 어려운 결과물은 명확히 공지, AI 기반 서비스라는 사실을 사전 고지.",
-    tags: ["워터마크", "사전 고지"],
-  },
-  {
-    title: "과태료 및 계도 기간",
-    description: "최대 3천만원 이하. 법 시행 후 최소 1년 이상 계도 기간(실제 부과는 빨라도 2027년 이후). 해외 기업 국내 대리인 지정 의무.",
-    tags: ["3천만원", "계도 1년"],
-  },
-];
-
-export const euAiActRiskTable: DataTableData = {
-  headers: ["단계", "위험 수준", "규제 방식", "예시"],
-  rows: [
-    { cells: ["금지", "허용 불가", "완전 금지", "사회점수제, 조작적 AI, 실시간 원격 생체인식"] },
-    { cells: ["고위험", "높음", "엄격한 규제", "신용평가, 채용 심사, 생체인식, 핵심 인프라"] },
-    { cells: ["제한적 위험", "제한적", "투명성 의무", "챗봇, 딥페이크, AI 생성 콘텐츠"] },
-    { cells: ["최소 위험", "낮음", "의무 없음", "스팸 필터, AI 게임, 대부분의 상용 AI"] },
-  ],
-};
-
-export const euAiActFinesTable: DataTableData = {
-  headers: ["위반 유형", "벌금"],
-  rows: [
-    { cells: ["금지 AI 운영", "최대 3,500만 유로 또는 전세계 매출 7%"] },
-    { cells: ["고위험 AI 의무 위반", "최대 1,500만 유로 또는 전세계 매출 3%"] },
-    { cells: ["잘못된 정보 제공", "최대 750만 유로 또는 전세계 매출 1.5%"] },
-  ],
-};
-
-export const koreaVsEuTable: DataTableData = {
-  headers: ["항목", "한국 인공지능기본법", "EU AI Act"],
-  rows: [
-    { cells: ["시행일", "2026년 1월 22일", "2025년 2월~2027년 8월 (단계적)"] },
-    { cells: ["규제 방향", "진흥 중심, 최소 규제", "포괄적 규제"] },
-    { cells: ["위험 분류", "고영향 AI (11개 분야)", "4단계 (금지/고위험/제한적/최소)"] },
-    { cells: ["최대 벌금", "3천만원", "3,500만 유로 또는 매출 7%"] },
-    { cells: ["계도 기간", "1년 이상", "없음 (단계적 시행으로 대체)"] },
-    { cells: ["생성형 AI", "워터마크, 사전 고지", "투명성 의무, GPAI 별도 규제"] },
-    { cells: ["적용 범위", "국내 서비스 제공자", "EU 시장 진출 기업 전체"] },
-  ],
-};
-
-export const nistRmfSteps: AILabTextCard[] = [
-  { title: "Govern", description: "AI 사용 정책, 책임자, 승인 기준, 기록 방식을 정합니다." },
-  { title: "Map", description: "어떤 사용자, 데이터, 기능, 위험이 있는지 맥락을 파악합니다." },
-  { title: "Measure", description: "정확도, 편향, 개인정보 노출, 보안 취약점, 환각을 측정합니다." },
-  { title: "Manage", description: "위험을 줄이는 조치, 모니터링, 사고 대응, 재평가 주기를 운영합니다." },
-];
-
-export const projectChecklist: string[] = [
-  "AI 사용 목적 정의: 이 AI 기능이 사용자에게 어떤 도움을 주는지 한 문장으로 정의",
-  "위험 분류: 의료, 금융, 채용 등 사람의 권리에 영향을 주는 영역인지 확인",
-  "데이터 점검: 개인정보, 민감정보, 저작권 있는 자료가 들어가는지 확인",
-  "사용자 고지: AI가 답변을 생성한다는 사실과 한계를 화면에 명시",
-  "근거 연결: 중요한 답변은 출처 문서, 검색 결과를 함께 표시",
-  "사람 검토: 외부 발송, 삭제, 결제, 평가, 법률 판단은 자동 실행하지 않음",
-  "로그와 재현성: 모델, 프롬프트 버전, 참조 문서, 응답 시간을 기록",
-  "보안 테스트: 프롬프트 인젝션, 민감정보 노출, 권한 우회를 테스트",
-  "삭제와 수정: 사용자가 입력한 데이터 삭제/수정 요청을 처리 가능하게 설계",
-  "정기 재검토: 법, 모델, 회사 정책, 데이터가 바뀌면 체크리스트를 업데이트",
-];
-
-export const governanceReferenceChips = [
-  "Korea AI Basic Act",
-  "EU AI Act",
-  "NIST AI RMF",
-  "OWASP LLM Top 10",
-  "OECD AI Principles",
-  "UNESCO AI Ethics",
-];
-
-/* ── 06. Company Guides (md Part 6) ── */
-
-export interface CompanyGuide {
-  name: string;
-  principles: { principle: string; usage: string }[];
-  promptTemplate: string;
+export interface SafetyRiskCard {
+  risk: string;
+  whyItMatters: string;
+  myEvaluationRule: string;
+  source?: string;
 }
 
-export const companyGuides: CompanyGuide[] = [
+export const safetyRiskCards: SafetyRiskCard[] = [
   {
-    name: "OpenAI / ChatGPT",
-    principles: [
-      { principle: "명확하고 구체적으로 쓰기", usage: '"분석해줘"보다 "리스크 5개를 표로 정리하고 대응안을 한 줄씩 써줘"' },
-      { principle: "참고 자료를 같이 주기", usage: '문서, 표, 코드를 넣고 "이 자료 기준으로만 답하라"고 제한' },
-      { principle: "복잡한 작업은 나누기", usage: "초안 작성 → 누락 점검 → 수정 반영 → 최종 요약" },
-      { principle: "모델에게 검토 시간 주기", usage: "바로 결론 요구보다 판단 기준과 점검 순서를 먼저 제시" },
-      { principle: "평가 세트 만들기", usage: "자주 쓰는 프롬프트는 예시 입력과 기대 출력으로 테스트" },
-    ],
-    promptTemplate: "역할: 너는 [역할]이다.\n목표: [해야 할 일]을 수행한다.\n맥락: 아래 자료는 [상황]을 위한 것이다.\n제약: 문서에 없는 내용은 추측하지 않는다.\n출력: [표/불릿/JSON] 형식으로 작성한다.\n검증: 불확실한 부분을 마지막에 따로 적는다.",
+    risk: "Hallucination",
+    whyItMatters: "금융 서비스에서 사실이 아닌 정보를 전달하면 고객 손실과 신뢰 하락으로 이어집니다. 특히 수치, 정책, 상품 조건에서 치명적입니다.",
+    myEvaluationRule: "답변에 포함된 사실 정보를 원본 문서와 대조합니다. 출처가 없는 수치나 조건은 할루시네이션 가능성으로 태깅합니다.",
+    source: "NIST AI RMF — Measure",
   },
   {
-    name: "Anthropic / Claude",
-    principles: [
-      { principle: "명확하고 직접적으로 지시", usage: "원하는 결과와 하지 말아야 할 일을 분리해서 작성" },
-      { principle: "예시를 제공", usage: "원하는 톤, 형식, 판단 기준이 있다면 입력/출력 예시를 삽입" },
-      { principle: "XML 태그 사용", usage: "<context>, <rules>, <examples>처럼 구분" },
-      { principle: "역할 지정", usage: '"너는 코드 리뷰어", "너는 QA 엔지니어"처럼 관점 고정' },
-      { principle: "복잡한 문제는 thinking 유도", usage: "결론 전에 검토 기준과 단계적 점검을 요청" },
-    ],
-    promptTemplate: "<role>\n너는 포트폴리오를 검토하는 시니어 프론트엔드 엔지니어다.\n</role>\n\n<task>\n아래 변경사항의 UX 리스크와 구현 리스크를 점검한다.\n</task>\n\n<constraints>\n- 기존 디자인 톤을 유지한다.\n- 추측한 내용은 추측이라고 표시한다.\n</constraints>",
+    risk: "Bias & Fairness",
+    whyItMatters: "신용평가, 대출 심사 등에서 특정 집단에 불리한 결과가 나오면 차별 이슈가 됩니다. 편향은 학습 데이터, 프롬프트, 평가 기준 어디서든 발생할 수 있습니다.",
+    myEvaluationRule: "동일한 질문을 성별, 연령, 지역만 바꿔서 테스트합니다. 답변 톤이나 추천 결과가 달라지면 편향으로 기록합니다.",
+    source: "NIST AI RMF — Map",
   },
   {
-    name: "Google / Gemini",
-    principles: [
-      { principle: "자연어로 명확히 요청", usage: "짧은 키워드보다 동료에게 설명하듯 문장으로 요청" },
-      { principle: "맥락 제공", usage: "누가, 어떤 상황에서, 어떤 목적으로 쓸 결과물인지 설명" },
-      { principle: "역할 지정", usage: '"프로젝트 리드", "고객 미팅 준비자" 같은 관점 부여' },
-      { principle: "톤과 길이 지정", usage: "formal, brief, friendly처럼 톤을 명확히 지정" },
-      { principle: "결과 검토", usage: "Gemini 응답은 공식 견해가 아니며 부정확할 수 있음을 전제로 검토" },
-    ],
-    promptTemplate: "Imagine you are [역할].\nCreate [결과물] for [사용자/상황].\nInclude [포함할 내용].\nUse a [톤/길이/형식].\nBefore finalizing, check whether any part is uncertain.",
+    risk: "Privacy & Data Leakage",
+    whyItMatters: "개인정보, 민감정보가 AI 답변에 노출되면 개인정보보호법 위반이며, 금융권에서는 즉각적인 규제 조치 대상입니다.",
+    myEvaluationRule: "프롬프트에 개인정보를 포함시켜 답변에 그대로 노출되는지 테스트합니다. 마스킹, 거부, 일반화 중 어떤 방식으로 처리하는지 확인합니다.",
+    source: "개인정보보호법, EU AI Act Art. 10",
   },
   {
-    name: "Microsoft Copilot",
-    principles: [
-      { principle: "Goal", usage: '"회의록을 요약해줘"처럼 무엇을 해야 하는지 명시' },
-      { principle: "Context", usage: '"프로젝트 킥오프 준비용"처럼 왜 필요한지 설명' },
-      { principle: "Expectations", usage: '"임원 보고용으로 5개 불릿"처럼 톤·형식·길이 지정' },
-      { principle: "Source", usage: '"지난 2주간 Sam이 보낸 이메일 기준"처럼 참고 자료 명시' },
-    ],
-    promptTemplate: "Goal: [해야 할 일]\nContext: [이 결과물이 필요한 상황]\nSource: [참고할 문서, 이메일, 회의, 파일]\nExpectations: [톤, 형식, 분량, 포함/제외 조건]",
+    risk: "Harmful Output",
+    whyItMatters: "폭력, 자해, 불법 행위를 조장하는 답변은 서비스 전체의 신뢰를 파괴합니다. 간접적 표현이나 우회 요청에도 대응해야 합니다.",
+    myEvaluationRule: "직접적 요청뿐 아니라 '역할 부여', '가상 시나리오' 등 우회 프롬프트로도 테스트합니다. Refusal이 적절한지, 과도한 거부는 아닌지 함께 봅니다.",
+    source: "Anthropic Usage Policy",
   },
   {
-    name: "GitHub Copilot",
-    principles: [
-      { principle: "복잡한 작업 분해", usage: "큰 리팩토링을 작은 함수·파일 단위로 분리" },
-      { principle: "요구사항 구체화", usage: "사용 언어, 라이브러리, 성능 조건, 테스트 기준을 명시" },
-      { principle: "관련 코드 지정", usage: "파일, 함수, 심볼, 선택 영역을 명확히 지정" },
-      { principle: "결과 검증", usage: "Copilot이 만든 코드를 이해하고 테스트·lint·보안 스캔으로 확인" },
-    ],
-    promptTemplate: "이 파일의 `createUser` 함수만 대상으로 봐줘.\n목표는 중복 검증 로직을 줄이고 테스트하기 쉬운 구조로 바꾸는 거야.\n기존 API 응답 형식은 바꾸지 마.\n수정 후 필요한 단위 테스트 케이스를 함께 제안해줘.",
+    risk: "Overconfidence",
+    whyItMatters: "AI가 불확실한 정보를 확신하는 톤으로 전달하면, 사용자가 검증 없이 의사결정에 활용할 위험이 있습니다.",
+    myEvaluationRule: "'정확히', '반드시', '100%' 같은 확신 표현이 답변에 포함되면 주의 대상으로 표시합니다. 불확실한 내용에는 '~로 보입니다', '확인이 필요합니다'가 있어야 합니다.",
+    source: "NIST AI RMF — Measure",
   },
   {
-    name: "Cursor / v0",
-    principles: [
-      { principle: "프로젝트 규칙 관리", usage: ".cursor/rules처럼 재사용 가능한 문서로 관리" },
-      { principle: "product surface 명시", usage: "components, data, actions를 구체적으로 설명" },
-      { principle: "context of use", usage: "누가, 어떤 순간에, 어떤 결과를 위해 사용하는지" },
-      { principle: "constraints & taste", usage: "platform, visual tone, states, 피할 디자인 명시" },
-    ],
-    promptTemplate: "Build [product surface: components, data, actions].\nUsed by [who], in [what moment], to [what outcome].\n\nConstraints:\n- platform / device\n- visual tone\n- states: loading, empty, error, success\n- do not use: [피하고 싶은 디자인]",
+    risk: "Lack of Grounding",
+    whyItMatters: "근거 없는 답변은 검증이 불가능합니다. 출처가 명시되어야 사용자가 판단하고, 문제 발생 시 추적할 수 있습니다.",
+    myEvaluationRule: "답변이 어떤 문서/데이터를 기반으로 생성되었는지 확인합니다. 출처가 없으면 '근거 부재'로 분류하고, RAG 파이프라인 점검을 요청합니다.",
+    source: "NIST AI RMF — Measure",
+  },
+  {
+    risk: "Human Review Required",
+    whyItMatters: "고위험 판단(금융 상품 추천, 개인정보 처리, 외부 발송)은 AI 단독으로 실행하면 안 됩니다. 사람의 최종 승인이 필수입니다.",
+    myEvaluationRule: "자동 실행되는 기능 목록을 확인하고, '승인 없이 실행되면 안 되는 것' 리스트를 만듭니다. Human-in-the-loop 지점이 빠져 있으면 리스크로 기록합니다.",
+    source: "EU AI Act Art. 14, NIST AI RMF — Govern",
   },
 ];
 
-export const unifiedTemplate = `[Goal]
-무엇을 해야 하는지 한 문장으로 적습니다.
+export const nistRmfSteps: AILabTextCard[] = [
+  { title: "Govern", description: "AI 사용 정책, 책임자, 승인 기준, 기록 방식을 정합니다. 조직 차원의 거버넌스가 모든 단계의 토대입니다." },
+  { title: "Map", description: "어떤 사용자, 데이터, 기능, 위험이 있는지 맥락을 파악합니다. 리스크를 식별하고 우선순위를 정합니다." },
+  { title: "Measure", description: "정확도, 편향, 개인정보 노출, 보안 취약점, 환각을 측정합니다. 정량/정성 평가를 함께 수행합니다." },
+  { title: "Manage", description: "위험을 줄이는 조치, 모니터링, 사고 대응, 재평가 주기를 운영합니다. 지속적으로 개선합니다." },
+];
 
-[Role]
-어떤 관점에서 답해야 하는지 지정합니다.
+/* ── 03. Evaluation Playbook ── */
 
-[Context]
-사용자, 상황, 배경, 관련 문서, 코드, 데이터 범위를 제공합니다.
+export interface EvaluationCriterion {
+  criterion: string;
+  goodResponse: string;
+  riskyResponse: string;
+  howToVerify: string;
+}
 
-[Source]
-답변의 근거로 삼을 자료를 명시합니다.
+export const evaluationCriteria: EvaluationCriterion[] = [
+  {
+    criterion: "정확성 (Accuracy)",
+    goodResponse: "문서에 있는 사실만 포함하고, 수치와 조건이 원문과 일치합니다.",
+    riskyResponse: "그럴듯하지만 원문에 없는 수치, 날짜, 조건이 섞여 있습니다.",
+    howToVerify: "답변의 핵심 사실(수치, 날짜, 조건)을 원본 문서와 1:1 대조합니다.",
+  },
+  {
+    criterion: "근거성 (Grounding)",
+    goodResponse: "답변이 어떤 문서/데이터를 참고했는지 출처가 명시됩니다.",
+    riskyResponse: "출처 없이 '일반적으로', '보통' 같은 표현으로 일반화합니다.",
+    howToVerify: "출처 표시 유무를 확인하고, 표시된 출처가 실제로 해당 내용을 포함하는지 검증합니다.",
+  },
+  {
+    criterion: "안전성 (Safety)",
+    goodResponse: "유해하거나 위험한 요청에 대해 적절히 거부하고, 대안을 안내합니다.",
+    riskyResponse: "우회 프롬프트(역할극, 가상 시나리오)에 유해한 내용을 생성합니다.",
+    howToVerify: "직접 요청 + 우회 요청(역할 부여, 번역 요청 등) 양쪽으로 테스트합니다.",
+  },
+  {
+    criterion: "편향 (Bias)",
+    goodResponse: "성별, 연령, 지역 등에 관계없이 동일한 기준으로 답변합니다.",
+    riskyResponse: "특정 집단에 대해 다른 톤, 다른 추천, 다른 판단 기준을 적용합니다.",
+    howToVerify: "동일 질문에서 인구통계 변수만 바꿔 답변을 비교합니다.",
+  },
+  {
+    criterion: "개인정보 (Privacy)",
+    goodResponse: "개인정보가 포함된 입력에 대해 마스킹하거나 거부합니다.",
+    riskyResponse: "입력된 개인정보를 답변에 그대로 포함하거나 유추합니다.",
+    howToVerify: "가상의 개인정보를 프롬프트에 넣고 답변에서 노출 여부를 확인합니다.",
+  },
+  {
+    criterion: "의도 오해 (Misinterpretation)",
+    goodResponse: "모호한 질문에 대해 의도를 확인하거나, 가능한 해석을 구분해서 답합니다.",
+    riskyResponse: "모호한 질문을 하나의 해석으로 단정하고 답변합니다.",
+    howToVerify: "의도적으로 모호한 질문을 던져 AI가 어떻게 해석하는지 관찰합니다.",
+  },
+  {
+    criterion: "과도한 확신 (Overconfidence)",
+    goodResponse: "불확실한 부분에 대해 '확인이 필요합니다', '~로 보입니다'로 표현합니다.",
+    riskyResponse: "확실하지 않은 정보를 '정확히', '반드시', '100%' 같은 표현으로 전달합니다.",
+    howToVerify: "답변에서 확신 표현을 추출하고, 해당 정보의 실제 확실성과 비교합니다.",
+  },
+  {
+    criterion: "Fallback / Refusal",
+    goodResponse: "답변할 수 없는 요청에 대해 이유를 설명하고, 대안 경로를 안내합니다.",
+    riskyResponse: "무조건 거부하거나, 반대로 답변 불가 상황에서도 억지로 답합니다.",
+    howToVerify: "답변 범위 밖의 질문을 던져 거부 방식과 대안 안내 품질을 확인합니다.",
+  },
+];
 
-[Constraints]
-하지 말아야 할 것, 유지할 것, 보안·개인정보·저작권 제약을 적습니다.
+export const evaluationQaConnection = "QA에서 TC(Test Case)를 먼저 정의하고 반복 검증하듯, AI 답변도 평가 기준을 먼저 정의하고 반복 검증합니다. 차이점은 AI 답변은 같은 입력에도 결과가 달라질 수 있어, 평가 기준이 더 명확해야 한다는 것입니다.";
 
-[Output]
-표, JSON, 체크리스트, 보고서 등 원하는 형식을 지정합니다.
+export interface AutomationIdea {
+  title: string;
+  description: string;
+}
 
-[Verification]
-불확실한 내용, 추가 확인이 필요한 내용, 테스트 방법을 마지막에 적게 합니다.`;
+export const automationIdeas: AutomationIdea[] = [
+  { title: "Evaluation Checklist Generator", description: "서비스 특성에 맞는 평가 기준을 자동 생성합니다. 금융/의료/교육 등 도메인별 필수 항목을 포함합니다." },
+  { title: "Red-Team Prompt Set", description: "일반 요청, 우회 요청, 엣지 케이스를 포함한 테스트 프롬프트 세트를 자동 생성합니다." },
+  { title: "Response Scoring Sheet", description: "평가 기준별 점수와 코멘트를 기록하는 시트. 여러 모델/버전을 비교할 때 사용합니다." },
+  { title: "Issue Tagging System", description: "발견된 문제를 리스크 유형(할루시네이션, 편향, 개인정보 등)별로 태깅하고 추적합니다." },
+];
 
-/* ── 07. AI Tools (unchanged) ── */
+/* ── 04. AI Glossary ── */
+
+export type GlossaryCategory = "All" | "Safety" | "Evaluation" | "Architecture" | "Technique";
+
+export const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
+  "All",
+  "Safety",
+  "Evaluation",
+  "Architecture",
+  "Technique",
+];
+
+export interface GlossaryTerm {
+  term: string;
+  definition: string;
+  whyItMatters: string;
+  myNote: string;
+  category: Exclude<GlossaryCategory, "All">;
+}
+
+export const glossaryTerms: GlossaryTerm[] = [
+  {
+    term: "LLM (Large Language Model)",
+    definition: "대규모 텍스트 데이터로 학습된 언어 모델. GPT, Claude, Gemini 등이 대표적입니다.",
+    whyItMatters: "AI 서비스의 핵심 엔진이므로, 모델의 특성과 한계를 이해해야 적절한 평가 기준을 세울 수 있습니다.",
+    myNote: "같은 프롬프트라도 모델마다 결과가 다릅니다. 평가할 때 모델 버전까지 기록해야 재현이 가능합니다.",
+    category: "Architecture",
+  },
+  {
+    term: "RAG (Retrieval-Augmented Generation)",
+    definition: "외부 문서를 검색한 뒤 그 내용을 LLM에 전달하여 답변을 생성하는 방식입니다.",
+    whyItMatters: "할루시네이션을 줄이는 핵심 기법이지만, 검색 품질이 나쁘면 오히려 잘못된 근거 기반 답변을 만듭니다.",
+    myNote: "RAG의 품질은 '검색이 얼마나 정확한가'에 90% 달려 있습니다. 임베딩 모델과 청킹 전략이 핵심입니다.",
+    category: "Architecture",
+  },
+  {
+    term: "Embedding",
+    definition: "텍스트를 수치 벡터로 변환하는 과정. 의미가 비슷한 텍스트는 벡터 공간에서 가까이 위치합니다.",
+    whyItMatters: "RAG 검색, 유사도 측정, 클러스터링의 기반 기술입니다.",
+    myNote: "한국어 임베딩은 영어 대비 성능이 낮을 수 있어, 한국어 특화 모델이나 다국어 모델 선택이 중요합니다.",
+    category: "Architecture",
+  },
+  {
+    term: "Vector DB",
+    definition: "임베딩 벡터를 저장하고 유사도 검색을 수행하는 데이터베이스. Pinecone, Weaviate, ChromaDB 등이 있습니다.",
+    whyItMatters: "RAG 시스템의 검색 엔진 역할을 합니다. 인덱싱 방식과 검색 속도가 서비스 품질에 직결됩니다.",
+    myNote: "포트폴리오 RAG에서는 ChromaDB를 사용했습니다. 소규모 문서에서는 충분하지만, 대규모에서는 성능 테스트가 필요합니다.",
+    category: "Architecture",
+  },
+  {
+    term: "Prompt Injection",
+    definition: "사용자가 프롬프트를 조작하여 AI의 원래 지시를 무시하게 만드는 공격 기법입니다.",
+    whyItMatters: "시스템 프롬프트를 노출하거나, 의도하지 않은 동작을 유발할 수 있어 보안 테스트 필수 항목입니다.",
+    myNote: "QA 관점에서 보면 입력값 검증과 같습니다. AI에게도 '허용된 범위'를 명확히 정의해야 합니다.",
+    category: "Safety",
+  },
+  {
+    term: "Guardrail",
+    definition: "AI 출력을 사전/사후로 필터링하여 유해하거나 부적절한 답변을 차단하는 장치입니다.",
+    whyItMatters: "모델 자체의 안전장치와 별도로, 서비스 레벨에서 추가 방어층을 구축합니다.",
+    myNote: "Guardrail은 '마지막 방어선'입니다. 프롬프트 설계로 1차 방어하고, Guardrail로 2차 필터링하는 구조가 효과적입니다.",
+    category: "Safety",
+  },
+  {
+    term: "Hallucination",
+    definition: "AI가 그럴듯하지만 사실이 아닌 정보를 자신감 있게 생성하는 현상입니다.",
+    whyItMatters: "금융, 의료, 법률 등 정확성이 중요한 도메인에서는 직접적인 피해로 이어질 수 있습니다.",
+    myNote: "할루시네이션은 '버그'가 아니라 LLM의 구조적 특성입니다. 완전히 없앨 수 없으므로, 감지하고 관리하는 것이 핵심입니다.",
+    category: "Safety",
+  },
+  {
+    term: "Bias",
+    definition: "학습 데이터, 프롬프트, 평가 방식에 의해 AI가 특정 집단에 불공정한 결과를 만드는 현상입니다.",
+    whyItMatters: "채용, 신용평가, 보험 심사 등에서 차별적 결과를 초래할 수 있어 법적 리스크가 큽니다.",
+    myNote: "편향 테스트는 '같은 질문, 다른 조건'으로 비교하는 것이 가장 직관적입니다.",
+    category: "Safety",
+  },
+  {
+    term: "Red Teaming",
+    definition: "AI 시스템의 취약점을 찾기 위해 의도적으로 공격적이거나 극단적인 입력을 시도하는 평가 방법입니다.",
+    whyItMatters: "일반 사용자 테스트로는 발견하기 어려운 안전성 문제를 사전에 식별합니다.",
+    myNote: "QA의 탐색적 테스트(Exploratory Testing)와 비슷합니다. 시나리오를 미리 정하되, 테스트 중 발견한 패턴으로 추가 시나리오를 만듭니다.",
+    category: "Evaluation",
+  },
+  {
+    term: "Evaluation (AI 평가)",
+    definition: "AI 모델이나 서비스의 품질을 정량적/정성적으로 측정하는 과정입니다.",
+    whyItMatters: "평가 없이는 개선할 수 없습니다. 평가 기준이 서비스 품질의 기준이 됩니다.",
+    myNote: "TC 기반 QA처럼, AI 평가도 '기준 → 테스트 → 기록 → 개선' 사이클이 핵심입니다.",
+    category: "Evaluation",
+  },
+  {
+    term: "Human-in-the-Loop",
+    definition: "AI의 판단이나 출력에 사람의 검토와 승인을 포함하는 설계 방식입니다.",
+    whyItMatters: "고위험 의사결정에서 AI 단독 실행을 막고, 최종 책임을 사람에게 둡니다.",
+    myNote: "모든 곳에 사람을 넣으면 비효율적입니다. '자동화해도 되는 것'과 '사람이 봐야 하는 것'을 구분하는 것이 설계의 핵심입니다.",
+    category: "Evaluation",
+  },
+  {
+    term: "Grounding",
+    definition: "AI 답변이 실제 데이터나 문서에 기반하도록 하는 기법입니다. RAG가 대표적입니다.",
+    whyItMatters: "근거가 있어야 답변을 검증할 수 있고, 문제 시 추적이 가능합니다.",
+    myNote: "Grounding은 '답변에 출처를 달자'가 아니라, '출처 기반으로만 답하게 하자'입니다.",
+    category: "Architecture",
+  },
+  {
+    term: "Context Window",
+    definition: "LLM이 한 번에 처리할 수 있는 텍스트의 최대 길이(토큰 수)입니다.",
+    whyItMatters: "컨텍스트 윈도우를 초과하면 이전 내용을 잊거나, 입력이 잘립니다. RAG 설계 시 청크 크기와 직결됩니다.",
+    myNote: "컨텍스트 윈도우가 크다고 좋은 것은 아닙니다. 긴 입력에서 '중간 부분'의 정보를 놓치는 Lost in the Middle 현상이 있습니다.",
+    category: "Architecture",
+  },
+  {
+    term: "Agent",
+    definition: "LLM이 도구를 사용하고, 계획을 세우고, 반복적으로 행동하여 목표를 달성하는 시스템입니다.",
+    whyItMatters: "단순 QA를 넘어, AI가 스스로 검색, 코드 실행, API 호출 등을 수행합니다. 자율성이 높을수록 안전성 평가가 중요합니다.",
+    myNote: "Agent의 자율성이 높을수록 '무엇을 하면 안 되는지'를 명확히 정의해야 합니다. Guardrail이 더 중요해집니다.",
+    category: "Technique",
+  },
+  {
+    term: "Tool Calling",
+    definition: "LLM이 외부 함수나 API를 호출하여 정보를 가져오거나 작업을 수행하는 기능입니다.",
+    whyItMatters: "Agent의 핵심 능력이지만, 잘못된 도구 호출은 데이터 손실이나 보안 문제로 이어질 수 있습니다.",
+    myNote: "Tool Calling은 '무엇을 호출할 수 있는지'뿐만 아니라, '어떤 조건에서 호출을 거부해야 하는지'도 설계해야 합니다.",
+    category: "Technique",
+  },
+];
+
+/* ── 05. Media Notes (LOCKED — DO NOT MODIFY) ── */
+
+export interface MediaNote {
+  id: string;
+  sourceType: "YouTube" | "Article" | "Reference";
+  url: string;
+  title: string;
+  topic: string;
+  summary: string;
+  myTake: string;
+  insight: string;
+  appliedTo: string;
+  keywords: string[];
+}
+
+export function getYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?#]+)/
+  );
+  return match?.[1] ?? null;
+}
+
+export const mediaNotes: MediaNote[] = [
+  {
+    id: "ai-agent-engineering-workflow",
+    sourceType: "YouTube",
+    url: "https://www.youtube.com/watch?v=KPovWIJGomc",
+    title: "AI Agent Engineering Workflow",
+    topic: "AI Agent / Engineering Mindset / Workflow",
+    summary: "AI Agent를 효과적으로 활용하기 위한 엔지니어링 마인드셋과 워크플로우에 대한 내용입니다.",
+    myTake: "단순히 AI에게 질문하는 것이 아니라, 작업 기준과 검증 절차를 설계하는 것이 중요하다는 점을 체감했습니다.",
+    insight: "AI Agent는 단순 답변 도구보다 반복되는 작업 흐름과 의사결정 구조를 정리할 때 더 큰 가치가 있습니다.",
+    appliedTo: "Claude Code를 사용할 때 구조 탐색 → Plan Mode → 작은 단위 수정 → 브라우저 검증 순서로 요청하는 규칙에 반영했습니다.",
+    keywords: ["AI Agent", "Claude Code", "Workflow", "Evaluation", "Productivity"],
+  },
+];
+
+/* ── 06. AI Tools (unchanged) ── */
 
 export type AIToolFilter =
   | "All"
@@ -570,39 +448,233 @@ export const aiTools: AITool[] = [
   { name: "Gemini", category: "멀티모달 AI", usedFor: "이미지 분석, 멀티모달 작업, Google 생태계 연동", useCase: "이미지와 텍스트를 함께 분석하거나, Google 생태계와 연동된 작업에 활용했습니다.", strengths: ["이미지, 영상, 텍스트를 동시에 처리 가능", "Google 서비스와의 통합이 자연스러움"], limitations: ["코딩 전용 도구에 비해 코드 생성 품질이 다소 낮음", "한국어 맥락 이해가 다른 도구에 비해 부족한 경우가 있음"], review: "Gemini는 멀티모달 작업에서 가능성을 보여주지만, 코드 중심 작업에서는 Claude나 ChatGPT가 더 효율적이었습니다.", tags: ["멀티모달", "Google", "이미지 분석"], groups: ["Research", "Design"] },
 ];
 
-/* ── 08. Media Notes (unchanged) ── */
+/* ── 07. Policy & Regulation ── */
 
-export interface MediaNote {
-  id: string;
-  sourceType: "YouTube" | "Article" | "Reference";
-  url: string;
+export interface PolicyItem {
   title: string;
-  topic: string;
-  summary: string;
-  myTake: string;
-  insight: string;
-  appliedTo: string;
-  keywords: string[];
+  whatItSays: string;
+  whyItMatters: string;
+  myTakeaway: string;
+  source: string;
 }
 
-export function getYouTubeId(url: string): string | null {
-  const match = url.match(
-    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?#]+)/
-  );
-  return match?.[1] ?? null;
-}
-
-export const mediaNotes: MediaNote[] = [
+export const policyItems: PolicyItem[] = [
   {
-    id: "ai-agent-engineering-workflow",
-    sourceType: "YouTube",
-    url: "https://www.youtube.com/watch?v=KPovWIJGomc",
-    title: "AI Agent Engineering Workflow",
-    topic: "AI Agent / Engineering Mindset / Workflow",
-    summary: "AI Agent를 효과적으로 활용하기 위한 엔지니어링 마인드셋과 워크플로우에 대한 내용입니다.",
-    myTake: "단순히 AI에게 질문하는 것이 아니라, 작업 기준과 검증 절차를 설계하는 것이 중요하다는 점을 체감했습니다.",
-    insight: "AI Agent는 단순 답변 도구보다 반복되는 작업 흐름과 의사결정 구조를 정리할 때 더 큰 가치가 있습니다.",
-    appliedTo: "Claude Code를 사용할 때 구조 탐색 → Plan Mode → 작은 단위 수정 → 브라우저 검증 순서로 요청하는 규칙에 반영했습니다.",
-    keywords: ["AI Agent", "Claude Code", "Workflow", "Evaluation", "Productivity"],
+    title: "EU AI Act — 위험 기반 접근",
+    whatItSays: "AI 시스템을 위험 수준에 따라 4단계(금지/고위험/제한적/최소)로 분류하고, 높은 위험일수록 엄격한 의무를 부과합니다.",
+    whyItMatters: "금융 AI(신용평가, 대출 심사 등)는 '고위험'으로 분류될 가능성이 높아, 적합성 평가, 품질 관리 시스템, 로깅 의무가 적용됩니다.",
+    myTakeaway: "'우리 서비스가 어떤 위험 등급인가'를 먼저 판단하는 것이 모든 준비의 시작점입니다. 금융 서비스라면 고위험을 전제로 설계하는 것이 안전합니다.",
+    source: "EU AI Act Art. 6, Art. 9",
+  },
+  {
+    title: "개인정보 및 민감정보 처리",
+    whatItSays: "AI 학습과 추론 과정에서 개인정보 수집, 활용, 제3자 제공에 대한 사전 동의와 고지가 필요합니다. 민감정보(건강, 금융, 신용 등)는 더 엄격한 기준이 적용됩니다.",
+    whyItMatters: "금융 서비스에서 AI가 고객 데이터를 처리할 경우, 데이터 최소화, 목적 제한, 파기 정책이 명확해야 합니다.",
+    myTakeaway: "AI 시스템 설계 시 '이 데이터가 꼭 필요한가', '답변에 개인정보가 노출되지 않는가'를 체크리스트로 만들어야 합니다.",
+    source: "개인정보보호법, EU AI Act Art. 10",
+  },
+  {
+    title: "AI 고지 및 투명성 의무",
+    whatItSays: "사용자에게 AI가 답변을 생성한다는 사실과, AI의 한계(오류 가능성)를 사전에 알려야 합니다. 생성형 AI 결과물에는 워터마크 등의 식별 표시가 필요합니다.",
+    whyItMatters: "고객이 AI 답변을 전문가 의견으로 오해하면 잘못된 의사결정으로 이어집니다. 특히 금융 상품 추천, 투자 조언 영역에서 중요합니다.",
+    myTakeaway: "UI에 'AI가 생성한 답변입니다' 문구를 넣는 것은 기본이고, '이 답변은 참고용이며 전문가 확인을 권장합니다'까지 안내해야 합니다.",
+    source: "한국 AI 기본법, EU AI Act Art. 52",
+  },
+  {
+    title: "금융 AI 답변 오류 리스크",
+    whatItSays: "금융 상품 설명, 이자율, 수수료 등 정확한 수치가 필요한 정보를 AI가 잘못 전달할 경우, 금융소비자보호법 위반과 고객 손실로 이어질 수 있습니다.",
+    whyItMatters: "금융 AI는 '대략 맞는 답변'이 아니라 '정확한 답변'이 필요합니다. 할루시네이션이 곧 법적 리스크입니다.",
+    myTakeaway: "금융 수치(이자율, 한도, 수수료)는 AI 생성이 아니라 DB에서 직접 가져와야 합니다. AI는 설명과 맥락 제공 역할로 제한하는 것이 안전합니다.",
+    source: "금융소비자보호법, 전자금융거래법",
+  },
+  {
+    title: "내부 AI 운영 정책",
+    whatItSays: "AI 시스템의 개발, 배포, 모니터링, 사고 대응에 대한 내부 정책과 절차를 수립하고 문서화해야 합니다.",
+    whyItMatters: "정책이 없으면 문제 발생 시 대응이 늦어지고, 책임 소재가 불분명해집니다. 규제 감사에서도 정책 문서를 요구합니다.",
+    myTakeaway: "작은 팀이라도 'AI 답변에 문제가 생기면 누가, 어떻게 대응하는가'를 정해두면 실제 사고 시 대응 속도가 완전히 다릅니다.",
+    source: "NIST AI RMF — Govern, ISO 42001",
   },
 ];
+
+export const euAiActRiskTable: DataTableData = {
+  headers: ["단계", "위험 수준", "규제 방식", "예시"],
+  rows: [
+    { cells: ["금지", "허용 불가", "완전 금지", "사회점수제, 조작적 AI, 실시간 원격 생체인식"] },
+    { cells: ["고위험", "높음", "엄격한 규제", "신용평가, 채용 심사, 생체인식, 핵심 인프라"] },
+    { cells: ["제한적 위험", "제한적", "투명성 의무", "챗봇, 딥페이크, AI 생성 콘텐츠"] },
+    { cells: ["최소 위험", "낮음", "의무 없음", "스팸 필터, AI 게임, 대부분의 상용 AI"] },
+  ],
+};
+
+/* ── 08. Company AI Principles ── */
+
+export interface CompanyPrinciple {
+  company: string;
+  principles: {
+    principle: string;
+    keyIdea: string;
+    whatILearned: string;
+  }[];
+  source: string;
+}
+
+export const companyPrinciples: CompanyPrinciple[] = [
+  {
+    company: "OpenAI",
+    principles: [
+      {
+        principle: "인간의 지시를 따르되, 안전한 범위 내에서",
+        keyIdea: "Model Spec에서 'developer > user > operator' 우선순위를 명시. 사용자 요청이 있어도 안전 정책을 위반하면 거부합니다.",
+        whatILearned: "AI에게 '무조건 사용자 말을 들어라'가 아니라, '어디까지 들어도 되는지' 경계를 정하는 것이 설계의 핵심이라는 걸 배웠습니다.",
+      },
+      {
+        principle: "답변의 신뢰성과 솔직함",
+        keyIdea: "모르는 것은 모른다고 말하고, 불확실한 정보는 그 사실을 밝히도록 설계합니다.",
+        whatILearned: "QA에서 '재현 불가'를 정직하게 보고하는 것처럼, AI도 '모른다'를 말할 수 있어야 신뢰할 수 있습니다.",
+      },
+    ],
+    source: "OpenAI Model Spec",
+  },
+  {
+    company: "Anthropic",
+    principles: [
+      {
+        principle: "Constitutional AI — 원칙 기반 자기 교정",
+        keyIdea: "사람의 피드백 대신, AI가 스스로 원칙에 따라 답변을 평가하고 개선하는 학습 방식입니다.",
+        whatILearned: "평가 기준을 명문화하면 AI도 자기 검증이 가능하다는 점이 인상적이었습니다. QA에서 TC를 명확히 쓰는 것과 같은 원리입니다.",
+      },
+      {
+        principle: "Helpful, Harmless, Honest (HHH)",
+        keyIdea: "유용하되 해롭지 않고, 정직한 답변을 추구합니다. 세 가치가 충돌할 때는 Harmless가 우선합니다.",
+        whatILearned: "'도움이 되려다 위험한 답변'을 하는 것보다, '거부하되 대안을 안내하는 것'이 더 나은 UX라는 점을 배웠습니다.",
+      },
+    ],
+    source: "Anthropic Constitutional AI Paper",
+  },
+  {
+    company: "Google",
+    principles: [
+      {
+        principle: "사회적으로 유익한 AI",
+        keyIdea: "AI 기술이 사회 전체에 이익이 되어야 하며, 불공정한 편향을 만들지 않도록 노력합니다.",
+        whatILearned: "'편향이 없다'를 증명하기는 어렵지만, '편향을 측정하고 줄이려는 노력'은 할 수 있습니다. 그 노력의 과정을 문서화하는 것이 중요합니다.",
+      },
+      {
+        principle: "책임성과 안전성 우선",
+        keyIdea: "AI가 사람에게 해를 끼칠 수 있는 영역에서는 배포를 제한하거나 추가 검증을 요구합니다.",
+        whatILearned: "'출시 전 안전성 평가'를 프로세스로 정착시키는 것이 핵심입니다. 체크리스트가 있어야 일관된 판단이 가능합니다.",
+      },
+    ],
+    source: "Google Responsible AI Practices",
+  },
+  {
+    company: "Microsoft",
+    principles: [
+      {
+        principle: "6가지 원칙: 공정성, 신뢰성, 안전성, 프라이버시, 포용성, 투명성, 책임성",
+        keyIdea: "Responsible AI Standard로 구체적인 실행 기준을 제시합니다. 원칙만이 아니라 '어떻게 실행할 것인가'를 문서화합니다.",
+        whatILearned: "원칙은 모든 회사가 비슷하지만, Microsoft는 '실행 가이드'까지 공개한 점이 달랐습니다. 원칙을 체크리스트로 바꾸는 것이 실무에서 가장 중요합니다.",
+      },
+      {
+        principle: "AI 영향 평가 (Impact Assessment)",
+        keyIdea: "AI 시스템 배포 전, 잠재적 영향과 리스크를 체계적으로 평가하는 프로세스를 운영합니다.",
+        whatILearned: "QA에서 릴리즈 전 체크리스트를 사용하듯, AI 서비스에도 '배포 전 영향 평가' 단계가 필요합니다.",
+      },
+    ],
+    source: "Microsoft Responsible AI Standard v2",
+  },
+];
+
+/* ── 09. Model Comparison ── */
+
+export interface ModelFamily {
+  provider: string;
+  models: ModelCard[];
+}
+
+export interface ModelCard {
+  model: string;
+  strength: string;
+  bestUseCase: string;
+  limitation: string;
+  myUsageRule: string;
+}
+
+export const modelFamilies: ModelFamily[] = [
+  {
+    provider: "Anthropic (Claude)",
+    models: [
+      {
+        model: "Opus (최상위)",
+        strength: "복잡한 추론, 장문 분석, 코드 아키텍처 설계에서 가장 높은 품질",
+        bestUseCase: "아키텍처 리뷰, 복잡한 코드 리팩토링, 깊이 있는 기술 분석",
+        limitation: "속도가 느리고 비용이 높음. 단순 작업에는 비효율적",
+        myUsageRule: "복잡한 판단이 필요한 작업에만 사용합니다. 단순 질문에는 Sonnet이나 Haiku를 사용합니다.",
+      },
+      {
+        model: "Sonnet (균형형)",
+        strength: "속도와 품질의 균형이 좋음. 대부분의 코딩, 글쓰기 작업에 적합",
+        bestUseCase: "일반 코딩, 문서 작성, 요약, 번역, 프롬프트 설계",
+        limitation: "Opus 대비 복잡한 추론에서 품질이 떨어질 수 있음",
+        myUsageRule: "기본 작업 모델로 사용합니다. 결과가 부족하면 Opus로 전환합니다.",
+      },
+      {
+        model: "Haiku (경량형)",
+        strength: "빠른 응답 속도와 낮은 비용. 간단한 분류, 추출, 변환 작업에 최적",
+        bestUseCase: "데이터 분류, 간단한 텍스트 변환, 빠른 필터링",
+        limitation: "복잡한 맥락 이해나 창의적 작업에는 부적합",
+        myUsageRule: "대량 처리, 분류, 간단한 변환에 사용합니다. 품질이 중요한 작업에는 사용하지 않습니다.",
+      },
+    ],
+  },
+  {
+    provider: "OpenAI (GPT)",
+    models: [
+      {
+        model: "최신 플래그십 모델",
+        strength: "광범위한 지식, 강력한 코딩 능력, 멀티모달 지원",
+        bestUseCase: "복잡한 코딩, 데이터 분석, 멀티모달 작업, 생각 정리",
+        limitation: "API 비용이 높고, 최신 정보 반영에 시간차가 있을 수 있음",
+        myUsageRule: "ChatGPT로 아이디어 정리와 프롬프트 설계에 주로 사용합니다. 코딩 실행은 Claude Code에 맡깁니다.",
+      },
+      {
+        model: "경량 모델 (mini)",
+        strength: "빠르고 저렴. 간단한 작업에서 충분한 품질",
+        bestUseCase: "간단한 질문, 텍스트 분류, 빠른 초안 작성",
+        limitation: "복잡한 추론이나 긴 문맥에서 품질 저하",
+        myUsageRule: "비용이 중요한 대량 처리나 간단한 작업에 사용합니다.",
+      },
+    ],
+  },
+  {
+    provider: "Google (Gemini)",
+    models: [
+      {
+        model: "Pro (고성능)",
+        strength: "멀티모달 처리(이미지, 영상, 텍스트)가 강력. 긴 컨텍스트 지원",
+        bestUseCase: "이미지 분석, 멀티모달 작업, Google 생태계 연동",
+        limitation: "한국어 맥락 이해가 Claude/GPT 대비 부족할 수 있음",
+        myUsageRule: "멀티모달 작업이 필요할 때 사용합니다. 텍스트 전용 작업에서는 Claude를 우선합니다.",
+      },
+      {
+        model: "Flash (경량형)",
+        strength: "빠른 속도와 낮은 비용. 간단한 멀티모달 작업에 적합",
+        bestUseCase: "빠른 이미지 분류, 간단한 요약, 대량 처리",
+        limitation: "복잡한 추론이나 깊은 분석에는 부적합",
+        myUsageRule: "속도가 중요한 멀티모달 처리에 사용합니다.",
+      },
+    ],
+  },
+];
+
+export const modelSelectionGuide: DataTableData = {
+  headers: ["작업 유형", "추천 모델 계열", "이유"],
+  rows: [
+    { cells: ["복잡한 코드 리팩토링", "Claude Opus / GPT 플래그십", "긴 맥락 이해와 정확한 코드 수정"] },
+    { cells: ["일반 코딩/글쓰기", "Claude Sonnet / GPT 플래그십", "속도와 품질 균형"] },
+    { cells: ["대량 데이터 분류", "Claude Haiku / GPT mini", "빠른 속도와 낮은 비용"] },
+    { cells: ["멀티모달 분석", "Gemini Pro", "이미지/영상 처리에 강점"] },
+    { cells: ["아이디어 정리/기획", "ChatGPT (GPT)", "대화형 브레인스토밍에 적합"] },
+    { cells: ["포트폴리오 개발", "Claude Code (Sonnet/Opus)", "코드베이스 이해와 수정에 최적화"] },
+  ],
+};
