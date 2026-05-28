@@ -4,7 +4,7 @@ import { useState, useEffect, memo, useCallback, type CSSProperties } from "reac
 import Image, { type ImageProps } from "next/image";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
-import { Github, ExternalLink, BookOpen } from "lucide-react";
+import { Github, ExternalLink, BookOpen, LinkIcon } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { isArticleProject } from "@/lib/project-groups";
 
@@ -109,6 +109,11 @@ const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
 
 /* ── 카드 심볼 (이미지 없을 때 기하학 아이콘) ── */
 const SYMBOLS = ["◇", "○", "△", "□", "◆", "▽", "⬡", "✦"];
+
+/* ── 프로젝트 슬러그 생성 (URL 해시용) ── */
+function toSlug(title: string) {
+  return encodeURIComponent(title.replace(/\s+/g, "-").toLowerCase());
+}
 
 function normalizeMediaUrl(url?: string) {
   return url?.split("#")[0].split("?")[0];
@@ -781,6 +786,43 @@ function ProjectCard({
             </>
           )}
         </div>
+
+        <div className="flex flex-wrap gap-2 mt-2.5" onClick={(e) => e.stopPropagation()}>
+          {item.liveUrl && (
+            <a href={item.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-[var(--notion-stone)] bg-[var(--notion-surface)] border border-[var(--notion-hairline)] rounded-md hover:bg-[var(--notion-bg-elevated)] hover:text-[var(--notion-ink)] transition-colors">
+              <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
+              Live
+            </a>
+          )}
+          {item.githubUrl && (
+            <a href={item.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-[var(--notion-stone)] bg-[var(--notion-surface)] border border-[var(--notion-hairline)] rounded-md hover:bg-[var(--notion-bg-elevated)] hover:text-[var(--notion-ink)] transition-colors">
+              <Github className="w-3 h-3" strokeWidth={1.5} />
+              GitHub
+            </a>
+          )}
+          {item.blogUrl && (
+            <a href={item.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-[var(--notion-stone)] bg-[var(--notion-surface)] border border-[var(--notion-hairline)] rounded-md hover:bg-[var(--notion-bg-elevated)] hover:text-[var(--notion-ink)] transition-colors">
+              <BookOpen className="w-3 h-3" strokeWidth={1.5} />
+              Blog
+            </a>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const url = `${window.location.origin}${window.location.pathname}#${toSlug(item.title)}`;
+              navigator.clipboard.writeText(url).then(() => {
+                const btn = e.currentTarget;
+                const orig = btn.textContent;
+                btn.textContent = "복사됨!";
+                setTimeout(() => { btn.textContent = orig; }, 1500);
+              });
+            }}
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-[var(--notion-stone)] bg-[var(--notion-surface)] border border-[var(--notion-hairline)] rounded-md hover:bg-[var(--notion-bg-elevated)] hover:text-[var(--notion-ink)] transition-colors"
+          >
+            <LinkIcon className="w-3 h-3" strokeWidth={1.5} />
+            링크 복사
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1163,6 +1205,32 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
 
   const projectItems = viewItems.filter((item) => item.category !== "activity");
   const activityItems = viewItems.filter((item) => item.category === "activity");
+
+  /* ── URL 해시로 프로젝트 모달 자동 오픈 ── */
+  useEffect(() => {
+    function openFromHash() {
+      const hash = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+      if (!hash) return;
+      const pi = projectItems.findIndex((item) => toSlug(item.title) === hash);
+      if (pi !== -1) { setSelectedModal({ source: "project", index: pi }); return; }
+      const ai = activityItems.findIndex((item) => toSlug(item.title) === hash);
+      if (ai !== -1) { setSelectedModal({ source: "activity", index: ai }); return; }
+    }
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, [projectItems, activityItems]);
+
+  /* ── 모달 열릴 때 해시 업데이트, 닫힐 때 해시 제거 ── */
+  useEffect(() => {
+    if (selectedModal) {
+      const list = selectedModal.source === "activity" ? activityItems : projectItems;
+      const item = list[selectedModal.index];
+      if (item) window.history.replaceState(null, "", `#${toSlug(item.title)}`);
+    } else if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [selectedModal, projectItems, activityItems]);
 
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
   const activitiesHeadingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
