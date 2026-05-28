@@ -135,27 +135,25 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    cursor: none;
   }
-  button,
-  a,
-  [role="button"],
-  .cursor-pointer {
-    cursor: none !important;
-  }
-  /* Text inputs keep native text cursor */
-  input,
-  textarea,
-  [contenteditable="true"],
-  code,
-  pre {
-    cursor: text !important;
-  }
-  /* Restore default cursor on touch devices (custom cursor auto-disables) */
-  @media (pointer: coarse) {
-    * { cursor: auto; }
-    button, a, [role="button"], .cursor-pointer { cursor: pointer !important; }
-    input, textarea, [contenteditable="true"], code, pre { cursor: text !important; }
+
+  @media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+    * {
+      cursor: none;
+    }
+    button,
+    a,
+    [role="button"],
+    .cursor-pointer {
+      cursor: none !important;
+    }
+    input,
+    textarea,
+    [contenteditable="true"],
+    code,
+    pre {
+      cursor: text !important;
+    }
   }
   html {
     @apply font-sans;
@@ -206,6 +204,31 @@
   background: #FFFFFF !important;
 }
 
+.scene-section--full {
+  height: 100vh;
+  min-height: 0;
+  max-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  display: block;
+}
+
+.scene-section--top {
+  align-items: flex-start;
+}
+
+/* Keep internal section scrolling usable without showing the scrollbar track. */
+[data-scroller] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+[data-scroller]::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 .scene-section-hero {
   padding: 0;
 }
@@ -213,6 +236,47 @@
 @media (max-width: 640px) {
   .scene-section {
     padding: 100px 20px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .scene-section {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
+    padding: 88px 20px 62px;
+  }
+
+  .scene-section > div {
+    max-height: calc(100svh - 150px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .scene-section > div::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-scroller] {
+    scrollbar-width: none;
+  }
+
+  [data-scroller]::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scene-section--full {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    overflow: hidden;
+  }
+
+  .scene-section--full > div {
+    max-height: none;
+    overflow: visible;
   }
 }
 
@@ -417,21 +481,24 @@
 
 @media (max-width: 640px) {
   .slide-nav-btn {
-    width: 32px;
-    height: 80px;
-  }
-  .slide-nav-btn--prev {
-    left: 10px;
-  }
-  .slide-nav-btn--next {
-    right: 10px;
+    display: none;
   }
 }
 
 @media (max-width: 640px) {
   .slide-indicator {
-    right: 12px;
-    gap: 8px;
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(33, 29, 25, 0.1);
+    backdrop-filter: blur(10px);
   }
 
   .slide-indicator__dot {
@@ -440,8 +507,8 @@
   }
 
   .slide-indicator__dot--active {
-    width: 5px;
-    height: 16px;
+    width: 16px;
+    height: 5px;
   }
 
   .slide-indicator__count {
@@ -455,9 +522,15 @@
   z-index: 50;
   overflow: hidden;
   background: #FFFFFF;
-  cursor: none;
+  cursor: pointer;
   touch-action: manipulation;
   transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+  .entry-overlay {
+    cursor: none;
+  }
 }
 
 .entry-overlay--leaving {
@@ -474,8 +547,33 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   user-select: none;
   pointer-events: none;
+}
+
+.entry-image--mobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .entry-overlay {
+    min-height: 100svh;
+    cursor: pointer !important;
+  }
+
+  .entry-image--desktop {
+    display: none !important;
+  }
+
+  .entry-image--mobile {
+    display: block !important;
+  }
+
+  .entry-image {
+    object-fit: cover;
+    padding: 0;
+  }
 }
 
 /* Scroll indicator line animation */
@@ -1905,5 +2003,29 @@
 
   .pj-rag-troubleshooting {
     margin-top: 36px;
+  }
+}
+
+@media (max-width: 768px), (hover: none), (pointer: coarse) {
+  * {
+    cursor: auto !important;
+  }
+
+  button,
+  a,
+  [role="button"],
+  .cursor-pointer,
+  [data-cursor],
+  [data-project-card] {
+    cursor: pointer !important;
+    touch-action: manipulation;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"],
+  code,
+  pre {
+    cursor: text !important;
   }
 }

@@ -42,23 +42,15 @@ export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
             <section
               key={SECTION_IDS[i]}
               id={SECTION_IDS[i]}
-              className="scene-section"
-              /* Projects section: no wrapper, content manages its own layout */
-              /* Contact section: top-aligned instead of center */
-              style={
+              className={[
+                "scene-section",
                 SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab"
-                  ? {
-                      height: "100vh",
-                      minHeight: 0,
-                      maxHeight: "100vh",
-                      padding: 0,
-                      overflow: "hidden",
-                      display: "block",
-                    }
-                  : SECTION_IDS[i] === "contact"
-                    ? { alignItems: "flex-start" }
-                    : undefined
-              }
+                  ? "scene-section--full"
+                  : "",
+                SECTION_IDS[i] === "contact" ? "scene-section--top" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               {SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab" ? (
                 content

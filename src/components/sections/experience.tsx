@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { SlideHeading } from "./about";
 
 export interface ExperienceItem {
@@ -39,76 +41,146 @@ function TimelineDot({ active }: { active: boolean }) {
   );
 }
 
+/* ── Detail content (shared between desktop & mobile) ── */
+function CardDetails({ item, detailItems }: { item: ExperienceItem; detailItems: string[] }) {
+  return (
+    <>
+      {detailItems.length > 0 && (
+        <ul className="mb-3 space-y-1.5">
+          {detailItems.map((text, j) => (
+            <li
+              key={j}
+              className="exp-child flex gap-2.5 text-[12px] leading-relaxed text-muted-foreground/75 sm:text-[13px]"
+            >
+              <span className="mt-[0.35em] h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/35" />
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {item.techStack && item.techStack.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {item.techStack.map((t, i) => (
+            <span
+              key={t}
+              className="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-foreground/70"
+              style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ── Card header (shared between desktop & mobile) ── */
+function CardHeader({ item }: { item: ExperienceItem }) {
+  return (
+    <>
+      <div className="exp-child flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+        <h3 className="font-display text-xl sm:text-2xl font-black tracking-[-0.02em] text-foreground">
+          {item.company}
+        </h3>
+        {item.status && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
+            {item.status}
+          </span>
+        )}
+      </div>
+      <p className="exp-child text-[13px] text-foreground/80 font-medium">
+        {item.role}
+      </p>
+      <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide mb-2.5">
+        {item.period}
+      </p>
+    </>
+  );
+}
+
 /* ── View Card ── */
-function ViewCard({ item }: { item: ExperienceItem }) {
+function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen ?? false);
   const detailItems = [item.summary, ...(item.achievements ?? [])]
     .filter(Boolean)
     .slice(0, 4);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const techRef = useRef<HTMLDivElement>(null);
 
   const isActive = !!item.status;
+  const hasDetails = detailItems.length > 0 || (item.techStack && item.techStack.length > 0);
 
   return (
-    <div
-      className="relative flex gap-4 overflow-hidden rounded-2xl border border-transparent px-2 py-3 sm:gap-6 sm:py-4"
-    >
-      {/* Timeline rail */}
-      <div className="flex flex-col items-center pt-1">
-        <TimelineDot active={isActive} />
-        <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
-      </div>
-
-      {/* Content */}
-      <div ref={cardRef} className="flex flex-1 flex-col justify-center overflow-hidden">
-        {/* Header */}
-        <div className="exp-child flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
-          <h3 className="font-display text-xl sm:text-2xl font-black tracking-[-0.02em] text-foreground">
-            {item.company}
-          </h3>
-          {item.status && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
-              {item.status}
-            </span>
-          )}
+    <>
+      {/* ── Desktop: 기존 레이아웃 그대로 (항상 펼침) ── */}
+      <div className="hidden md:flex relative gap-6 overflow-hidden rounded-2xl border border-transparent px-2 py-4">
+        <div className="flex flex-col items-center pt-1">
+          <TimelineDot active={isActive} />
+          <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
         </div>
-
-        <p className="exp-child text-[13px] text-foreground/80 font-medium">
-          {item.role}
-        </p>
-        <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide mb-2.5">
-          {item.period}
-        </p>
-
-        {detailItems.length > 0 && (
-          <ul className="mb-3 space-y-1.5">
-            {detailItems.map((text, j) => (
-              <li
-                key={j}
-                className="exp-child flex gap-2.5 text-[12px] leading-relaxed text-muted-foreground/75 sm:text-[13px]"
-              >
-                <span className="mt-[0.35em] h-1.5 w-1.5 shrink-0 rounded-full bg-foreground/35" />
-                <span>{text}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {item.techStack && item.techStack.length > 0 && (
-          <div ref={techRef} className="flex flex-wrap gap-1.5">
-            {item.techStack.map((t, i) => (
-              <span
-                key={t}
-                className="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-foreground/70"
-                style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-1 flex-col justify-center overflow-hidden">
+          <CardHeader item={item} />
+          <CardDetails item={item} detailItems={detailItems} />
+        </div>
       </div>
-    </div>
+
+      {/* ── Mobile: 토글 아코디언 ── */}
+      <div className="md:hidden relative flex gap-4 overflow-hidden rounded-2xl border border-transparent px-2 py-3">
+        <div className="flex flex-col items-center pt-1">
+          <TimelineDot active={isActive} />
+          <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
+        </div>
+        <div className="flex flex-1 flex-col justify-center overflow-hidden">
+          <button
+            type="button"
+            data-no-section-nav
+            onClick={() => hasDetails && setOpen((v) => !v)}
+            className="w-full text-left flex items-start justify-between gap-2"
+          >
+            <div className="flex-1 min-w-0">
+              <div className="exp-child flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
+                <h3 className="font-display text-xl font-black tracking-[-0.02em] text-foreground">
+                  {item.company}
+                </h3>
+                {item.status && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
+                    {item.status}
+                  </span>
+                )}
+              </div>
+              <p className="exp-child text-[13px] text-foreground/80 font-medium">
+                {item.role}
+              </p>
+              <p className="exp-child text-[11px] text-muted-foreground/60 tracking-wide">
+                {item.period}
+              </p>
+            </div>
+            {hasDetails && (
+              <ChevronDown
+                className={`w-4 h-4 mt-1.5 shrink-0 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                strokeWidth={1.5}
+              />
+            )}
+          </button>
+
+          <AnimatePresence initial={false}>
+            {open && hasDetails && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="pt-2.5">
+                  <CardDetails item={item} detailItems={detailItems} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -344,56 +416,74 @@ export const Experience = memo(function Experience({ items }: ExperienceProps) {
   if (displayItems.length === 0 && !isEditMode) return null;
 
   return (
-    <div className="w-full">
-      <div className="flex items-end justify-between mb-2">
-        <div ref={isEditMode ? undefined : headingRef}>
-          <SlideHeading label="Experience" title="Work Experience" />
+    <div
+      className="w-full"
+      data-allow-scroll
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}
+    >
+      <div
+        data-scroller
+        style={{
+          height: "100%",
+          maxHeight: "100vh",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          padding: "80px 24px 120px",
+          boxSizing: "border-box",
+        }}
+      >
+        <div className="flex items-end justify-between mb-2">
+          <div ref={isEditMode ? undefined : headingRef}>
+            <SlideHeading label="Experience" title="Work Experience" />
+          </div>
+          {!isEditMode && (
+            <button
+              onClick={() => setShowPasswordModal(true)}
+              className="mb-10 inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
+              type="button"
+              aria-label="수정하기"
+            >
+              ✎ 수정
+            </button>
+          )}
         </div>
-        {!isEditMode && (
-          <button
-            onClick={() => setShowPasswordModal(true)}
-            className="mb-10 inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
-            type="button"
-            aria-label="수정하기"
-          >
-            ✎ 수정
+
+        {isEditMode && (
+          <div className="flex gap-2 justify-end mb-3">
+            <button onClick={cancelEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">취소</button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex h-9 items-center rounded-lg bg-foreground px-3.5 text-sm font-medium text-background transition-colors duration-150 hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:opacity-50"
+              type="button"
+            >
+              {saving ? "저장 중..." : "저장"}
+            </button>
+          </div>
+        )}
+
+        <div className={isEditMode ? "space-y-4" : "space-y-0.5"}>
+          {isEditMode
+            ? editItems.map((item, i) => (
+                <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />
+              ))
+            : displayItems.map((item, i) => (
+                <ViewCard key={i} item={item} defaultOpen={i === 0} />
+              ))}
+        </div>
+
+        {isEditMode && (
+          <button onClick={addItem} className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-lg border border-dashed border-border bg-transparent text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">
+            + 경력 추가
           </button>
         )}
+
+        {showPasswordModal && (
+          <PasswordModal onSuccess={enterEditMode} onClose={() => setShowPasswordModal(false)} />
+        )}
       </div>
-
-      {isEditMode && (
-        <div className="flex gap-2 justify-end mb-3">
-          <button onClick={cancelEdit} className="inline-flex h-9 items-center rounded-lg border border-border bg-transparent px-3.5 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">취소</button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex h-9 items-center rounded-lg bg-foreground px-3.5 text-sm font-medium text-background transition-colors duration-150 hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 disabled:opacity-50"
-            type="button"
-          >
-            {saving ? "저장 중..." : "저장"}
-          </button>
-        </div>
-      )}
-
-      <div className={isEditMode ? "space-y-4" : "space-y-0.5"}>
-        {isEditMode
-          ? editItems.map((item, i) => (
-              <EditCard key={i} item={item} onChange={(u) => updateItem(i, u)} onDelete={() => deleteItem(i)} />
-            ))
-          : displayItems.map((item, i) => (
-              <ViewCard key={i} item={item} />
-            ))}
-      </div>
-
-      {isEditMode && (
-        <button onClick={addItem} className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-lg border border-dashed border-border bg-transparent text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45" type="button">
-          + 경력 추가
-        </button>
-      )}
-
-      {showPasswordModal && (
-        <PasswordModal onSuccess={enterEditMode} onClose={() => setShowPasswordModal(false)} />
-      )}
     </div>
   );
 });

@@ -27,6 +27,7 @@ const HIGHLIGHT_SPRING = { damping: 22, stiffness: 120, mass: 0.8 };
 const MAGNETIC_RADIUS = 70;
 const MAGNETIC_WEAK = 0.2;
 const MAGNETIC_STRONG = 0.35;
+const MOBILE_CURSOR_QUERY = "(max-width: 768px), (pointer: coarse)";
 
 type CursorMode = "default" | "nav" | "button" | "project" | "labeled" | "highlight";
 
@@ -75,14 +76,27 @@ export function MagneticCursor() {
 
   /* ── Setup ── */
   useEffect(() => {
-    const touch =
-      "ontouchstart" in window ||
-      navigator.maxTouchPoints > 0 ||
-      window.matchMedia("(pointer: coarse)").matches;
-    setIsTouch(touch);
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const cursorMedia = window.matchMedia(MOBILE_CURSOR_QUERY);
+    const reducedMotionMedia = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
     );
+    const updateInputMode = () => {
+      setIsTouch(
+        cursorMedia.matches ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0
+      );
+      setReducedMotion(reducedMotionMedia.matches);
+    };
+
+    updateInputMode();
+    cursorMedia.addEventListener("change", updateInputMode);
+    reducedMotionMedia.addEventListener("change", updateInputMode);
+
+    return () => {
+      cursorMedia.removeEventListener("change", updateInputMode);
+      reducedMotionMedia.removeEventListener("change", updateInputMode);
+    };
   }, []);
 
   const refreshTargets = useCallback(() => {

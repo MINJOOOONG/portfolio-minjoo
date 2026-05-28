@@ -107,15 +107,33 @@ export const Articles = memo(function Articles({ items }: ArticlesProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="w-full max-w-[860px]">
-      <div ref={headingRef} className="mb-8">
-        <SlideHeading label="Articles" title="논문 / 연구" />
-      </div>
+    <div
+      className="w-full max-w-[860px]"
+      data-allow-scroll
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}
+    >
+      <div
+        data-scroller
+        style={{
+          height: "100%",
+          maxHeight: "100vh",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          padding: "80px 24px 120px",
+          boxSizing: "border-box",
+        }}
+      >
+        <div ref={headingRef} className="mb-8">
+          <SlideHeading label="Articles" title="논문 / 연구" />
+        </div>
 
-      <div className="space-y-12">
-        {items.map((item) => (
-          <ArticleItem key={item.title} item={item} />
-        ))}
+        <div className="space-y-12">
+          {items.map((item) => (
+            <ArticleItem key={item.title} item={item} />
+          ))}
+        </div>
       </div>
     </div>
   );

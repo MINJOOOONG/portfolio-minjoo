@@ -38,102 +38,120 @@ export const ContactSection = memo(function ContactSection({
   });
 
   return (
-    <div className="w-full max-w-[980px]">
-      {/* ── Heading ── */}
-      <div ref={headingRef} className="mb-10 sm:mb-12">
-        <SlideHeading label="Contact" title="Contact" />
-      </div>
-
-      {/* ── Profile row ── */}
+    <div
+      className="w-full max-w-[980px]"
+      data-allow-scroll
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}
+    >
       <div
-        ref={profileRef}
-        className="flex flex-col items-start md:flex-row md:items-start gap-10 md:gap-16"
+        data-scroller
+        style={{
+          height: "100%",
+          maxHeight: "100vh",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          padding: "80px 24px 120px",
+          boxSizing: "border-box",
+        }}
       >
-        {/* Left: Photo */}
-        <div className="shrink-0 w-36 h-44 sm:w-40 sm:h-48 md:w-44 md:h-52">
-          <div className="relative w-full h-full rounded-xl overflow-hidden">
-            <Image
-              src={contactProfile.photo}
-              alt={contactProfile.name}
-              fill
-              className="object-cover object-top"
-              sizes="(max-width: 768px) 160px, 176px"
-            />
+        {/* ── Heading ── */}
+        <div ref={headingRef} className="mb-10 sm:mb-12">
+          <SlideHeading label="Contact" title="Contact" />
+        </div>
+
+        {/* ── Profile row ── */}
+        <div
+          ref={profileRef}
+          className="flex flex-col items-start md:flex-row md:items-start gap-10 md:gap-16"
+        >
+          {/* Left: Photo */}
+          <div className="shrink-0 w-36 h-44 sm:w-40 sm:h-48 md:w-44 md:h-52">
+            <div className="relative w-full h-full rounded-xl overflow-hidden">
+              <Image
+                src={contactProfile.photo}
+                alt={contactProfile.name}
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 768px) 160px, 176px"
+              />
+            </div>
+          </div>
+
+          {/* Right: Name + Tagline + Badges */}
+          <div className="flex min-w-0 flex-col items-start text-left flex-1 gap-6 md:pt-2">
+            <h3 className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] text-[var(--notion-navy)] leading-[0.95]">
+              {contactProfile.name}
+            </h3>
+
+            <p className="text-[15px] leading-[1.8] text-[var(--notion-slate)] max-w-sm">
+              {contactProfile.tagline}
+            </p>
+
+            {/* Links */}
+            <div className="flex flex-wrap gap-3 mt-2">
+              {contactLinks.map((link) => (
+                <LinkBadge key={link.label} link={link} />
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Right: Name + Tagline + Badges */}
-        <div className="flex min-w-0 flex-col items-start text-left flex-1 gap-6 md:pt-2">
-          <h3 className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] text-[var(--notion-navy)] leading-[0.95]">
-            {contactProfile.name}
-          </h3>
+        {/* ── Education & Certifications ── */}
+        {((educationItems && educationItems.length > 0) ||
+          (certificationItems && certificationItems.length > 0)) && (
+          <>
+            <div className="border-t border-[var(--notion-hairline)] mt-12 mb-12" />
 
-          <p className="text-[15px] leading-[1.8] text-[var(--notion-slate)] max-w-sm">
-            {contactProfile.tagline}
-          </p>
+            <div ref={bottomRef} className="grid gap-12 sm:grid-cols-2">
+              {/* Education */}
+              {educationItems && educationItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--notion-stone)] mb-6">
+                    Education
+                  </h4>
+                  <div className="space-y-5">
+                    {educationItems.map((item, i) => (
+                      <div key={i}>
+                        <p className="text-sm font-semibold text-[var(--notion-ink)] leading-snug">
+                          {item.school}
+                        </p>
+                        <p className="text-xs text-[var(--notion-slate)] mt-1.5">
+                          {item.major}
+                          <span className="mx-1.5 text-[var(--notion-muted)]">&middot;</span>
+                          <span className="text-[var(--notion-stone)]">{item.period}</span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Links */}
-          <div className="flex flex-wrap gap-3 mt-2">
-            {contactLinks.map((link) => (
-              <LinkBadge key={link.label} link={link} />
-            ))}
-          </div>
-        </div>
+              {/* Certifications */}
+              {certificationItems && certificationItems.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--notion-stone)] mb-6">
+                    Certifications
+                  </h4>
+                  <div className="space-y-4">
+                    {certificationItems.map((item, i) => (
+                      <div key={i} className="flex items-start justify-between gap-4">
+                        <p className="text-sm font-semibold text-[var(--notion-ink)] leading-snug">
+                          {item.name}
+                        </p>
+                        <p className="text-[11px] text-[var(--notion-stone)] shrink-0 pt-0.5">
+                          {item.date}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
-
-      {/* ── Education & Certifications ── */}
-      {((educationItems && educationItems.length > 0) ||
-        (certificationItems && certificationItems.length > 0)) && (
-        <>
-          <div className="border-t border-[var(--notion-hairline)] mt-12 mb-12" />
-
-          <div ref={bottomRef} className="grid gap-12 sm:grid-cols-2">
-            {/* Education */}
-            {educationItems && educationItems.length > 0 && (
-              <div>
-                <h4 className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--notion-stone)] mb-6">
-                  Education
-                </h4>
-                <div className="space-y-5">
-                  {educationItems.map((item, i) => (
-                    <div key={i}>
-                      <p className="text-sm font-semibold text-[var(--notion-ink)] leading-snug">
-                        {item.school}
-                      </p>
-                      <p className="text-xs text-[var(--notion-slate)] mt-1.5">
-                        {item.major}
-                        <span className="mx-1.5 text-[var(--notion-muted)]">&middot;</span>
-                        <span className="text-[var(--notion-stone)]">{item.period}</span>
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Certifications */}
-            {certificationItems && certificationItems.length > 0 && (
-              <div>
-                <h4 className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--notion-stone)] mb-6">
-                  Certifications
-                </h4>
-                <div className="space-y-4">
-                  {certificationItems.map((item, i) => (
-                    <div key={i} className="flex items-start justify-between gap-4">
-                      <p className="text-sm font-semibold text-[var(--notion-ink)] leading-snug">
-                        {item.name}
-                      </p>
-                      <p className="text-[11px] text-[var(--notion-stone)] shrink-0 pt-0.5">
-                        {item.date}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      )}
     </div>
   );
 });

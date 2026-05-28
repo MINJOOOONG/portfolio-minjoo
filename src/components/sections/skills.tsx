@@ -163,39 +163,57 @@ export const Skills = memo(function Skills({ data: _data }: SkillsProps) {
   }, []);
 
   return (
-    <div className="skills-section w-full">
-      {/* Heading — same pattern as About, Experience, AI Lab */}
-      <div className="mb-6 sm:mb-8">
-        <SlideHeading label="Skills" title="Skills" />
-      </div>
+    <div
+      className="skills-section w-full"
+      data-allow-scroll
+      style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}
+    >
+      <div
+        data-scroller
+        style={{
+          height: "100%",
+          maxHeight: "100vh",
+          overflowY: "scroll",
+          overflowX: "hidden",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          padding: "80px 24px 120px",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Heading — same pattern as About, Experience, AI Lab */}
+        <div className="mb-6 sm:mb-8">
+          <SlideHeading label="Skills" title="Skills" />
+        </div>
 
-      <p className="text-sm leading-[1.8] text-[var(--notion-slate)] max-w-lg mb-12">
-        Tools and technologies I use to build, test, and design products.
-      </p>
+        <p className="text-sm leading-[1.8] text-[var(--notion-slate)] max-w-lg mb-12">
+          Tools and technologies I use to build, test, and design products.
+        </p>
 
-      {/* Category tabs — same pattern as AI Lab */}
-      <div className="flex flex-wrap gap-2 mb-10 border-b border-[var(--notion-hairline)] pb-5">
-        {SKILL_CATEGORIES.map((category) => (
-          <button
-            key={category}
-            type="button"
-            onClick={() => handleCategory(category)}
-            className={`px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
-              activeCategory === category
-                ? "bg-[var(--notion-ink)] text-white"
-                : "text-[var(--notion-stone)] hover:text-[var(--notion-ink)] hover:bg-[var(--notion-surface)]"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+        {/* Category tabs — horizontal scroll on mobile */}
+        <div className="flex flex-nowrap overflow-x-auto sm:flex-wrap sm:overflow-x-visible gap-2 mb-10 border-b border-[var(--notion-hairline)] pb-5 -mx-1 px-1" data-no-section-nav>
+          {SKILL_CATEGORIES.map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => handleCategory(category)}
+              className={`shrink-0 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
+                activeCategory === category
+                  ? "bg-[var(--notion-ink)] text-white"
+                  : "text-[var(--notion-stone)] hover:text-[var(--notion-ink)] hover:bg-[var(--notion-surface)]"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
 
-      {/* Icon grid */}
-      <div className="skills-icon-grid" key={activeCategory ?? "all"}>
-        {visibleSkills.map((item) => (
-          <SkillTile key={item.name} item={item} />
-        ))}
+        {/* Icon grid */}
+        <div className="skills-icon-grid" key={activeCategory ?? "all"}>
+          {visibleSkills.map((item) => (
+            <SkillTile key={item.name} item={item} />
+          ))}
+        </div>
       </div>
     </div>
   );

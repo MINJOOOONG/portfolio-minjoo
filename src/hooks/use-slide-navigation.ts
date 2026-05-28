@@ -39,7 +39,8 @@ const INTERACTIVE_SELECTOR = [
 ].join(", ");
 
 /** Sections whose content scrolls internally instead of PPT-style navigation */
-const SCROLLABLE_SECTIONS = new Set(["projects", "ai-lab"]);
+const SCROLLABLE_SECTIONS = new Set(["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"]);
+const MOBILE_NAV_QUERY = "(max-width: 768px), (pointer: coarse)";
 
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -207,11 +208,21 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
   /* ── Block native scroll so only click/keyboard navigates ── */
   /* For scrollable sections (e.g. "projects"), forward wheel to internal scroller */
   useEffect(() => {
+    const mobileNav = window.matchMedia(MOBILE_NAV_QUERY).matches;
+
     /** Find the internal scroll container for the current section */
     const getScroller = (): HTMLElement | null => {
       const sectionId = sectionIds[currentIndexRef.current];
-      if (!sectionId || !SCROLLABLE_SECTIONS.has(sectionId)) return null;
+      if (!sectionId) return null;
       const section = document.getElementById(sectionId);
+      if (mobileNav) {
+        return (
+          section?.querySelector<HTMLElement>("[data-scroller]") ??
+          section?.querySelector<HTMLElement>(":scope > div") ??
+          null
+        );
+      }
+      if (!SCROLLABLE_SECTIONS.has(sectionId)) return null;
       return section?.querySelector<HTMLElement>("[data-scroller]") ?? null;
     };
 
@@ -237,13 +248,18 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     };
 
     let touchStartY = 0;
+    let touchStartX = 0;
+    let touchMoved = false;
     const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      touchMoved = false;
     };
     const blockTouchMove = (e: TouchEvent) => {
       // Let modal handle its own touch scroll natively
       if (isInsideModal(e.target)) return;
 
+      touchMoved = true;
       e.preventDefault();
       const scroller = getScroller();
       if (scroller) {
@@ -251,6 +267,49 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
         touchStartY = e.touches[0].clientY;
         scroller.scrollBy({ top: deltaY, behavior: "instant" });
       }
+    };
+
+    const navigateByTapX = (clientX: number) => {
+      if (clientX >= window.innerWidth / 2) {
+        goTo(currentIndexRef.current + 1);
+      } else {
+        goTo(currentIndexRef.current - 1);
+      }
+    };
+
+    const shouldIgnoreMobileTap = (target: EventTarget | null) => {
+      if (cooldownRef.current) return true;
+      if (isInsideModal(target)) return true;
+      if (
+        target instanceof HTMLElement &&
+        target.closest(INTERACTIVE_SELECTOR)
+      ) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const isTapGesture = (clientX: number, clientY: number) => {
+      const dx = Math.abs(clientX - touchStartX);
+      const dy = Math.abs(clientY - touchStartY);
+      return !touchMoved || (dx <= 12 && dy <= 12);
+    };
+
+    const handleMobilePointerTap = (e: PointerEvent) => {
+      if (!mobileNav || e.pointerType !== "touch") return;
+      if (shouldIgnoreMobileTap(e.target)) return;
+      if (!isTapGesture(e.clientX, e.clientY)) return;
+      navigateByTapX(e.clientX);
+    };
+
+    const handleMobileTouchEnd = (e: TouchEvent) => {
+      if (!mobileNav) return;
+      if (shouldIgnoreMobileTap(e.target)) return;
+      const touch = e.changedTouches[0];
+      if (!touch || !isTapGesture(touch.clientX, touch.clientY)) return;
+      e.preventDefault();
+      navigateByTapX(touch.clientX);
     };
 
     // CSS-level scroll lock
@@ -262,6 +321,8 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       passive: true,
     });
     document.addEventListener("touchmove", blockTouchMove, { passive: false });
+    document.addEventListener("touchend", handleMobileTouchEnd, { passive: false });
+    document.addEventListener("pointerup", handleMobilePointerTap);
 
     return () => {
       document.documentElement.style.overflow = "";
@@ -269,8 +330,10 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       window.removeEventListener("wheel", blockWheel);
       document.removeEventListener("touchstart", handleTouchStart);
       document.removeEventListener("touchmove", blockTouchMove);
+      document.removeEventListener("touchend", handleMobileTouchEnd);
+      document.removeEventListener("pointerup", handleMobilePointerTap);
     };
-  }, [sectionIds]);
+  }, [goTo, sectionIds]);
 
   /* ── Navigate to section from URL hash on initial load ── */
   useEffect(() => {

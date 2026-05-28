@@ -2,7 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useCallback, useEffect, useState, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type TouchEvent,
+} from "react";
 
 export function EntryPage() {
   const router = useRouter();
@@ -29,6 +36,23 @@ export function EntryPage() {
     [go]
   );
 
+  const onTouchEnd = useCallback(
+    (e: TouchEvent<HTMLElement>) => {
+      e.preventDefault();
+      go();
+    },
+    [go]
+  );
+
+  const onPointerUp = useCallback(
+    (e: PointerEvent<HTMLElement>) => {
+      if (e.pointerType !== "touch") return;
+      e.preventDefault();
+      go();
+    },
+    [go]
+  );
+
   return (
     <main
       className={`entry-overlay ${leaving ? "entry-overlay--leaving" : ""}`}
@@ -38,14 +62,24 @@ export function EntryPage() {
       data-cursor="ENTER"
       onClick={go}
       onKeyDown={onKey}
+      onPointerUp={onPointerUp}
+      onTouchEnd={onTouchEnd}
     >
+      <Image
+        src="/entry-page-mobile.png"
+        alt="Minjoo portfolio entry badge"
+        fill
+        priority
+        sizes="(max-width: 768px) 100vw, 0px"
+        className="entry-image entry-image--mobile"
+      />
       <Image
         src="/entry-page.png"
         alt="Minjoo portfolio entry badge"
         fill
         priority
-        sizes="100vw"
-        className="entry-image"
+        sizes="(max-width: 768px) 0px, 100vw"
+        className="entry-image entry-image--desktop"
       />
     </main>
   );
