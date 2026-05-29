@@ -182,22 +182,18 @@ export const Skills = memo(function Skills({ data: _data }: SkillsProps) {
         }}
       >
         {/* Heading — same pattern as About, Experience, AI Lab */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-3 sm:mb-8">
           <SlideHeading label="Skills" title="Skills" />
         </div>
 
-        <p className="text-sm leading-[1.8] text-[var(--notion-slate)] max-w-lg mb-12">
-          Tools and technologies I use to build, test, and design products.
-        </p>
-
-        {/* Category tabs — horizontal scroll on mobile */}
-        <div className="flex flex-nowrap overflow-x-auto sm:flex-wrap sm:overflow-x-visible gap-2 mb-10 border-b border-[var(--notion-hairline)] pb-5 -mx-1 px-1" data-no-section-nav>
+        {/* Category tabs — carousel scroll on mobile */}
+        <div className="flex flex-nowrap overflow-x-auto scrollbar-hide snap-x snap-mandatory sm:flex-wrap sm:overflow-x-visible gap-2 mb-4 sm:mb-10 border-b border-[var(--notion-hairline)] pb-2 sm:pb-5 -mx-1 px-1" data-no-section-nav>
           {SKILL_CATEGORIES.map((category) => (
             <button
               key={category}
               type="button"
               onClick={() => handleCategory(category)}
-              className={`shrink-0 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
+              className={`snap-start shrink-0 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
                 activeCategory === category
                   ? "bg-[var(--notion-ink)] text-white"
                   : "text-[var(--notion-stone)] hover:text-[var(--notion-ink)] hover:bg-[var(--notion-surface)]"

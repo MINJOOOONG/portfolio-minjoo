@@ -9,7 +9,7 @@ const links = [
 
 export function Contact() {
   return (
-    <section id="contact" className="py-8">
+    <section id="contact" className="pt-0 pb-6 sm:py-8">
       <div className="max-w-[880px] mx-auto px-5 sm:px-8">
         <div className="section-divider" />
         <SlideHeading label="Contact" title="Contact" />

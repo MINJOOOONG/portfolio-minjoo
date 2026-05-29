@@ -57,14 +57,14 @@ export const ContactSection = memo(function ContactSection({
         }}
       >
         {/* ── Heading ── */}
-        <div ref={headingRef} className="mb-10 sm:mb-12">
+        <div ref={headingRef} className="mb-6 sm:mb-12">
           <SlideHeading label="Contact" title="Contact" />
         </div>
 
         {/* ── Profile row ── */}
         <div
           ref={profileRef}
-          className="flex flex-col items-start md:flex-row md:items-start gap-10 md:gap-16"
+          className="flex flex-col items-start md:flex-row md:items-start gap-6 md:gap-16"
         >
           {/* Left: Photo */}
           <div className="shrink-0 w-36 h-44 sm:w-40 sm:h-48 md:w-44 md:h-52">
@@ -80,7 +80,7 @@ export const ContactSection = memo(function ContactSection({
           </div>
 
           {/* Right: Name + Tagline + Badges */}
-          <div className="flex min-w-0 flex-col items-start text-left flex-1 gap-6 md:pt-2">
+          <div className="flex min-w-0 flex-col items-start text-left flex-1 gap-4 sm:gap-6 md:pt-2">
             <h3 className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] text-[var(--notion-navy)] leading-[0.95]">
               {contactProfile.name}
             </h3>
@@ -90,7 +90,7 @@ export const ContactSection = memo(function ContactSection({
             </p>
 
             {/* Links */}
-            <div className="flex flex-wrap gap-3 mt-2">
+            <div className="flex flex-wrap gap-3">
               {contactLinks.map((link) => (
                 <LinkBadge key={link.label} link={link} />
               ))}
@@ -102,9 +102,9 @@ export const ContactSection = memo(function ContactSection({
         {((educationItems && educationItems.length > 0) ||
           (certificationItems && certificationItems.length > 0)) && (
           <>
-            <div className="border-t border-[var(--notion-hairline)] mt-12 mb-12" />
+            <div className="border-t border-[var(--notion-hairline)] mt-8 mb-8 sm:mt-12 sm:mb-12" />
 
-            <div ref={bottomRef} className="grid gap-12 sm:grid-cols-2">
+            <div ref={bottomRef} className="grid gap-8 sm:gap-12 sm:grid-cols-2">
               {/* Education */}
               {educationItems && educationItems.length > 0 && (
                 <div>

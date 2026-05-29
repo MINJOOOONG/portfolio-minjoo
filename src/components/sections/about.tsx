@@ -37,12 +37,12 @@ export const About = memo(function About({ content }: AboutProps) {
           overflowX: "hidden",
           WebkitOverflowScrolling: "touch",
           overscrollBehavior: "contain",
-          padding: "80px 40px 120px",
+          padding: "80px 24px 120px",
           boxSizing: "border-box",
         }}
       >
         {/* ── Heading ── */}
-        <div ref={headingRef} className="mb-12 sm:mb-16">
+        <div ref={headingRef} className="mb-4 sm:mb-16">
           <SlideHeading label="About" title="About Me" />
         </div>
 
@@ -89,14 +89,14 @@ function MobileAboutItem({ section, index }: { section: (typeof aboutSections)[n
         type="button"
         data-no-section-nav
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-5 text-left"
+        className="w-full flex items-center justify-between py-3 text-left"
       >
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[11px] font-bold tracking-[0.06em] text-foreground/25">
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-[10px] font-bold tracking-[0.06em] text-foreground/25">
             {section.number}
           </span>
-          <span className="text-[15px] font-semibold text-foreground tracking-[-0.01em]">
-            {section.koreanTitle}
+          <span className="text-[13px] font-semibold text-foreground tracking-[-0.01em]">
+            {section.englishTitle}
           </span>
         </div>
         <ChevronDown
@@ -114,13 +114,13 @@ function MobileAboutItem({ section, index }: { section: (typeof aboutSections)[n
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-6 pl-[30px]">
-              <p className="text-[16px] font-semibold leading-[1.55] tracking-[-0.02em] text-foreground mb-4">
+            <div className="pb-4 pl-[26px]">
+              <p className="text-[13px] font-semibold leading-[1.5] tracking-[-0.02em] text-foreground mb-3">
                 {section.sentence}
               </p>
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {section.paragraphs.map((p, i) => (
-                  <p key={i} className="text-[14px] leading-[1.8] text-foreground/60">
+                  <p key={i} className="text-[12px] leading-[1.7] text-foreground/60">
                     {p}
                   </p>
                 ))}
@@ -130,7 +130,7 @@ function MobileAboutItem({ section, index }: { section: (typeof aboutSections)[n
                   type="button"
                   data-no-section-nav
                   onClick={() => window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: section.detailLink!.targetId }))}
-                  className="mt-5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-foreground/60 hover:text-foreground transition-colors"
+                  className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/60 hover:text-foreground transition-colors"
                 >
                   {section.detailLink.label}
                   <span aria-hidden="true">→</span>
@@ -148,11 +148,11 @@ export function SlideHeading({ label, title }: { label: string; title?: string }
   const displayText = title && /^[A-Za-z0-9 /&|+-]+$/.test(title) ? title : label;
 
   return (
-    <div className="mb-4">
-      <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-2">
+    <div className="mb-2 sm:mb-4">
+      <span className="block text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50 mb-1 sm:mb-2">
         {label}
       </span>
-      <h2 className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] text-foreground">
+      <h2 className="font-display text-[clamp(1.4rem,4.5vw,3.2rem)] font-black tracking-[-0.04em] leading-[0.95] text-foreground">
         {displayText}
       </h2>
     </div>

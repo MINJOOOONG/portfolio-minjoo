@@ -22,15 +22,15 @@ export interface AILabArchiveNavItem {
 }
 
 export const aiLabArchiveNavItems: AILabArchiveNavItem[] = [
-  { id: "overview", label: "개요", eyebrow: "", group: "소개" },
-  { id: "safety-framework", label: "안전성 기준", eyebrow: "", group: "품질 & 안전성" },
-  { id: "evaluation-playbook", label: "평가 체크리스트", eyebrow: "", group: "품질 & 안전성" },
-  { id: "ai-glossary", label: "용어 정리", eyebrow: "", group: "AI Dictionary" },
-  { id: "ai-policy", label: "법·정책", eyebrow: "", group: "규제 & 모델" },
-  { id: "company-principles", label: "회사별 원칙", eyebrow: "", group: "규제 & 모델" },
-  { id: "model-comparison", label: "모델 비교", eyebrow: "", group: "규제 & 모델" },
-  { id: "ai-tool-stack", label: "AI 도구", eyebrow: "", group: "도구 & 기록" },
-  { id: "media-note", label: "Media Notes", eyebrow: "", group: "도구 & 기록" },
+  { id: "overview", label: "Overview", eyebrow: "" },
+  { id: "safety-framework", label: "Safety", eyebrow: "" },
+  { id: "evaluation-playbook", label: "Evaluation", eyebrow: "" },
+  { id: "ai-glossary", label: "Glossary", eyebrow: "" },
+  { id: "ai-policy", label: "Policy", eyebrow: "" },
+  { id: "company-principles", label: "Principles", eyebrow: "" },
+  { id: "model-comparison", label: "Models", eyebrow: "" },
+  { id: "ai-tool-stack", label: "AI Tools", eyebrow: "" },
+  { id: "media-note", label: "Media Notes", eyebrow: "" },
 ];
 
 /* ── Shared Types ── */
@@ -58,36 +58,55 @@ export interface DataTableData {
 
 /* ── 01. Overview ── */
 
-export const overviewSummaryCards: AILabSummaryCard[] = [
+export interface OverviewNote {
+  heading: string;
+  body: string;
+}
+
+export const overviewNotes: OverviewNote[] = [
   {
-    title: "Safety Framework",
-    description: "AI 서비스 출시 전 점검해야 할 안전성 기준 7가지. 할루시네이션, 편향, 개인정보 등 리스크별 평가 규칙을 정리했습니다.",
-    tags: ["Hallucination", "Bias", "Privacy"],
+    heading: "AI는 답변 도구에서 실행 도구로 바뀌고 있다",
+    body: "초기 생성형 AI는 질문에 답해주는 도구였다. 하지만 지금 AI는 스스로 단계를 나누고, 정보를 찾고, 실제 행동까지 수행하는 방향으로 발전하고 있다. \"알려주는 존재\"에서 \"대신 해주는 존재\"로 이동하고 있는 것이다. AI가 실행까지 할 수 있다면, 그 실행을 평가하고 기준을 세우는 사람이 중요해진다. 이 랩을 만든 출발점이 여기에 있다.",
   },
   {
-    title: "Evaluation Playbook",
-    description: "QA 경험에서 출발한 AI 답변 평가 체크리스트. 정확성, 근거성, 안전성 등 8개 기준으로 good/risky response를 구분합니다.",
-    tags: ["QA", "평가 기준", "Red Team"],
+    heading: "지식 노동도 자동화의 대상이 되었다",
+    body: "자동화는 단순 반복 노동을 먼저 대체할 거라고 생각했다. 하지만 AI는 리서치, 분석, 문서 작성, 의사결정 보조 같은 화이트칼라 업무를 흔들고 있다. 직업 자체가 사라지는 게 아니라, 사람이 하던 일의 일부가 AI에게 분해되어 넘어간다. AI가 잘하는 것과 못하는 것을 이해하는 게 경쟁력의 출발점이라고 생각해서 이 공부를 시작했다.",
   },
   {
-    title: "AI Glossary",
-    description: "실무에서 만나는 AI 용어를 나만의 기준으로 정리한 사전. 검색과 카테고리 필터를 지원합니다.",
-    tags: ["LLM", "RAG", "Guardrail"],
+    heading: "생산성이 올라도 그 결과가 공평하게 돌아오진 않는다",
+    body: "AI가 생산성을 높이지만, 그 결과가 모두에게 돌아가는 건 별개의 문제다. 기업은 더 적은 인력으로 같은 결과를 낼 수 있게 된다. 중요한 건 AI가 일을 할 수 있느냐가 아니라, 그 가치를 이해하는 쪽에 있느냐다. 이 랩은 결과를 소비하는 게 아니라 가치를 이해하는 사람이 되기 위해 만들었다.",
   },
   {
-    title: "Policy & Regulation",
-    description: "EU AI Act, 한국 AI 기본법 등 AI 관련 법·정책 핵심 정리. 금융 서비스 관점의 시사점을 함께 기록합니다.",
-    tags: ["EU AI Act", "AI 기본법", "금융"],
+    heading: "정답을 아는 능력의 희소성이 낮아지고 있다",
+    body: "검색, 계산, 요약, 코드 작성 — AI가 이미 잘하는 일들이다. 정답을 빨리 찾는 능력 자체의 가치가 떨어지고 있다. 중요한 건 그 답을 가지고 무엇을 하느냐다. 이 랩은 사실을 외우는 게 아니라 판단 기준과 프레임워크를 만드는 연습이다.",
   },
   {
-    title: "Company AI Principles",
-    description: "OpenAI, Anthropic, Google, Microsoft의 AI 안전 원칙을 비교하고, 내가 배운 점을 정리했습니다.",
-    tags: ["Constitutional AI", "Model Spec", "Responsible AI"],
+    heading: "프롬프트 능력은 첫 번째 파도였고, 이미 지나가고 있다",
+    body: "ChatGPT가 나왔을 때 프롬프트를 잘 쓰는 게 능력처럼 느껴졌다. 하지만 모델이 똑똑해질수록 경쟁력은 \"어떻게 질문할까\"에서 \"무엇을 시킬지, 왜 시키는지, 결과를 어떻게 판단할지\"로 이동한다. 이 랩이 프롬프트 템플릿이 아니라 평가 기준과 안전성 기준에 집중하는 이유다.",
   },
   {
-    title: "AI Tools & Media Notes",
-    description: "실제로 사용하고 비교한 AI 도구와, AI Quality/Safety 관련 학습 기록입니다.",
-    tags: ["도구 비교", "학습 기록"],
+    heading: "문제를 정의하는 능력이 핵심이 된다",
+    body: "AI는 답을 만들 수 있지만, 어떤 문제가 중요한지, 어떤 방향으로 접근해야 하는지, 결과가 의미 있는지를 판단하지는 못한다. 문제 정의, 질문 설계, 판단은 여전히 사람의 몫이다. 이 랩의 모든 섹션 — 안전성, 평가, 정책 — 은 AI에게 결과를 요구하기 전에 \"좋은 것\"이 무엇인지 먼저 정의하는 연습이다.",
+  },
+  {
+    heading: "사람의 역할이 실행자에서 디렉터로 바뀐다",
+    body: "AI가 실행을 대신하면, 사람은 무엇을 만들지, 왜 만들어야 하는지, 어떤 기준으로 판단할지를 결정하는 역할로 이동한다. 경쟁력은 AI보다 빨리 일하는 게 아니라, AI를 제대로 방향 잡아주는 데 있다. QA에서 배운 건 품질은 속도가 아니라 명확한 기준에서 나온다는 것이다. 이 랩은 그 원칙을 AI에 적용한 것이다.",
+  },
+  {
+    heading: "직접 경험과 맥락의 가치가 커진다",
+    body: "AI는 텍스트에서 배울 수 있지만, 실제 실패와 대화와 복잡한 상황에서 얻은 판단력은 대체하기 어렵다. 깊은 직접 경험은 문서만으로는 가르칠 수 없는 이해를 만든다. 이 랩의 노트들은 교과서 요약이 아니라 내 실무 경험을 통해 걸러낸 내용이다.",
+  },
+  {
+    heading: "미래 직업을 맞히는 것보다 적응력이 중요하다",
+    body: "변화 속도가 너무 빠르기 때문에 커리어 예측은 의미가 없다. 호기심, 회복탄력성, 환경이 바뀌었을 때 방향을 바꿀 수 있는 힘이 특정 스킬이나 직함보다 오래간다. 이 랩 자체가 그 접근의 증거다 — 누군가 AI 안전성을 가르쳐줄 때까지 기다리지 않고, 직접 공부하고 정리하기 시작했다.",
+  },
+  {
+    heading: "AI가 강해질수록 인간적인 능력도 중요해진다",
+    body: "신뢰 형성, 공감, 설득, 관계 관리 — AI가 하기 어려운 것들이다. 기술적 실행이 자동화될수록 기술 이해와 진짜 인간적 연결을 함께 다루는 사람이 더 가치 있어진다. 내가 목표하는 균형이 바로 이것이다: AI에 대한 깊은 기술적 이해 + 실제 인간 맥락에 기반한 판단.",
+  },
+  {
+    heading: "익숙한 방식만 반복하면 위험하다",
+    body: "빠르게 변하는 환경에서 익숙한 패턴에 머무르는 건 오히려 위험하다. 새로운 자극을 찾고, 자기 방식으로 해석하고, 남의 결론을 재활용하지 않고 직접 생각하는 사람이 강해진다. 이 랩은 바로 그 연습장이다 — 배운 것을 처리해서 내 언어와 프레임워크로 바꾸는 공간.",
   },
 ];
 

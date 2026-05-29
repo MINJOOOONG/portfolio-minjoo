@@ -29,11 +29,11 @@ import {
   modelFamilies,
   modelSelectionGuide,
   nistRmfSteps,
-  overviewSummaryCards,
+  overviewNotes,
   policyItems,
   safetyRiskCards,
   type AILabArchiveSectionId,
-  type AILabSummaryCard,
+  type OverviewNote,
   type AILabTextCard,
   type AITool,
   type AIToolFilter,
@@ -68,6 +68,7 @@ const glossaryCategoryLabels: Record<GlossaryCategory, string> = {
 /* ── Main Component ── */
 
 export const AILab = memo(function AILab() {
+  const [activeTab, setActiveTab] = useState<AILabArchiveSectionId>("overview");
   const [activeToolFilter, setActiveToolFilter] = useState<AIToolFilter>("All");
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 30, duration: 0.8 });
 
@@ -76,183 +77,140 @@ export const AILab = memo(function AILab() {
     return aiTools.filter((tool) => tool.groups.includes(activeToolFilter));
   }, [activeToolFilter]);
 
-  const scrollToSection = useCallback((id: AILabArchiveSectionId) => {
-    document.getElementById(sectionDomId(id))?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, []);
-
   return (
-    <div className="ai-lab-section" style={{ height: "100vh", overflow: "hidden" }}>
+    <div className="ai-lab-section" style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      {/* ── Fixed header: heading + tab nav (outside scroller) ── */}
+      <div className="pt-12 sm:pt-20" style={{ flexShrink: 0, boxSizing: "border-box" as const }}>
+        <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
+          <div ref={headingRef} className="mb-2 sm:mb-4">
+            <SlideHeading label="AI Lab" title="AI Lab" />
+          </div>
+        </div>
+        <ArchiveNavigation activeTab={activeTab} onSelect={setActiveTab} />
+      </div>
+
+      {/* ── Scrollable content ── */}
       <div
         data-scroller
         style={{
-          height: "100%",
-          maxHeight: "100vh",
+          flex: 1,
+          minHeight: 0,
           overflowY: "scroll",
           overflowX: "hidden",
           WebkitOverflowScrolling: "touch",
           overscrollBehavior: "contain",
-          padding: "100px 28px 120px",
+          padding: "0 24px 120px",
           boxSizing: "border-box" as const,
         }}
       >
         <div className="max-w-[1160px] mx-auto">
-          <div ref={headingRef} className="mb-4">
-            <SlideHeading label="AI Lab" title="AI Lab" />
-          </div>
-
-          <p className="text-sm leading-[1.8] text-[var(--notion-slate)] max-w-lg mb-10">
-            AI 품질, 안전성, 평가, 정책을 공부하고 정리하는 개인 작업 노트입니다.
-          </p>
-
-          <ArchiveNavigation onSelect={scrollToSection} />
-
-          <main className="space-y-20 min-w-0">
-            {/* 01 — Overview */}
-            <ArchiveSection
-              id="overview"
-              eyebrow="Overview"
-              title="AI Quality & Safety Lab"
-              description="AI를 많이 써본 것이 아니라, AI 서비스를 안전하게 출시하기 위해 품질·안전성·평가·정책·모델 특성을 공부하고 나만의 기준으로 정리해온 공간입니다."
-            >
-              <LineGrid>
-                {overviewSummaryCards.map((card, index) => (
-                  <SummaryItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-            </ArchiveSection>
-
-            {/* 02 — Safety Framework */}
-            <ArchiveSection
-              id="safety-framework"
-              eyebrow="Safety Framework"
-              title="AI 서비스 출시 전 안전성 기준"
-              description="금융 서비스 관점에서 AI 답변의 7가지 리스크를 정의하고, 각 리스크별 평가 규칙을 정리했습니다. QA에서 TC를 먼저 정의하듯, 안전성도 기준이 먼저입니다."
-            >
-              <LineGrid>
-                {safetyRiskCards.map((card, index) => (
-                  <SafetyRiskItem key={card.risk} card={card} index={index} />
-                ))}
-              </LineGrid>
-
-              <SubsectionLabel title="NIST AI RMF 4단계" />
-              <LineGrid>
-                {nistRmfSteps.map((card, index) => (
-                  <TextItem key={card.title} card={card} index={index} />
-                ))}
-              </LineGrid>
-            </ArchiveSection>
-
-            {/* 03 — Evaluation Playbook */}
-            <ArchiveSection
-              id="evaluation-playbook"
-              eyebrow="Evaluation Playbook"
-              title="AI 답변 평가 체크리스트"
-              description="Toss QA에서 TC 기반으로 체크하듯, AI 답변도 평가 기준을 먼저 정의하고 반복 검증합니다."
-            >
-              <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] px-5 py-4 mb-6">
-                <p className="text-xs leading-[1.8] text-[var(--notion-ink)]">
-                  {evaluationQaConnection}
+          <main className="min-w-0">
+            {activeTab === "overview" && (
+              <ArchiveSection id="overview" eyebrow="Overview" title="이 랩을 만든 이유">
+                <p className="text-xs sm:text-sm leading-[1.8] text-[var(--notion-slate)] mb-5 sm:mb-8 max-w-2xl">
+                  AI는 더 이상 답변 도구가 아니라 실행 도구로 바뀌고 있습니다.
+                  업계가 기준을 정하기 전에, 스스로 AI 품질·안전성·평가의 기준을 공부하고 정리하기 위해 이 공간을 만들었습니다.
                 </p>
-              </div>
+                <div className="space-y-4 sm:space-y-6">
+                  {overviewNotes.map((note, i) => (
+                    <OverviewNoteItem key={i} note={note} index={i} />
+                  ))}
+                </div>
+              </ArchiveSection>
+            )}
 
-              <div className="space-y-4">
-                {evaluationCriteria.map((item, index) => (
-                  <EvaluationItem key={item.criterion} item={item} index={index} />
-                ))}
-              </div>
+            {activeTab === "safety-framework" && (
+              <ArchiveSection id="safety-framework" eyebrow="Safety Framework" title="Safety Standards">
+                <LineGrid>
+                  {safetyRiskCards.map((card, index) => (
+                    <SafetyRiskItem key={card.risk} card={card} index={index} />
+                  ))}
+                </LineGrid>
+                <SubsectionLabel title="NIST AI RMF 4 Steps" />
+                <LineGrid>
+                  {nistRmfSteps.map((card, index) => (
+                    <TextItem key={card.title} card={card} index={index} />
+                  ))}
+                </LineGrid>
+              </ArchiveSection>
+            )}
 
-              <SubsectionLabel title="자동화 아이디어" />
-              <LineGrid>
-                {automationIdeas.map((idea, index) => (
-                  <TextItem key={idea.title} card={idea} index={index} />
-                ))}
-              </LineGrid>
-            </ArchiveSection>
+            {activeTab === "evaluation-playbook" && (
+              <ArchiveSection id="evaluation-playbook" eyebrow="Evaluation Playbook" title="Evaluation Checklist">
+                <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] px-5 py-4 mb-6">
+                  <p className="text-xs leading-[1.8] text-[var(--notion-ink)]">
+                    {evaluationQaConnection}
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  {evaluationCriteria.map((item, index) => (
+                    <EvaluationItem key={item.criterion} item={item} index={index} />
+                  ))}
+                </div>
+                <SubsectionLabel title="Automation Ideas" />
+                <LineGrid>
+                  {automationIdeas.map((idea, index) => (
+                    <TextItem key={idea.title} card={idea} index={index} />
+                  ))}
+                </LineGrid>
+              </ArchiveSection>
+            )}
 
-            {/* 04 — AI Glossary */}
-            <ArchiveSection
-              id="ai-glossary"
-              eyebrow="AI Dictionary"
-              title="AI 용어 정리"
-              description="교과서 정의가 아니라, 내가 이해한 방식으로 정리한 용어집입니다. 각 용어에 실무 관점의 메모를 달았습니다."
-            >
-              <GlossaryTable />
-            </ArchiveSection>
+            {activeTab === "ai-glossary" && (
+              <ArchiveSection id="ai-glossary" eyebrow="AI Dictionary" title="Glossary">
+                <GlossaryTable />
+              </ArchiveSection>
+            )}
 
-            {/* 05 — Policy & Regulation */}
-            <ArchiveSection
-              id="ai-policy"
-              eyebrow="Policy & Regulation"
-              title="AI 법·정책 핵심 정리"
-              description="EU AI Act, 한국 AI 기본법, 개인정보보호법 등 AI 관련 법·정책을 금융 서비스 관점에서 정리했습니다."
-            >
-              <div className="space-y-4">
-                {policyItems.map((item, index) => (
-                  <PolicyCard key={item.title} item={item} index={index} />
-                ))}
-              </div>
+            {activeTab === "ai-policy" && (
+              <ArchiveSection id="ai-policy" eyebrow="Policy & Regulation" title="Policy">
+                <div className="space-y-4">
+                  {policyItems.map((item, index) => (
+                    <PolicyCard key={item.title} item={item} index={index} />
+                  ))}
+                </div>
+                <SubsectionLabel title="EU AI Act Risk Classification" />
+                <DataTable data={euAiActRiskTable} />
+              </ArchiveSection>
+            )}
 
-              <SubsectionLabel title="EU AI Act 위험 분류" />
-              <DataTable data={euAiActRiskTable} />
-            </ArchiveSection>
+            {activeTab === "company-principles" && (
+              <ArchiveSection id="company-principles" eyebrow="Company AI Principles" title="Principles">
+                <div className="space-y-4">
+                  {companyPrinciples.map((cp) => (
+                    <CompanyPrincipleCard key={cp.company} data={cp} />
+                  ))}
+                </div>
+              </ArchiveSection>
+            )}
 
-            {/* 06 — Company AI Principles */}
-            <ArchiveSection
-              id="company-principles"
-              eyebrow="Company AI Principles"
-              title="AI 회사별 안전 원칙 비교"
-              description="OpenAI, Anthropic, Google, Microsoft가 AI 안전을 어떻게 정의하는지 비교하고, QA 경험과 연결해 배운 점을 정리했습니다."
-            >
-              <div className="space-y-4">
-                {companyPrinciples.map((cp) => (
-                  <CompanyPrincipleCard key={cp.company} data={cp} />
-                ))}
-              </div>
-            </ArchiveSection>
+            {activeTab === "model-comparison" && (
+              <ArchiveSection id="model-comparison" eyebrow="Model Comparison" title="Models">
+                <div className="space-y-6">
+                  {modelFamilies.map((family) => (
+                    <ModelFamilyCard key={family.provider} family={family} />
+                  ))}
+                </div>
+                <SubsectionLabel title="Model Selection Guide" />
+                <DataTable data={modelSelectionGuide} />
+              </ArchiveSection>
+            )}
 
-            {/* 07 — Model Comparison */}
-            <ArchiveSection
-              id="model-comparison"
-              eyebrow="Model Comparison"
-              title="모델별 특성과 선택 기준"
-              description="모델 이름을 외우는 것이 아니라, 작업 유형에 따라 어떤 모델 계열을 선택할지 기준을 정리했습니다."
-            >
-              <div className="space-y-6">
-                {modelFamilies.map((family) => (
-                  <ModelFamilyCard key={family.provider} family={family} />
-                ))}
-              </div>
+            {activeTab === "ai-tool-stack" && (
+              <ArchiveSection id="ai-tool-stack" eyebrow="AI Tools" title="AI Tools">
+                <ToolsGrid
+                  activeFilter={activeToolFilter}
+                  tools={filteredTools}
+                  onFilterChange={setActiveToolFilter}
+                />
+              </ArchiveSection>
+            )}
 
-              <SubsectionLabel title="작업별 모델 선택 가이드" />
-              <DataTable data={modelSelectionGuide} />
-            </ArchiveSection>
-
-            {/* 08 — AI Tools (unchanged) */}
-            <ArchiveSection
-              id="ai-tool-stack"
-              eyebrow="AI Tools"
-              title="실제로 쓰고 비교한 도구들"
-              description="AI 도구는 유행이 아니라 사용 목적 기준으로 비교합니다. 어디에 쓰는지, 무엇에 강한지, 어디서 조심해야 하는지를 함께 기록합니다."
-            >
-              <ToolsGrid
-                activeFilter={activeToolFilter}
-                tools={filteredTools}
-                onFilterChange={setActiveToolFilter}
-              />
-            </ArchiveSection>
-
-            {/* 09 — Media Notes (LOCKED — unchanged) */}
-            <ArchiveSection
-              id="media-note"
-              eyebrow="Media Note"
-              title="Media Note"
-              description="AI 작업 방식을 만들면서 본 영상, 글, 발표, 레퍼런스를 정리한 기록입니다."
-            >
-              <MediaNotesList />
-            </ArchiveSection>
+            {activeTab === "media-note" && (
+              <ArchiveSection id="media-note" eyebrow="Media Note" title="Media Notes">
+                <MediaNotesList />
+              </ArchiveSection>
+            )}
           </main>
         </div>
       </div>
@@ -263,45 +221,36 @@ export const AILab = memo(function AILab() {
 /* ── Layout Components ── */
 
 function ArchiveNavigation({
+  activeTab,
   onSelect,
 }: {
+  activeTab: AILabArchiveSectionId;
   onSelect: (id: AILabArchiveSectionId) => void;
 }) {
-  // Group items by their group label
-  const groups = useMemo(() => {
-    const result: { group: string; items: typeof aiLabArchiveNavItems }[] = [];
-    for (const item of aiLabArchiveNavItems) {
-      const g = item.group ?? "";
-      const last = result[result.length - 1];
-      if (last && last.group === g) {
-        last.items.push(item);
-      } else {
-        result.push({ group: g, items: [item] });
-      }
-    }
-    return result;
-  }, []);
-
   return (
-    <nav className="sticky top-0 z-10 -mx-1 mb-16 bg-white/95 py-4 backdrop-blur-sm">
-      <div className="flex gap-6 overflow-x-auto px-1 pb-1">
-        {groups.map((g) => (
-          <div key={g.group} className="shrink-0">
-            <span className="block text-[9px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-muted)] mb-2 pl-1">
-              {g.group}
-            </span>
-            <div className="flex gap-1">
-              {g.items.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => onSelect(item.id)}
-                  className="shrink-0 px-3.5 py-2 rounded-lg border border-[var(--notion-hairline)] bg-white text-[11px] font-medium text-[var(--notion-stone)] hover:bg-[var(--notion-ink)] hover:text-white hover:border-[var(--notion-ink)] transition-all duration-150 whitespace-nowrap"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
+    <nav className="mb-1 sm:mb-2 bg-white/95 py-2 sm:py-3" data-no-section-nav>
+      <div
+        className="max-w-[1160px] mx-auto flex gap-2 scrollbar-hide snap-x snap-mandatory px-4 sm:px-6 pb-1"
+        data-no-section-nav
+        style={{
+          overflowX: "scroll",
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-x",
+        }}
+      >
+        {aiLabArchiveNavItems.map((item) => (
+          <button
+            key={item.id}
+            data-no-section-nav
+            onClick={() => onSelect(item.id)}
+            className={`snap-start shrink-0 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg border text-[11px] font-medium transition-all duration-150 whitespace-nowrap ${
+              activeTab === item.id
+                ? "bg-[var(--notion-ink)] text-white border-[var(--notion-ink)]"
+                : "border-[var(--notion-hairline)] bg-white text-[var(--notion-stone)] hover:bg-[var(--notion-ink)] hover:text-white hover:border-[var(--notion-ink)]"
+            }`}
+          >
+            {item.label}
+          </button>
         ))}
       </div>
     </nav>
@@ -312,28 +261,23 @@ function ArchiveSection({
   id,
   eyebrow,
   title,
-  description,
   children,
 }: {
   id: AILabArchiveSectionId;
   eyebrow: string;
   title: string;
-  description: string;
   children: React.ReactNode;
 }) {
   return (
-    <section id={sectionDomId(id)} className="scroll-mt-24">
-      <div className="border-t border-[var(--notion-hairline)] pt-8">
+    <section id={sectionDomId(id)}>
+      <div className="pt-2">
         <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--notion-stone)]">
           {eyebrow}
         </span>
-        <h3 className="text-xl md:text-2xl font-bold text-[var(--notion-ink)] mt-3 leading-tight">
+        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--notion-ink)] mt-1.5 sm:mt-2 mb-4 sm:mb-6 leading-tight">
           {title}
         </h3>
-        <p className="text-sm leading-[1.9] text-[var(--notion-slate)] max-w-2xl mt-4 mb-8">
-          {description}
-        </p>
-        <div className="space-y-6">{children}</div>
+        <div className="space-y-4 sm:space-y-6">{children}</div>
       </div>
     </section>
   );
@@ -379,20 +323,21 @@ function TagList({ tags }: { tags?: string[] }) {
 
 /* ── Content Items ── */
 
-function SummaryItem({ card, index }: { card: AILabSummaryCard; index: number }) {
+function OverviewNoteItem({ note, index }: { note: OverviewNote; index: number }) {
   return (
-    <article className="py-5 border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0">
-      <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
+    <div className="flex gap-3 sm:gap-4">
+      <span className="shrink-0 text-[11px] font-bold tabular-nums text-[var(--notion-stone)]/40 pt-0.5">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug">
-        {card.title}
-      </h4>
-      <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-3">
-        {card.description}
-      </p>
-      <TagList tags={card.tags} />
-    </article>
+      <div>
+        <h4 className="text-[13px] sm:text-sm font-semibold text-[var(--notion-ink)] leading-snug mb-1.5">
+          {note.heading}
+        </h4>
+        <p className="text-[12px] sm:text-[13px] leading-[1.75] text-[var(--notion-slate)]">
+          {note.body}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -410,7 +355,7 @@ function TextItem({
       <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug mt-3">
+      <h4 className="text-[13px] sm:text-sm font-bold text-[var(--notion-ink)] leading-snug mt-3">
         {card.title}
       </h4>
       <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-3">
@@ -527,7 +472,7 @@ function GlossaryTable() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="용어 검색..."
+            placeholder="Search terms..."
             className="w-full pl-9 pr-3 py-2 text-xs border border-[var(--notion-hairline)] rounded-md bg-white text-[var(--notion-ink)] placeholder:text-[var(--notion-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--notion-stone)]"
           />
         </div>

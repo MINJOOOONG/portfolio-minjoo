@@ -760,7 +760,7 @@ function ProjectCard({
       </div>
 
       <div className="pj-card__content">
-        <h3 className="font-display text-[18px] font-black leading-tight mb-1.5">
+        <h3 className="font-display text-[15px] sm:text-[18px] font-black leading-tight mb-1.5">
           {item.title}
         </h3>
 
@@ -1261,22 +1261,19 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
           overflowX: "hidden",
           WebkitOverflowScrolling: "touch",
           overscrollBehavior: "contain",
-          padding: "80px 40px 120px",
+          padding: "80px 24px 120px",
           boxSizing: "border-box",
         }}
       >
         {/* ── Project 섹션 헤딩 ── */}
-        <div ref={headingRef} className="mb-12 text-center">
-          <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-3">
+        <div ref={headingRef} className="mb-6 sm:mb-12 text-center">
+          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-2 sm:mb-3">
             프로젝트 상세
           </span>
-          <h2 className="font-display text-[clamp(2rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-4">
+          <h2 className="font-display text-[clamp(1.4rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-2 sm:mb-4">
             PROJECTS
           </h2>
-          <p className="text-sm text-muted-foreground/70 max-w-md mx-auto leading-relaxed">
-            직접 기획하고 개발하며 문제를 해결했던 프로젝트들을 모았습니다.
-          </p>
-          <div className="mt-6 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
+          <div className="mt-2 sm:mt-4 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
         </div>
 
         {/* ── Project 카드 그리드 ── */}
@@ -1298,20 +1295,16 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
           <>
             <div
               ref={activitiesHeadingRef}
-              className="mb-12 text-center"
-              style={{ marginTop: 100 }}
+              className="mb-6 sm:mb-12 text-center mt-10 sm:mt-[100px]"
             >
-              <div className="h-px w-24 bg-[var(--notion-hairline)] mx-auto mb-10" />
-              <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-3">
+              <div className="h-px w-24 bg-[var(--notion-hairline)] mx-auto mb-4 sm:mb-10" />
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-2 sm:mb-3">
                 대외활동
               </span>
-              <h2 className="font-display text-[clamp(2rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-4">
+              <h2 className="font-display text-[clamp(1.4rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-2 sm:mb-4">
                 ACTIVITIES
               </h2>
-              <p className="text-sm text-muted-foreground/70 max-w-md mx-auto leading-relaxed">
-                창업, 해커톤, 교육, 대회 등 다양한 외부 활동을 통해 쌓은 경험들입니다.
-              </p>
-              <div className="mt-6 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
+              <div className="mt-2 sm:mt-4 h-px w-16 bg-[var(--notion-hairline)] mx-auto" />
             </div>
 
             <div className="pj-grid">
