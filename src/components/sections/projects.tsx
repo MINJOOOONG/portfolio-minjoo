@@ -3,10 +3,12 @@
 import { useState, useEffect, memo, useCallback, type CSSProperties } from "react";
 import Image, { type ImageProps } from "next/image";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Github, ExternalLink, BookOpen, LinkIcon } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { isArticleProject } from "@/lib/project-groups";
+import { projectSlug } from "@/lib/portfolio-project-content";
 
 /* ── 이미지 로드 실패 시 fallback을 보여주는 래퍼 ── */
 function SafeImage(props: ImageProps & { fallbackText?: string }) {
@@ -109,11 +111,6 @@ const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
 
 /* ── 카드 심볼 (이미지 없을 때 기하학 아이콘) ── */
 const SYMBOLS = ["◇", "○", "△", "□", "◆", "▽", "⬡", "✦"];
-
-/* ── 프로젝트 슬러그 생성 (URL 해시용) ── */
-function toSlug(title: string) {
-  return encodeURIComponent(title.replace(/\s+/g, "-").toLowerCase());
-}
 
 function normalizeMediaUrl(url?: string) {
   return url?.split("#")[0].split("?")[0];
@@ -809,7 +806,7 @@ function ProjectCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const url = `${window.location.origin}${window.location.pathname}#${toSlug(item.title)}`;
+              const url = `${window.location.origin}${window.location.pathname}#${projectSlug(item.title)}`;
               navigator.clipboard.writeText(url).then(() => {
                 const btn = e.currentTarget;
                 const orig = btn.textContent;
@@ -1194,8 +1191,227 @@ function ProjectModal({
   );
 }
 
+export function ProjectDetailPageContent({
+  project,
+  index,
+}: {
+  project: ProjectItem;
+  index: number;
+}) {
+  const num = String(index + 1).padStart(2, "0");
+  const blocks = buildCaseStudy(project);
+  const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
+  const detailContentBlocks = project.contentBlocks
+    ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)
+    : [];
+  const shouldShowPrimaryMedia = Boolean(project.media?.url && project.media.type !== "image");
+  const techStackList = Array.isArray(project.techStack)
+    ? project.techStack.flatMap((t) => (typeof t === "string" && t.includes(",") ? t.split(",").map((s) => s.trim()) : [t]))
+    : typeof project.techStack === "string"
+      ? (project.techStack as string).split(",").map((s) => s.trim())
+      : [];
+
+  return (
+    <main className="min-h-[100svh] bg-white text-foreground">
+      <header className="sticky top-0 z-40 border-b border-[var(--notion-hairline)] bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-14 max-w-[900px] items-center justify-between px-5">
+          <a
+            href="/portfolio#projects"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[20px] text-foreground transition-colors hover:bg-muted"
+            aria-label="프로젝트 목록으로 돌아가기"
+          >
+            ←
+          </a>
+          <span className="min-w-0 truncate px-4 text-sm font-semibold">
+            프로젝트 상세
+          </span>
+          <span className="font-mono text-[11px] font-semibold text-foreground/35">
+            {num}
+          </span>
+        </div>
+      </header>
+
+      <article
+        className="pj-modal__body mx-auto max-w-[900px]"
+        style={{ overflow: "visible", paddingTop: 28, paddingBottom: 96 }}
+      >
+        {shouldShowPrimaryMedia && project.media && (
+          <div
+            className="relative w-full rounded-lg overflow-hidden bg-[var(--notion-surface)] mb-8"
+            style={{
+              aspectRatio:
+                project.media.type === "pdf"
+                  ? DEFAULT_PDF_RATIO
+                  : DEFAULT_MEDIA_RATIO,
+            }}
+          >
+            <MediaPreview
+              media={project.media}
+              title={project.title}
+              techStack={project.techStack}
+            />
+          </div>
+        )}
+
+        <div className="pj-modal__title-block" style={{ marginBottom: 32 }}>
+          <span className="pj-modal__title-number">{num}</span>
+          <h1 className="pj-modal__title">{project.title}</h1>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 0,
+            fontSize: 13,
+            color: "rgba(33, 29, 25, 0.6)",
+            lineHeight: 1.6,
+          }}
+        >
+          <span style={{ fontWeight: 500 }}>
+            <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
+              개발일정
+            </span>
+            {project.period}
+          </span>
+          <span style={{ margin: "0 10px", color: "rgba(33, 29, 25, 0.2)", userSelect: "none" }}>·</span>
+          <span style={{ fontWeight: 500 }}>
+            <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
+              개발인원
+            </span>
+            {project.teamSize}
+          </span>
+        </div>
+
+        {(project.githubUrl || project.liveUrl || project.blogUrl) && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 18,
+              marginTop: 14,
+            }}
+          >
+            {project.githubUrl && (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground">
+                <Github size={15} style={{ opacity: 0.5 }} />
+                GitHub ↗
+              </a>
+            )}
+            {project.liveUrl && (
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground">
+                <ExternalLink size={15} style={{ opacity: 0.5 }} />
+                Live ↗
+              </a>
+            )}
+            {project.blogUrl && (
+              <a href={project.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground">
+                <BookOpen size={15} style={{ opacity: 0.5 }} />
+                Blog ↗
+              </a>
+            )}
+          </div>
+        )}
+
+        {project.summary && (
+          <p
+            style={{
+              maxWidth: 760,
+              margin: "36px 0 0",
+              color: "var(--muted-foreground)",
+              fontSize: 14,
+              lineHeight: 1.8,
+            }}
+          >
+            {project.summary}
+          </p>
+        )}
+
+        {techStackList.length > 0 && (
+          <div style={{ marginTop: 32 }}>
+            <span
+              style={{
+                display: "block",
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: "rgba(33, 29, 25, 0.35)",
+                marginBottom: 10,
+              }}
+            >
+              기술스택
+            </span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+              {techStackList.map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 30,
+                    padding: "0 12px",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    borderRadius: 999,
+                    color: "rgba(33, 29, 25, 0.8)",
+                    background: "#fff",
+                    border: "1px solid rgba(33, 29, 25, 0.15)",
+                    lineHeight: 1,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div style={{ height: 1, width: "100%", background: "var(--notion-hairline)", margin: "40px 0 32px" }} />
+
+        {detailContentBlocks.length > 0 ? (
+          <ContentBlockRenderer blocks={detailContentBlocks} />
+        ) : (
+          <>
+            <ProjectMediaGallery
+              items={project.gallery}
+              mainUrl={project.media?.url}
+            />
+            <ProjectAttachmentList items={project.attachments} />
+
+            <div className="space-y-8">
+              {blocks.map((block) => (
+                <section key={block.heading}>
+                  <h2 className="pj-content-heading">{block.heading}</h2>
+                  <ul className="space-y-2">
+                    {block.body.map((line, j) => (
+                      <li
+                        key={j}
+                        className="text-[14px] text-foreground/80 leading-[1.75] flex gap-2.5"
+                      >
+                        {block.body.length > 1 && (
+                          <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
+                        )}
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </>
+        )}
+      </article>
+    </main>
+  );
+}
+
 /* ── 메인 컴포넌트 ── */
 export const Projects = memo(function Projects({ items }: ProjectsProps) {
+  const router = useRouter();
   const [selectedModal, setSelectedModal] = useState<{
     source: "project" | "activity";
     index: number;
@@ -1211,9 +1427,9 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     function openFromHash() {
       const hash = decodeURIComponent(window.location.hash.replace(/^#/, ""));
       if (!hash) return;
-      const pi = projectItems.findIndex((item) => toSlug(item.title) === hash);
+      const pi = projectItems.findIndex((item) => projectSlug(item.title) === hash);
       if (pi !== -1) { setSelectedModal({ source: "project", index: pi }); return; }
-      const ai = activityItems.findIndex((item) => toSlug(item.title) === hash);
+      const ai = activityItems.findIndex((item) => projectSlug(item.title) === hash);
       if (ai !== -1) { setSelectedModal({ source: "activity", index: ai }); return; }
     }
     openFromHash();
@@ -1226,7 +1442,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     if (selectedModal) {
       const list = selectedModal.source === "activity" ? activityItems : projectItems;
       const item = list[selectedModal.index];
-      if (item) window.history.replaceState(null, "", `#${toSlug(item.title)}`);
+      if (item) window.history.replaceState(null, "", `#${projectSlug(item.title)}`);
     } else if (window.location.hash) {
       window.history.replaceState(null, "", window.location.pathname);
     }
@@ -1237,6 +1453,22 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
 
   const currentList = selectedModal?.source === "activity" ? activityItems : projectItems;
   const selectedProject = selectedModal ? currentList[selectedModal.index] : null;
+
+  const handleSelect = useCallback(
+    (source: "project" | "activity", index: number) => {
+      const list = source === "activity" ? activityItems : projectItems;
+      const item = list[index];
+      if (!item) return;
+
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        router.push(`/projects/${projectSlug(item.title)}`);
+        return;
+      }
+
+      setSelectedModal({ source, index });
+    },
+    [activityItems, projectItems, router]
+  );
 
   if (viewItems.length === 0) return null;
 
@@ -1284,7 +1516,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
                 key={item.title}
                 item={item}
                 index={i}
-                onSelect={() => setSelectedModal({ source: "project", index: i })}
+                onSelect={() => handleSelect("project", i)}
               />
             ))}
           </div>
@@ -1313,7 +1545,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
                   key={item.title}
                   item={item}
                   index={i}
-                  onSelect={() => setSelectedModal({ source: "activity", index: i })}
+                  onSelect={() => handleSelect("activity", i)}
                 />
               ))}
             </div>

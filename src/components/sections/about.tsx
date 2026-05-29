@@ -12,7 +12,14 @@ interface AboutProps {
   content: string;
 }
 
+const mobileSummary =
+  "QA 실무 경험을 바탕으로 문제를 재현하고, 로그와 코드 흐름까지 따라가며 개선점을 찾는 백엔드 지향 개발자입니다.";
+
+const mobileKeywords = ["QA 관점", "문제 추적", "백엔드 구현", "AI 활용", "기록과 협업"];
+
 export const About = memo(function About({ content }: AboutProps) {
+  void content;
+
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 30, duration: 0.8 });
   const [activeId, setActiveId] = useState<string>("01");
 
@@ -69,10 +76,28 @@ export const About = memo(function About({ content }: AboutProps) {
         </div>
 
         {/* ── Mobile: 아코디언 리스트 ── */}
-        <div className="md:hidden space-y-0">
-          {aboutSections.map((section, index) => (
-            <MobileAboutItem key={section.number} section={section} index={index} />
+        <div className="md:hidden">
+          <section className="mb-8 rounded-[8px] border border-foreground/[0.08] bg-white/80 px-4 py-4 shadow-[0_12px_30px_rgba(33,29,25,0.04)]">
+            <p className="text-[15px] font-semibold leading-[1.65] tracking-[-0.02em] text-foreground">
+              {mobileSummary}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {mobileKeywords.map((keyword) => (
+                <span
+                  key={keyword}
+                  className="rounded-full border border-foreground/[0.08] bg-[#F7F6F3] px-2.5 py-1 text-[11px] font-medium text-foreground/65"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          <div className="space-y-2.5">
+          {aboutSections.map((section) => (
+            <MobileAboutItem key={section.number} section={section} />
           ))}
+          </div>
         </div>
       </div>
     </div>
@@ -80,27 +105,38 @@ export const About = memo(function About({ content }: AboutProps) {
 });
 
 /* ── 모바일 아코디언 아이템 ── */
-function MobileAboutItem({ section, index }: { section: (typeof aboutSections)[number]; index: number }) {
-  const [open, setOpen] = useState(index === 0);
+function MobileAboutItem({ section }: { section: (typeof aboutSections)[number] }) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-b border-foreground/[0.06]">
+    <div className="rounded-[8px] border border-foreground/[0.08] bg-white/70 px-3.5 shadow-[0_8px_22px_rgba(33,29,25,0.035)]">
       <button
         type="button"
         data-no-section-nav
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between py-3 text-left"
+        className="w-full flex items-start justify-between gap-3 py-3.5 text-left"
+        aria-expanded={open}
       >
-        <div className="flex items-center gap-2.5">
-          <span className="font-mono text-[10px] font-bold tracking-[0.06em] text-foreground/25">
+        <div className="flex min-w-0 gap-3">
+          <span className="mt-0.5 font-mono text-[10px] font-bold tracking-[0.06em] text-foreground/25">
             {section.number}
           </span>
-          <span className="text-[13px] font-semibold text-foreground tracking-[-0.01em]">
-            {section.englishTitle}
-          </span>
+          <div className="min-w-0">
+            <span className="block text-[14px] font-semibold text-foreground tracking-[-0.01em]">
+              {section.koreanTitle}
+            </span>
+            <span className="mt-1 block text-[11px] font-medium text-foreground/45">
+              {section.englishTitle}
+            </span>
+            {!open && (
+              <span className="mt-2 block text-[12px] leading-[1.55] text-foreground/58">
+                {section.sentence}
+              </span>
+            )}
+          </div>
         </div>
         <ChevronDown
-          className={`w-4 h-4 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          className={`mt-0.5 h-4 w-4 shrink-0 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           strokeWidth={1.5}
         />
       </button>
@@ -114,13 +150,13 @@ function MobileAboutItem({ section, index }: { section: (typeof aboutSections)[n
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-4 pl-[26px]">
-              <p className="text-[13px] font-semibold leading-[1.5] tracking-[-0.02em] text-foreground mb-3">
+            <div className="pb-4 pl-[25px]">
+              <p className="text-[14px] font-semibold leading-[1.6] tracking-[-0.02em] text-foreground mb-3">
                 {section.sentence}
               </p>
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {section.paragraphs.map((p, i) => (
-                  <p key={i} className="text-[12px] leading-[1.7] text-foreground/60">
+                  <p key={i} className="text-[13px] leading-[1.78] text-foreground/62">
                     {p}
                   </p>
                 ))}
