@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, memo } from "react";
+import Link from "next/link";
+import { BotMessageSquare, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PortfolioAskBar } from "@/components/shared/portfolio-ask-bar";
 
@@ -71,7 +73,21 @@ export const SceneNavbar = memo(function SceneNavbar() {
     >
       <div className="max-w-[960px] mx-auto px-5 sm:px-8">
         <div className="flex items-center justify-between h-14">
-          <PortfolioAskBar />
+          <div className="hidden sm:block">
+            <PortfolioAskBar />
+          </div>
+          <Link
+            href="/assistant"
+            className={cn(
+              "sm:hidden ml-auto inline-flex h-10 w-10 items-center justify-center rounded-full",
+              "border border-[var(--notion-hairline)] bg-white/88 text-foreground shadow-sm backdrop-blur-md",
+              "transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
+            )}
+            aria-label="RAG AI 열기"
+          >
+            <BotMessageSquare className="h-5 w-5" />
+            <Sparkles className="absolute -mt-5 ml-5 h-3 w-3 text-[var(--notion-primary)]" />
+          </Link>
           <nav className="hidden sm:flex items-center gap-1">
             {navItems.map((item) => (
               <button
