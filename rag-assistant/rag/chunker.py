@@ -6,7 +6,7 @@ import re
 def split_documents(
     documents: list[dict],
     chunk_size: int = 500,
-    chunk_overlap: int = 100,
+    chunk_overlap: int = 80,
 ) -> list[dict]:
     """Document 리스트를 chunk 단위로 분할합니다.
 
@@ -37,12 +37,26 @@ def _recursive_split(text: str, separators: list[str], chunk_size: int) -> list[
     if len(text) <= chunk_size:
         return [text]
 
+    if not separators:
+        return _split_by_length(text, chunk_size)
+
     for sep in separators:
         parts = text.split(sep)
         if len(parts) > 1:
             result: list[str] = []
             current = ""
             for part in parts:
+                part = part.strip()
+                if not part:
+                    continue
+
+                if len(part) > chunk_size:
+                    if current:
+                        result.append(current)
+                        current = ""
+                    result.extend(_recursive_split(part, separators[1:], chunk_size))
+                    continue
+
                 candidate = current + sep + part if current else part
                 if len(candidate) <= chunk_size:
                     current = candidate
@@ -54,7 +68,11 @@ def _recursive_split(text: str, separators: list[str], chunk_size: int) -> list[
                 result.append(current)
             return result
 
-    # 마지막 수단: 글자 수 기준 자르기
+    return _split_by_length(text, chunk_size)
+
+
+def _split_by_length(text: str, chunk_size: int) -> list[str]:
+    """마지막 수단: 문장 경계가 없을 때 글자 수 기준으로 자릅니다."""
     result = []
     for i in range(0, len(text), chunk_size):
         result.append(text[i:i + chunk_size])

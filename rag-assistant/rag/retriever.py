@@ -2,11 +2,14 @@
 
 from rag.embedder import KeywordIndex
 
+MAX_CONTEXT_CHARS = 3_500
+MAX_CHUNK_CHARS = 700
+
 
 def retrieve_documents(
     index: KeywordIndex,
     query: str,
-    top_k: int = 6,
+    top_k: int = 4,
 ) -> list[dict]:
     """질문 키워드를 기반으로 관련 문서를 검색합니다."""
     return index.search(query, top_k=top_k)
@@ -18,11 +21,19 @@ def format_context(documents: list[dict]) -> str:
 
     for i, doc in enumerate(documents, 1):
         source = doc.get("source", "unknown")
+        content = doc["page_content"].strip()
+        if len(content) > MAX_CHUNK_CHARS:
+            content = content[:MAX_CHUNK_CHARS].rstrip() + "\n..."
+
         context_parts.append(
-            f"[문서 {i}] (출처: {source})\n{doc['page_content']}"
+            f"[문서 {i}] (출처: {source})\n{content}"
         )
 
-    return "\n\n---\n\n".join(context_parts)
+    context = "\n\n---\n\n".join(context_parts)
+    if len(context) > MAX_CONTEXT_CHARS:
+        context = context[:MAX_CONTEXT_CHARS].rstrip() + "\n..."
+
+    return context
 
 
 def get_source_list(documents: list[dict]) -> list[str]:
