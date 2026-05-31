@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { SlideHeading } from "./about";
 
 export interface ExperienceItem {
@@ -91,13 +89,13 @@ function DetailList({ item, items }: { item: ExperienceItem; items: string[] }) 
   return (
     <>
       {items.length > 0 && (
-        <ul className="mb-2 sm:mb-3 space-y-1 sm:space-y-1.5">
+        <ul className="mb-1.5 space-y-0.5">
           {items.map((text, j) => (
             <li
               key={j}
-              className="exp-child flex gap-2 text-[11px] leading-relaxed text-muted-foreground/75 sm:text-[13px] sm:gap-2.5"
+              className="exp-child flex gap-1.5 text-[10px] leading-[1.5] text-muted-foreground/75"
             >
-              <span className="mt-[0.35em] h-1 w-1 sm:h-1.5 sm:w-1.5 shrink-0 rounded-full bg-foreground/35" />
+              <span className="mt-[0.42em] h-1 w-1 shrink-0 rounded-full bg-foreground/35" />
               <span>{text}</span>
             </li>
           ))}
@@ -105,11 +103,11 @@ function DetailList({ item, items }: { item: ExperienceItem; items: string[] }) 
       )}
 
       {item.techStack && item.techStack.length > 0 && (
-        <div className="flex flex-wrap gap-1 sm:gap-1.5">
+        <div className="flex flex-wrap gap-0.5">
           {item.techStack.map((t, i) => (
             <span
               key={t}
-              className="px-2 py-px sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-medium rounded-md text-foreground/70"
+              className="px-1.5 py-px text-[9px] font-medium rounded-md text-foreground/70"
               style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
             >
               {t}
@@ -209,15 +207,13 @@ function CardHeader({ item }: { item: ExperienceItem }) {
 }
 
 /* ── View Card ── */
-function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen ?? false);
-  const detailItems = [item.summary, ...(item.achievements ?? [])]
-    .filter(Boolean)
-    .slice(0, 4);
-  const [leadItem, ...toggleItems] = detailItems;
+function ViewCard({ item }: { item: ExperienceItem }) {
+  const baseDetailItems = [item.summary, ...(item.achievements ?? [])].filter(Boolean);
+  const desktopDetailItems = baseDetailItems.slice(0, 4);
+  const mobileDetailItems = baseDetailItems.slice(0, 3);
+  const [leadItem, ...mobileBulletItems] = mobileDetailItems;
 
   const isActive = !!item.status;
-  const hasDetails = toggleItems.length > 0 || (item.techStack && item.techStack.length > 0);
 
   return (
     <>
@@ -229,69 +225,44 @@ function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: b
         </div>
         <div className="flex flex-1 flex-col justify-center overflow-hidden">
           <CardHeader item={item} />
-          <CardDetails item={item} detailItems={detailItems} />
+          <CardDetails item={item} detailItems={desktopDetailItems} />
         </div>
       </div>
 
-      {/* ── Mobile: 토글 아코디언 ── */}
-      <div className="md:hidden relative flex gap-3 overflow-hidden rounded-xl border border-transparent px-1.5 py-2">
+      {/* ── Mobile: 항상 펼침, 핵심 내용만 압축 표시 ── */}
+      <div className="md:hidden relative flex gap-2.5 overflow-hidden rounded-xl border border-transparent px-1.5 py-2">
         <div className="flex flex-col items-center pt-0.5">
           <TimelineIcon item={item} active={isActive} />
           <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
         </div>
         <div className="flex flex-1 flex-col justify-center overflow-hidden">
-          <button
-            type="button"
-            data-no-section-nav
-            onClick={() => hasDetails && setOpen((v) => !v)}
-            className="w-full text-left flex items-start justify-between gap-2"
-          >
-            <div className="flex-1 min-w-0">
-              <div className="exp-child flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 mb-0.5">
-                <h3 className="font-display text-base font-black tracking-[-0.02em] text-foreground">
-                  {item.company}
-                </h3>
-                {item.status && (
-                  <span className="text-[9px] px-1.5 py-px rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
-                    {item.status}
-                  </span>
-                )}
-              </div>
-              <p className="exp-child text-[11px] text-foreground/80 font-medium">
-                {item.role}
-              </p>
-              <p className="exp-child text-[10px] text-muted-foreground/60 tracking-wide">
-                {item.period}
-              </p>
-              {leadItem && (
-                <p className="exp-child mt-2 text-[10.5px] leading-relaxed text-muted-foreground/75">
-                  {leadItem}
-                </p>
+          <div className="flex-1 min-w-0">
+            <div className="exp-child flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 mb-0.5">
+              <h3 className="font-display text-base font-black tracking-[-0.02em] text-foreground">
+                {item.company}
+              </h3>
+              {item.status && (
+                <span className="text-[9px] px-1.5 py-px rounded-full text-foreground/70 font-medium border border-foreground/15 tracking-wide">
+                  {item.status}
+                </span>
               )}
             </div>
-            {hasDetails && (
-              <ChevronDown
-                className={`w-3.5 h-3.5 mt-1 shrink-0 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
-                strokeWidth={1.5}
-              />
+            <p className="exp-child text-[11px] text-foreground/80 font-medium">
+              {item.role}
+            </p>
+            <p className="exp-child text-[10px] text-muted-foreground/60 tracking-wide">
+              {item.period}
+            </p>
+            {leadItem && (
+              <p className="exp-child mt-1 text-[10px] leading-[1.5] text-muted-foreground/75">
+                {leadItem}
+              </p>
             )}
-          </button>
+          </div>
 
-          <AnimatePresence initial={false}>
-            {open && hasDetails && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="overflow-hidden"
-              >
-                <div className="pt-2.5">
-                  <DetailList item={item} items={toggleItems} />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="pt-1.5">
+            <DetailList item={item} items={mobileBulletItems} />
+          </div>
         </div>
       </div>
     </>
@@ -327,7 +298,7 @@ export const Experience = memo(function Experience({ items }: ExperienceProps) {
 
         <div className="space-y-0.5">
           {items.map((item, i) => (
-            <ViewCard key={i} item={item} defaultOpen={false} />
+            <ViewCard key={i} item={item} />
           ))}
         </div>
       </div>
