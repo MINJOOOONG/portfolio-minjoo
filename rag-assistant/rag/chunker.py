@@ -5,8 +5,8 @@ import re
 
 def split_documents(
     documents: list[dict],
-    chunk_size: int = 500,
-    chunk_overlap: int = 80,
+    chunk_size: int = 800,
+    chunk_overlap: int = 150,
 ) -> list[dict]:
     """Document 리스트를 chunk 단위로 분할합니다.
 

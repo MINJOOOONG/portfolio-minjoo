@@ -2,14 +2,14 @@
 
 from rag.embedder import KeywordIndex
 
-MAX_CONTEXT_CHARS = 3_500
-MAX_CHUNK_CHARS = 700
+MAX_CONTEXT_CHARS = 6_000
+MAX_CHUNK_CHARS = 1_000
 
 
 def retrieve_documents(
     index: KeywordIndex,
     query: str,
-    top_k: int = 4,
+    top_k: int = 8,
 ) -> list[dict]:
     """질문 키워드를 기반으로 관련 문서를 검색합니다."""
     return index.search(query, top_k=top_k)

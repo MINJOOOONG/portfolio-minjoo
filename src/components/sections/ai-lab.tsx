@@ -259,7 +259,7 @@ function ArchiveNavigation({
 
 function ArchiveSection({
   id,
-  eyebrow,
+  eyebrow: _eyebrow,
   title,
   children,
 }: {
@@ -271,10 +271,7 @@ function ArchiveSection({
   return (
     <section id={sectionDomId(id)}>
       <div className="pt-2">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--notion-stone)]">
-          {eyebrow}
-        </span>
-        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--notion-ink)] mt-1.5 sm:mt-2 mb-4 sm:mb-6 leading-tight">
+        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[var(--notion-ink)] mb-4 sm:mb-6 leading-tight">
           {title}
         </h3>
         <div className="space-y-4 sm:space-y-6">{children}</div>

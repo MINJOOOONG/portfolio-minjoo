@@ -1499,9 +1499,6 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
       >
         {/* ── Project 섹션 헤딩 ── */}
         <div ref={headingRef} className="mb-6 sm:mb-12 text-center">
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-2 sm:mb-3">
-            프로젝트 상세
-          </span>
           <h2 className="font-display text-[clamp(1.4rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-2 sm:mb-4">
             PROJECTS
           </h2>
@@ -1530,9 +1527,6 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
               className="mb-6 sm:mb-12 text-center mt-10 sm:mt-[100px]"
             >
               <div className="h-px w-24 bg-[var(--notion-hairline)] mx-auto mb-4 sm:mb-10" />
-              <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50 font-medium block mb-2 sm:mb-3">
-                대외활동
-              </span>
               <h2 className="font-display text-[clamp(1.4rem,5vw,3.2rem)] font-black tracking-[-0.04em] leading-tight mb-2 sm:mb-4">
                 ACTIVITIES
               </h2>

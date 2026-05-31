@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, memo } from "react";
-import { Search, X, Loader2, FileText, ArrowRight } from "lucide-react";
+import { Search, X, Loader2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AskResponse {
   answer: string;
   sources: string[];
-  recommended_section?: { label: string; section_id: string };
   error?: string;
 }
 
@@ -154,31 +153,6 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
             </div>
           )}
 
-          {result.recommended_section && (
-            <div className="mt-3 pt-3 border-t border-[var(--notion-hairline)]">
-              <button
-                onClick={() => {
-                  window.dispatchEvent(
-                    new CustomEvent("slide-nav-goto", {
-                      detail: result.recommended_section!.section_id,
-                    }),
-                  );
-                  setOpen(false);
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 w-full",
-                  "border-[var(--notion-hairline)] bg-white text-xs text-muted-foreground",
-                  "hover:bg-muted hover:text-foreground transition-colors",
-                )}
-              >
-                <span>관련 섹션 보기</span>
-                <ArrowRight className="h-3 w-3" />
-                <span className="font-medium text-foreground">
-                  {result.recommended_section.label}
-                </span>
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>

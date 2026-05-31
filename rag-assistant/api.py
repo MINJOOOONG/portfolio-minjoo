@@ -57,76 +57,9 @@ class AskRequest(BaseModel):
     question: str
 
 
-class RecommendedSection(BaseModel):
-    label: str
-    section_id: str
-
-
 class AskResponse(BaseModel):
     answer: str
     sources: list[str]
-    recommended_section: Optional[RecommendedSection] = None
-
-
-# ── 섹션 추천 로직 ──
-SECTION_RULES: list[tuple[list[str], list[str], str, str]] = [
-    # (source 파일명 키워드, 질문 키워드, section_id, label)
-    (
-        ["experience.md"],
-        ["근무", "경력", "회사", "토스", "toss", "부트캠프", "카페"],
-        "experience",
-        "Experience",
-    ),
-    (
-        ["projects.md", "loopers-backend.md", "qa-minjoo-helper.md", "portfolio-site.md"],
-        ["프로젝트", "project", "loopers", "helper", "포트폴리오", "블로그"],
-        "projects",
-        "Projects",
-    ),
-    (
-        [],
-        ["ai", "agent", "rag", "llm", "claude", "chatgpt", "도구"],
-        "ai-lab",
-        "AI Lab",
-    ),
-    (
-        ["skills.md"],
-        ["기술", "스택", "skill", "스킬", "언어", "프레임워크"],
-        "skills",
-        "Skills",
-    ),
-    (
-        ["resume.md"],
-        ["소개", "강점", "민주", "역량", "요약", "resume"],
-        "about",
-        "About",
-    ),
-    (
-        [],
-        ["연락", "메일", "email", "contact", "github", "linkedin"],
-        "contact",
-        "Contact",
-    ),
-]
-
-
-def get_recommended_section(
-    question: str, sources: list[str]
-) -> Optional[RecommendedSection]:
-    """질문과 source 파일명을 기반으로 관련 섹션을 추천합니다."""
-    q_lower = question.lower()
-
-    # 1차: 질문 키워드 매칭 (우선)
-    for _, question_keywords, section_id, label in SECTION_RULES:
-        if any(kw in q_lower for kw in question_keywords):
-            return RecommendedSection(label=label, section_id=section_id)
-
-    # 2차: source 파일명 매칭 (fallback)
-    for source_keywords, _, section_id, label in SECTION_RULES:
-        if any(sk in sources for sk in source_keywords):
-            return RecommendedSection(label=label, section_id=section_id)
-
-    return None
 
 
 # ── 엔드포인트 ──
@@ -151,7 +84,4 @@ async def ask(req: AskRequest):
     # 4. 참고 문서 목록
     sources = get_source_list(retrieved_docs)
 
-    # 5. 관련 섹션 추천
-    recommended = get_recommended_section(req.question, sources)
-
-    return AskResponse(answer=answer, sources=sources, recommended_section=recommended)
+    return AskResponse(answer=answer, sources=sources)
