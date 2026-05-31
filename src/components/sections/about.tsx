@@ -1,8 +1,6 @@
 "use client";
 
 import { memo, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { aboutSections } from "@/data/about-sections";
 import { AboutSectionRow } from "@/components/sections/about-section-row";
@@ -70,10 +68,10 @@ export const About = memo(function About({ content }: AboutProps) {
           </div>
         </div>
 
-        {/* ── Mobile: 아코디언 리스트 (웹뷰와 동일한 콘텐츠) ── */}
-        <div className="md:hidden space-y-2.5">
+        {/* ── Mobile: Editorial 스타일 (카드 없이) ── */}
+        <div className="md:hidden">
           {aboutSections.map((section, i) => (
-            <MobileAboutItem key={section.number} section={section} defaultOpen={i === 0} />
+            <MobileAboutItem key={section.number} section={section} isFirst={i === 0} />
           ))}
         </div>
       </div>
@@ -81,79 +79,52 @@ export const About = memo(function About({ content }: AboutProps) {
   );
 });
 
-/* ── 모바일 아코디언 아이템 ── */
-function MobileAboutItem({ section, defaultOpen = false }: { section: (typeof aboutSections)[number]; defaultOpen?: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
-
+/* ── 모바일 Editorial 아이템 ── */
+function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)[number]; isFirst: boolean }) {
   return (
-    <div className="rounded-[8px] border border-foreground/[0.08] bg-white/70 px-3.5 shadow-[0_8px_22px_rgba(33,29,25,0.035)]">
-      <button
-        type="button"
-        data-no-section-nav
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-start justify-between gap-3 py-3.5 text-left"
-        aria-expanded={open}
-      >
-        <div className="flex min-w-0 gap-3">
-          <span className="mt-0.5 font-mono text-[10px] font-bold tracking-[0.06em] text-foreground/25">
-            {section.number}
-          </span>
-          <div className="min-w-0">
-            <span className="block text-[14px] font-semibold text-foreground tracking-[-0.01em]">
-              {section.koreanTitle}
-            </span>
-            <span className="mt-1 block text-[11px] font-medium text-foreground/45">
-              {section.englishTitle}
-            </span>
-            {!open && (
-              <span className="mt-2 block text-[12px] leading-[1.55] text-foreground/58">
-                {section.sentence}
-              </span>
-            )}
-          </div>
-        </div>
-        <ChevronDown
-          className={`mt-0.5 h-4 w-4 shrink-0 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
+    <article className={`${isFirst ? "" : "border-t border-foreground/[0.06] mt-8 pt-8"}`}>
+      {/* 번호 + 영문 라벨 */}
+      <div className="flex items-center gap-2.5 mb-4">
+        <span className="font-mono text-[11px] font-bold tracking-[0.08em] text-foreground/25">
+          {section.number}
+        </span>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/35">
+          {section.englishTitle}
+        </span>
+      </div>
 
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="pb-4 pl-[25px]">
-              <p className="text-[14px] font-semibold leading-[1.6] tracking-[-0.02em] text-foreground mb-3">
-                {section.sentence}
-              </p>
-              <div className="space-y-3">
-                {section.paragraphs.map((p, i) => (
-                  <p key={i} className="text-[13px] leading-[1.78] text-foreground/62">
-                    {p}
-                  </p>
-                ))}
-              </div>
-              {section.detailLink && (
-                <button
-                  type="button"
-                  data-no-section-nav
-                  onClick={() => window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: section.detailLink!.targetId }))}
-                  className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/60 hover:text-foreground transition-colors"
-                >
-                  {section.detailLink.label}
-                  <span aria-hidden="true">→</span>
-                </button>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      {/* 한글 제목 */}
+      <h3 className="text-[18px] font-bold tracking-[-0.02em] text-foreground leading-snug mb-3">
+        {section.koreanTitle}
+      </h3>
+
+      {/* 핵심 문장 */}
+      <p className="text-[14px] font-medium leading-[1.7] tracking-[-0.01em] text-foreground/80 mb-4">
+        {section.sentence}
+      </p>
+
+      {/* 본문 */}
+      <div className="space-y-3">
+        {section.paragraphs.map((p, i) => (
+          <p key={i} className="text-[13px] leading-[1.85] text-foreground/55">
+            {p}
+          </p>
+        ))}
+      </div>
+
+      {/* 상세 링크 */}
+      {section.detailLink && (
+        <button
+          type="button"
+          data-no-section-nav
+          onClick={() => window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: section.detailLink!.targetId }))}
+          className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/50 hover:text-foreground transition-colors"
+        >
+          {section.detailLink.label}
+          <span aria-hidden="true">→</span>
+        </button>
+      )}
+    </article>
   );
 }
 
