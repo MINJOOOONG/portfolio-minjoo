@@ -232,6 +232,11 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
       return target.closest(".pj-modal, [role='dialog'], [data-modal-overlay]") !== null;
     };
 
+    const isInsideInteractiveElement = (target: EventTarget | null): boolean => {
+      if (!(target instanceof HTMLElement)) return false;
+      return target.closest(INTERACTIVE_SELECTOR) !== null;
+    };
+
     const blockWheel = (e: WheelEvent) => {
       // Let modal handle its own scroll natively
       if (isInsideModal(e.target)) return;
@@ -258,6 +263,8 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     const blockTouchMove = (e: TouchEvent) => {
       // Let modal handle its own touch scroll natively
       if (isInsideModal(e.target)) return;
+      // Let scrollable tabs and other interactive controls handle horizontal swipe natively
+      if (isInsideInteractiveElement(e.target)) return;
 
       touchMoved = true;
       e.preventDefault();

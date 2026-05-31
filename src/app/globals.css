@@ -237,18 +237,29 @@
   display: none;
 }
 
+.mobile-scroll-tabs {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scroll-padding-inline: 16px;
+}
+
+.mobile-scroll-tabs > * {
+  touch-action: pan-x;
+}
+
 .scene-section-hero {
   padding: 0;
 }
 
 @media (max-width: 640px) {
   .scene-section {
-    padding: 60px 16px 40px;
+    padding: 72px 16px 40px;
   }
 
   /* ── Mobile: tighten scroller padding globally ── */
   [data-scroller] {
-    padding-top: 52px !important;
+    padding-top: 68px !important;
     padding-left: 16px !important;
     padding-right: 16px !important;
     padding-bottom: 56px !important;
@@ -265,7 +276,7 @@
     min-height: 100svh;
     max-height: 100svh;
     overflow: hidden;
-    padding: 60px 16px 44px;
+    padding: 72px 16px 44px;
   }
 
   .scene-section > div {
@@ -276,7 +287,7 @@
   }
 
   .scene-section:not(.scene-section--full) [data-scroller] {
-    padding: 0 0 36px !important;
+    padding: 24px 0 36px !important;
   }
 
   .scene-section > div::-webkit-scrollbar {
@@ -302,6 +313,14 @@
   .scene-section--full > div {
     max-height: none;
     overflow: visible;
+  }
+
+  .ai-lab-section > div:first-child {
+    padding-top: 76px !important;
+  }
+
+  .ai-lab-section nav[data-no-section-nav] {
+    margin-top: 8px;
   }
 }
 

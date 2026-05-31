@@ -230,13 +230,8 @@ function ArchiveNavigation({
   return (
     <nav className="mb-1 sm:mb-2 bg-white/95 py-2 sm:py-3" data-no-section-nav>
       <div
-        className="max-w-[1160px] mx-auto flex gap-2 scrollbar-hide snap-x snap-mandatory px-4 sm:px-6 pb-1"
+        className="mobile-scroll-tabs max-w-[1160px] mx-auto flex w-full min-w-0 gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-4 sm:px-6 pb-1"
         data-no-section-nav
-        style={{
-          overflowX: "scroll",
-          WebkitOverflowScrolling: "touch",
-          touchAction: "pan-x",
-        }}
       >
         {aiLabArchiveNavItems.map((item) => (
           <button

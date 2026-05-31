@@ -10,12 +10,13 @@ import { type CertificationItem, type EducationItem } from "@/components/section
 import { SceneLayout } from "@/components/shared/scene-layout";
 import { isArticleProject } from "@/lib/project-groups";
 import { applyCurrentPortfolioContentBlocks } from "@/lib/portfolio-project-content";
+import { applyCurrentExperienceContent } from "@/lib/experience-content";
 import type { ResumeData } from "@/lib/pdf/types";
 
 export async function PortfolioPage() {
   const settings = await getSettings();
 
-  const experienceData = parseJsonSetting<ExperienceItem[]>(settings, "experience_data", []);
+  const experienceData = applyCurrentExperienceContent(parseJsonSetting<ExperienceItem[]>(settings, "experience_data", []));
   const projectData = applyCurrentPortfolioContentBlocks(parseJsonSetting<ProjectItem[]>(settings, "project_data", []));
   const skillsData = parseJsonSetting<Record<string, string[]>>(settings, "skills_data", {});
   const educationData = parseJsonSetting<EducationItem[]>(settings, "education_data", []);

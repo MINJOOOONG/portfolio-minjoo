@@ -13,6 +13,8 @@ export interface ExperienceItem {
   achievements: string[];
   status?: string;
   techStack?: string[];
+  companyIconUrl?: string;
+  companyIconFallback?: string;
 }
 
 interface ExperienceProps {
@@ -30,24 +32,33 @@ const NOTION_TINTS = [
 ];
 
 /* ── Timeline dot ── */
-function TimelineDot({ active }: { active: boolean }) {
-  return active ? (
-    <span className="relative flex h-3 w-3">
-      <span className="absolute inset-0 rounded-full bg-foreground/10 ring-[3px] ring-foreground/5" />
-      <span className="relative inline-flex h-3 w-3 rounded-full bg-foreground/70" />
+function TimelineIcon({ item, active }: { item: ExperienceItem; active: boolean }) {
+  return (
+    <span
+      className={`relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-white shadow-sm ${
+        active ? "border-foreground/15 ring-[3px] ring-foreground/5" : "border-foreground/12"
+      }`}
+    >
+      <CompanyIcon item={item} framed={false} />
     </span>
-  ) : (
-    <span className="inline-flex h-2.5 w-2.5 rounded-full border border-foreground/15" />
   );
 }
 
 /* ── Detail content (shared between desktop & mobile) ── */
 function CardDetails({ item, detailItems }: { item: ExperienceItem; detailItems: string[] }) {
+  const [leadItem, ...bulletItems] = detailItems;
+
   return (
     <>
-      {detailItems.length > 0 && (
+      {leadItem && (
+        <p className="exp-child mb-2 text-[10.5px] leading-relaxed text-muted-foreground/75 sm:mb-3 sm:text-[13px] sm:text-muted-foreground/80">
+          {leadItem}
+        </p>
+      )}
+
+      {bulletItems.length > 0 && (
         <ul className="mb-2 sm:mb-3 space-y-1 sm:space-y-1.5">
-          {detailItems.map((text, j) => (
+          {bulletItems.map((text, j) => (
             <li
               key={j}
               className="exp-child flex gap-2 text-[11px] leading-relaxed text-muted-foreground/75 sm:text-[13px] sm:gap-2.5"
@@ -73,6 +84,103 @@ function CardDetails({ item, detailItems }: { item: ExperienceItem; detailItems:
         </div>
       )}
     </>
+  );
+}
+
+function DetailList({ item, items }: { item: ExperienceItem; items: string[] }) {
+  return (
+    <>
+      {items.length > 0 && (
+        <ul className="mb-2 sm:mb-3 space-y-1 sm:space-y-1.5">
+          {items.map((text, j) => (
+            <li
+              key={j}
+              className="exp-child flex gap-2 text-[11px] leading-relaxed text-muted-foreground/75 sm:text-[13px] sm:gap-2.5"
+            >
+              <span className="mt-[0.35em] h-1 w-1 sm:h-1.5 sm:w-1.5 shrink-0 rounded-full bg-foreground/35" />
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {item.techStack && item.techStack.length > 0 && (
+        <div className="flex flex-wrap gap-1 sm:gap-1.5">
+          {item.techStack.map((t, i) => (
+            <span
+              key={t}
+              className="px-2 py-px sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-medium rounded-md text-foreground/70"
+              style={{ background: NOTION_TINTS[i % NOTION_TINTS.length] }}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function CompanyIcon({
+  item,
+  compact = false,
+  framed = true,
+}: {
+  item: ExperienceItem;
+  compact?: boolean;
+  framed?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  const iconFallback = item.companyIconFallback ?? item.company.slice(0, 1).toUpperCase();
+  const isRiwonsoft = item.company === "Riwonsoft";
+
+  if (!item.companyIconUrl || failed || isRiwonsoft) {
+    return (
+      <span
+        aria-hidden="true"
+        className={`inline-grid shrink-0 place-items-center ${
+          framed
+            ? compact
+              ? "h-[18px] w-[18px] rounded-md border border-foreground/10 bg-white shadow-sm"
+              : "h-5 w-5 rounded-md border border-foreground/10 bg-white shadow-sm sm:h-6 sm:w-6"
+            : "h-full w-full"
+        }`}
+      >
+        {isRiwonsoft ? (
+          <span className="grid h-[72%] w-[72%] grid-cols-2 gap-[2px] rounded-sm">
+            <span className="rounded-[2px] bg-[var(--notion-tint-sky)]" />
+            <span className="rounded-[2px] bg-[var(--notion-tint-mint)]" />
+            <span className="rounded-[2px] bg-[var(--notion-tint-peach)]" />
+            <span className="rounded-[2px] bg-[var(--notion-primary)]/75" />
+          </span>
+        ) : (
+          <span className="text-[9px] font-bold text-foreground/55 sm:text-[10px]">
+            {iconFallback}
+          </span>
+        )}
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center overflow-hidden ${
+        framed
+          ? compact
+            ? "h-[18px] w-[18px] rounded-md border border-foreground/10 bg-white shadow-sm"
+            : "h-5 w-5 rounded-md border border-foreground/10 bg-white shadow-sm sm:h-6 sm:w-6"
+          : "h-full w-full"
+      }`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={item.companyIconUrl}
+        alt=""
+        loading="lazy"
+        className="h-full w-full object-cover"
+        onError={() => setFailed(true)}
+      />
+    </span>
   );
 }
 
@@ -106,16 +214,17 @@ function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: b
   const detailItems = [item.summary, ...(item.achievements ?? [])]
     .filter(Boolean)
     .slice(0, 4);
+  const [leadItem, ...toggleItems] = detailItems;
 
   const isActive = !!item.status;
-  const hasDetails = detailItems.length > 0 || (item.techStack && item.techStack.length > 0);
+  const hasDetails = toggleItems.length > 0 || (item.techStack && item.techStack.length > 0);
 
   return (
     <>
       {/* ── Desktop: 기존 레이아웃 그대로 (항상 펼침) ── */}
       <div className="hidden md:flex relative gap-6 overflow-hidden rounded-2xl border border-transparent px-2 py-4">
         <div className="flex flex-col items-center pt-1">
-          <TimelineDot active={isActive} />
+          <TimelineIcon item={item} active={isActive} />
           <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
         </div>
         <div className="flex flex-1 flex-col justify-center overflow-hidden">
@@ -127,7 +236,7 @@ function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: b
       {/* ── Mobile: 토글 아코디언 ── */}
       <div className="md:hidden relative flex gap-3 overflow-hidden rounded-xl border border-transparent px-1.5 py-2">
         <div className="flex flex-col items-center pt-0.5">
-          <TimelineDot active={isActive} />
+          <TimelineIcon item={item} active={isActive} />
           <div className="flex-1 w-px bg-[var(--notion-hairline)]" />
         </div>
         <div className="flex flex-1 flex-col justify-center overflow-hidden">
@@ -154,6 +263,11 @@ function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: b
               <p className="exp-child text-[10px] text-muted-foreground/60 tracking-wide">
                 {item.period}
               </p>
+              {leadItem && (
+                <p className="exp-child mt-2 text-[10.5px] leading-relaxed text-muted-foreground/75">
+                  {leadItem}
+                </p>
+              )}
             </div>
             {hasDetails && (
               <ChevronDown
@@ -173,7 +287,7 @@ function ViewCard({ item, defaultOpen }: { item: ExperienceItem; defaultOpen?: b
                 className="overflow-hidden"
               >
                 <div className="pt-2.5">
-                  <CardDetails item={item} detailItems={detailItems} />
+                  <DetailList item={item} items={toggleItems} />
                 </div>
               </motion.div>
             )}
@@ -213,7 +327,7 @@ export const Experience = memo(function Experience({ items }: ExperienceProps) {
 
         <div className="space-y-0.5">
           {items.map((item, i) => (
-            <ViewCard key={i} item={item} defaultOpen={i === 0} />
+            <ViewCard key={i} item={item} defaultOpen={false} />
           ))}
         </div>
       </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { memo, useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { aboutSections } from "@/data/about-sections";
 import { AboutSectionRow } from "@/components/sections/about-section-row";
@@ -81,6 +83,9 @@ export const About = memo(function About({ content }: AboutProps) {
 
 /* ── 모바일 Editorial 아이템 ── */
 function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)[number]; isFirst: boolean }) {
+  const [open, setOpen] = useState(false);
+  const hasDetails = section.paragraphs.length > 0 || Boolean(section.detailLink);
+
   return (
     <article className={`${isFirst ? "" : "border-t border-foreground/[0.06] mt-8 pt-8"}`}>
       {/* 번호 + 영문 라벨 */}
@@ -93,35 +98,70 @@ function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)
         </span>
       </div>
 
-      {/* 한글 제목 */}
-      <h3 className="text-[18px] font-bold tracking-[-0.02em] text-foreground leading-snug mb-3">
-        {section.koreanTitle}
-      </h3>
+      <button
+        type="button"
+        data-no-section-nav
+        onClick={() => hasDetails && setOpen((v) => !v)}
+        className="mb-3 flex w-full items-start justify-between gap-3 text-left"
+        aria-expanded={open}
+      >
+        <h3 className="text-[18px] font-bold tracking-[-0.02em] text-foreground leading-snug">
+          {section.englishTitle}
+        </h3>
+        {hasDetails && (
+          <ChevronDown
+            className={`mt-1 h-4 w-4 shrink-0 text-foreground/30 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+            strokeWidth={1.5}
+          />
+        )}
+      </button>
 
       {/* 핵심 문장 */}
       <p className="text-[14px] font-medium leading-[1.7] tracking-[-0.01em] text-foreground/80 mb-4">
         {section.sentence}
       </p>
 
-      {/* 본문 */}
-      <div className="space-y-3">
-        {section.paragraphs.map((p, i) => (
-          <p key={i} className="text-[13px] leading-[1.85] text-foreground/55">
-            {p}
-          </p>
-        ))}
-      </div>
+      <AnimatePresence initial={false}>
+        {open && hasDetails && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-3 pt-1">
+              {section.paragraphs.map((p, i) => (
+                <p key={i} className="text-[13px] leading-[1.85] text-foreground/55">
+                  {p}
+                </p>
+              ))}
+            </div>
 
-      {/* 상세 링크 */}
-      {section.detailLink && (
+            {section.detailLink && (
+              <button
+                type="button"
+                data-no-section-nav
+                onClick={() => window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: section.detailLink!.targetId }))}
+                className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/50 hover:text-foreground transition-colors"
+              >
+                {section.detailLink.label}
+                <span aria-hidden="true">→</span>
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!open && hasDetails && (
         <button
           type="button"
           data-no-section-nav
-          onClick={() => window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: section.detailLink!.targetId }))}
-          className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/50 hover:text-foreground transition-colors"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/45"
         >
-          {section.detailLink.label}
-          <span aria-hidden="true">→</span>
+          자세히 보기
+          <span aria-hidden="true">↓</span>
         </button>
       )}
     </article>

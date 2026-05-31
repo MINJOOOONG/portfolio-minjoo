@@ -77,7 +77,7 @@ export const SceneNavbar = memo(function SceneNavbar() {
       {/* ── Desktop top header ── */}
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          "hidden sm:block fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           scrolled
             ? "bg-[var(--notion-canvas)]/80 backdrop-blur-xl border-b border-[var(--notion-hairline)]"
             : "bg-transparent"
@@ -127,8 +127,11 @@ export const SceneNavbar = memo(function SceneNavbar() {
           <div className="shrink-0 w-px h-6 bg-[var(--notion-hairline)]" />
 
           {/* Section tabs — carousel horizontal scroll */}
-          <div className="flex-1 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-            <div className="flex items-center gap-1 px-1">
+          <div
+            className="mobile-scroll-tabs flex-1 min-w-0 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+            data-no-section-nav
+          >
+            <div className="flex w-max min-w-full items-center gap-1 px-1">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
