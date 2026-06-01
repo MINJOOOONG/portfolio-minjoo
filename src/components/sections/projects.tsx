@@ -12,6 +12,12 @@ import { projectSlug } from "@/lib/portfolio-project-content";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
 
+/* ── lang 기반 필드 선택 헬퍼 ── */
+type Lang = "ko" | "en";
+function t<T>(lang: Lang, ko: T, en: T | undefined): T {
+  return lang === "en" && en !== undefined ? en : ko;
+}
+
 /* ── 이미지 로드 실패 시 fallback을 보여주는 래퍼 ── */
 function SafeImage(props: ImageProps & { fallbackText?: string }) {
   const { fallbackText, alt, ...rest } = props;
@@ -92,6 +98,14 @@ export interface ProjectItem {
   achievement?: string;
   role?: string;
   category?: "project" | "activity";
+  titleEn?: string;
+  summaryEn?: string;
+  descriptionEn?: string[];
+  teamSizeEn?: string;
+  roleEn?: string;
+  achievementEn?: string;
+  periodEn?: string;
+  contentBlocksEn?: ContentBlock[];
 }
 
 interface ProjectsProps {
@@ -135,14 +149,16 @@ function filterRepeatedMediaBlocks(blocks: ContentBlock[], mediaUrl?: string) {
 function buildCaseStudy(item: ProjectItem, lang: "ko" | "en"): CaseStudyBlock[] {
   if (item.caseStudy && item.caseStudy.length > 0) return item.caseStudy;
 
-  const desc = item.description ?? [];
+  const desc = lang === "en" && item.descriptionEn ? item.descriptionEn : (item.description ?? []);
   if (desc.length === 0) return [];
+
+  const summary = lang === "en" && item.summaryEn ? item.summaryEn : item.summary;
 
   const blocks: CaseStudyBlock[] = [];
 
   blocks.push({
     heading: locale["projects.overview"][lang],
-    body: [item.summary || desc[0]],
+    body: [summary || desc[0]],
   });
 
   if (desc.length > 1) {
@@ -712,9 +728,15 @@ function ProjectCard({
   index: number;
   onSelect: () => void;
 }) {
+  const { lang } = useLanguage();
   const num = String(index + 1).padStart(2, "0");
   const symbol = SYMBOLS[index % SYMBOLS.length];
   const hasImageMedia = item.media?.type === "image" && Boolean(item.media.url);
+  const title = t(lang, item.title, item.titleEn);
+  const summary = t(lang, item.summary, item.summaryEn);
+  const achievement = t(lang, item.achievement, item.achievementEn);
+  const period = t(lang, item.period, item.periodEn);
+  const teamSize = t(lang, item.teamSize, item.teamSizeEn);
   const cardRef = useScrollReveal<HTMLDivElement>({
     y: 40,
     duration: 0.8,
@@ -762,28 +784,28 @@ function ProjectCard({
 
       <div className="pj-card__content">
         <h3 className="font-display text-[15px] sm:text-[18px] font-black leading-tight mb-1.5">
-          {item.title}
+          {title}
         </h3>
 
-        {item.summary && (
+        {summary && (
           <p className="pj-card__summary text-[12.5px] text-muted-foreground/70 leading-relaxed mb-1">
-            {item.summary}
+            {summary}
           </p>
         )}
 
-        {item.achievement && (
+        {achievement && (
           <p className="pj-card__achievement">
             <span className="pj-card__achievement-prefix">▸</span>
-            {item.achievement}
+            {achievement}
           </p>
         )}
 
         <div className="pj-card__meta">
-          <span>{item.period}</span>
-          {item.teamSize && (
+          <span>{period}</span>
+          {teamSize && (
             <>
               <span style={{ color: "rgba(33,29,25,0.2)", userSelect: "none" }}>·</span>
-              <span>{item.teamSize}</span>
+              <span>{teamSize}</span>
             </>
           )}
         </div>
@@ -814,14 +836,14 @@ function ProjectCard({
               navigator.clipboard.writeText(url).then(() => {
                 const btn = e.currentTarget;
                 const orig = btn.textContent;
-                btn.textContent = "복사됨!";
+                btn.textContent = locale["projects.copied"][lang];
                 setTimeout(() => { btn.textContent = orig; }, 1500);
               });
             }}
             className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-[var(--notion-stone)] bg-[var(--notion-surface)] border border-[var(--notion-hairline)] rounded-md hover:bg-[var(--notion-bg-elevated)] hover:text-[var(--notion-ink)] transition-colors"
           >
             <LinkIcon className="w-3 h-3" strokeWidth={1.5} />
-            링크 복사
+            {locale["projects.copyLink"][lang]}
           </button>
         </div>
       </div>
@@ -851,14 +873,20 @@ function ProjectModal({
   const num = String(index + 1).padStart(2, "0");
   const blocks = buildCaseStudy(project, lang);
   const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
-  const detailContentBlocks = project.contentBlocks
-    ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)
+  const activeContentBlocks = lang === "en" && project.contentBlocksEn ? project.contentBlocksEn : project.contentBlocks;
+  const detailContentBlocks = activeContentBlocks
+    ? filterRepeatedMediaBlocks(activeContentBlocks, repeatedCardImageUrl)
     : [];
   const shouldShowPrimaryMedia = Boolean(project.media?.url && project.media.type !== "image");
 
+  const modalTitle = t(lang, project.title, project.titleEn);
+  const modalSummary = t(lang, project.summary, project.summaryEn);
+  const modalPeriod = t(lang, project.period, project.periodEn);
+  const modalTeamSize = t(lang, project.teamSize, project.teamSizeEn);
+
   // Normalize techStack: handle edge case where DB returns a single comma-joined string
   const techStackList = Array.isArray(project.techStack)
-    ? project.techStack.flatMap((t) => (typeof t === "string" && t.includes(",") ? t.split(",").map((s) => s.trim()) : [t]))
+    ? project.techStack.flatMap((ts) => (typeof ts === "string" && ts.includes(",") ? ts.split(",").map((s) => s.trim()) : [ts]))
     : typeof project.techStack === "string"
       ? (project.techStack as string).split(",").map((s) => s.trim())
       : [];
@@ -967,7 +995,7 @@ function ProjectModal({
               {num}
             </span>
             <h2 className="pj-modal__title">
-              {project.title}
+              {modalTitle}
             </h2>
           </div>
 
@@ -985,16 +1013,16 @@ function ProjectModal({
           >
             <span style={{ fontWeight: 500 }}>
               <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
-                개발일정
+                {locale["projects.schedule"][lang]}
               </span>
-              {project.period}
+              {modalPeriod}
             </span>
             <span style={{ margin: "0 10px", color: "rgba(33, 29, 25, 0.2)", userSelect: "none" as const }}>·</span>
             <span style={{ fontWeight: 500 }}>
               <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" as const, color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
-                개발인원
+                {locale["projects.teamSize"][lang]}
               </span>
-              {project.teamSize}
+              {modalTeamSize}
             </span>
           </div>
 
@@ -1084,7 +1112,7 @@ function ProjectModal({
           )}
 
           {/* 4. 소개 문단 */}
-          {project.summary && (
+          {modalSummary && (
             <p
               style={{
                 maxWidth: 760,
@@ -1094,7 +1122,7 @@ function ProjectModal({
                 lineHeight: 1.8,
               }}
             >
-              {project.summary}
+              {modalSummary}
             </p>
           )}
 
@@ -1112,7 +1140,7 @@ function ProjectModal({
                   marginBottom: 10,
                 }}
               >
-                기술스택
+                {locale["projects.techStackLabel"][lang]}
               </span>
               <div
                 style={{
@@ -1121,9 +1149,9 @@ function ProjectModal({
                   gap: 7,
                 }}
               >
-                {techStackList.map((t) => (
+                {techStackList.map((tech) => (
                   <span
-                    key={t}
+                    key={tech}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -1139,7 +1167,7 @@ function ProjectModal({
                       whiteSpace: "nowrap" as const,
                     }}
                   >
-                    {t}
+                    {tech}
                   </span>
                 ))}
               </div>
@@ -1207,15 +1235,21 @@ export function ProjectDetailPageContent({
   const num = String(index + 1).padStart(2, "0");
   const blocks = buildCaseStudy(project, lang);
   const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
-  const detailContentBlocks = project.contentBlocks
-    ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)
+  const activeContentBlocks = lang === "en" && project.contentBlocksEn ? project.contentBlocksEn : project.contentBlocks;
+  const detailContentBlocks = activeContentBlocks
+    ? filterRepeatedMediaBlocks(activeContentBlocks, repeatedCardImageUrl)
     : [];
   const shouldShowPrimaryMedia = Boolean(project.media?.url && project.media.type !== "image");
   const techStackList = Array.isArray(project.techStack)
-    ? project.techStack.flatMap((t) => (typeof t === "string" && t.includes(",") ? t.split(",").map((s) => s.trim()) : [t]))
+    ? project.techStack.flatMap((ts) => (typeof ts === "string" && ts.includes(",") ? ts.split(",").map((s) => s.trim()) : [ts]))
     : typeof project.techStack === "string"
       ? (project.techStack as string).split(",").map((s) => s.trim())
       : [];
+
+  const pageTitle = t(lang, project.title, project.titleEn);
+  const pageSummary = t(lang, project.summary, project.summaryEn);
+  const pagePeriod = t(lang, project.period, project.periodEn);
+  const pageTeamSize = t(lang, project.teamSize, project.teamSizeEn);
 
   return (
     <main className="min-h-[100svh] bg-white text-foreground">
@@ -1224,12 +1258,12 @@ export function ProjectDetailPageContent({
           <a
             href="/portfolio#projects"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[20px] text-foreground transition-colors hover:bg-muted"
-            aria-label="프로젝트 목록으로 돌아가기"
+            aria-label={locale["projects.backToList"][lang]}
           >
             ←
           </a>
           <span className="min-w-0 truncate px-4 text-sm font-semibold">
-            프로젝트 상세
+            {locale["projects.detail"][lang]}
           </span>
           <span className="font-mono text-[11px] font-semibold text-foreground/35">
             {num}
@@ -1261,7 +1295,7 @@ export function ProjectDetailPageContent({
 
         <div className="pj-modal__title-block" style={{ marginBottom: 32 }}>
           <span className="pj-modal__title-number">{num}</span>
-          <h1 className="pj-modal__title">{project.title}</h1>
+          <h1 className="pj-modal__title">{pageTitle}</h1>
         </div>
 
         <div
@@ -1277,16 +1311,16 @@ export function ProjectDetailPageContent({
         >
           <span style={{ fontWeight: 500 }}>
             <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
-              개발일정
+              {locale["projects.schedule"][lang]}
             </span>
-            {project.period}
+            {pagePeriod}
           </span>
           <span style={{ margin: "0 10px", color: "rgba(33, 29, 25, 0.2)", userSelect: "none" }}>·</span>
           <span style={{ fontWeight: 500 }}>
             <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "rgba(33, 29, 25, 0.35)", marginRight: 6 }}>
-              개발인원
+              {locale["projects.teamSize"][lang]}
             </span>
-            {project.teamSize}
+            {pageTeamSize}
           </span>
         </div>
 
@@ -1321,7 +1355,7 @@ export function ProjectDetailPageContent({
           </div>
         )}
 
-        {project.summary && (
+        {pageSummary && (
           <p
             style={{
               maxWidth: 760,
@@ -1331,7 +1365,7 @@ export function ProjectDetailPageContent({
               lineHeight: 1.8,
             }}
           >
-            {project.summary}
+            {pageSummary}
           </p>
         )}
 
@@ -1348,12 +1382,12 @@ export function ProjectDetailPageContent({
                 marginBottom: 10,
               }}
             >
-              기술스택
+              {locale["projects.techStackLabel"][lang]}
             </span>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-              {techStackList.map((t) => (
+              {techStackList.map((tech) => (
                 <span
-                  key={t}
+                  key={tech}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -1369,7 +1403,7 @@ export function ProjectDetailPageContent({
                     whiteSpace: "nowrap",
                   }}
                 >
-                  {t}
+                  {tech}
                 </span>
               ))}
             </div>

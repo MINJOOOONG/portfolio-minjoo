@@ -11,13 +11,18 @@ import { SceneLayout } from "@/components/shared/scene-layout";
 import { isArticleProject } from "@/lib/project-groups";
 import { applyCurrentPortfolioContentBlocks } from "@/lib/portfolio-project-content";
 import { applyCurrentExperienceContent } from "@/lib/experience-content";
+import { projectTranslations } from "@/data/project-translations";
 import type { ResumeData } from "@/lib/pdf/types";
 
 export async function PortfolioPage() {
   const settings = await getSettings();
 
   const experienceData = applyCurrentExperienceContent(parseJsonSetting<ExperienceItem[]>(settings, "experience_data", []));
-  const projectData = applyCurrentPortfolioContentBlocks(parseJsonSetting<ProjectItem[]>(settings, "project_data", []));
+  const projectDataRaw = applyCurrentPortfolioContentBlocks(parseJsonSetting<ProjectItem[]>(settings, "project_data", []));
+  const projectData = projectDataRaw.map(p => ({
+    ...p,
+    ...projectTranslations[p.title],
+  }));
   const skillsData = parseJsonSetting<Record<string, string[]>>(settings, "skills_data", {});
   const educationData = parseJsonSetting<EducationItem[]>(settings, "education_data", []);
   const certificationData = parseJsonSetting<CertificationItem[]>(settings, "certifications_data", []);
