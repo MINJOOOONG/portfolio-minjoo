@@ -7,6 +7,8 @@ import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { aboutSections } from "@/data/about-sections";
 import { AboutSectionRow } from "@/components/sections/about-section-row";
 import { AboutDetailPanel } from "@/components/sections/about-detail-panel";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 interface AboutProps {
   content: string;
@@ -83,8 +85,11 @@ export const About = memo(function About({ content }: AboutProps) {
 
 /* ── 모바일 Editorial 아이템 ── */
 function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)[number]; isFirst: boolean }) {
+  const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const hasDetails = section.paragraphs.length > 0 || Boolean(section.detailLink);
+  const sentence = lang === "en" ? section.sentenceEn : section.sentence;
+  const paragraphs = lang === "en" ? section.paragraphsEn : section.paragraphs;
 
   return (
     <article className={`${isFirst ? "" : "border-t border-foreground/[0.06] mt-8 pt-8"}`}>
@@ -118,7 +123,7 @@ function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)
 
       {/* 핵심 문장 */}
       <p className="text-[14px] font-medium leading-[1.7] tracking-[-0.01em] text-foreground/80 mb-4">
-        {section.sentence}
+        {sentence}
       </p>
 
       <AnimatePresence initial={false}>
@@ -131,7 +136,7 @@ function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)
             className="overflow-hidden"
           >
             <div className="space-y-3 pt-1">
-              {section.paragraphs.map((p, i) => (
+              {paragraphs.map((p, i) => (
                 <p key={i} className="text-[13px] leading-[1.85] text-foreground/55">
                   {p}
                 </p>
@@ -160,7 +165,7 @@ function MobileAboutItem({ section, isFirst }: { section: (typeof aboutSections)
           onClick={() => setOpen(true)}
           className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-foreground/45"
         >
-          자세히 보기
+          {locale["about.readMore"][lang]}
           <span aria-hidden="true">↓</span>
         </button>
       )}

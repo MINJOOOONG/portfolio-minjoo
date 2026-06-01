@@ -6,6 +6,8 @@ import { SlideHeading } from "./about";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { useStaggerReveal } from "@/hooks/use-stagger-reveal";
 import type { ProjectItem } from "./projects";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 const PdfViewer = dynamic(
   () => import("@/components/shared/pdf-viewer"),
@@ -103,6 +105,7 @@ function ArticleItem({ item }: { item: ProjectItem }) {
 
 export const Articles = memo(function Articles({ items }: ArticlesProps) {
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
+  const { lang } = useLanguage();
 
   if (items.length === 0) return null;
 
@@ -126,7 +129,7 @@ export const Articles = memo(function Articles({ items }: ArticlesProps) {
         }}
       >
         <div ref={headingRef} className="mb-4 sm:mb-8">
-          <SlideHeading label="Articles" title="논문 / 연구" />
+          <SlideHeading label="Articles" title={locale["articles.heading"][lang]} />
         </div>
 
         <div className="space-y-6 sm:space-y-12">

@@ -9,6 +9,8 @@ import { Github, ExternalLink, BookOpen, LinkIcon } from "lucide-react";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { isArticleProject } from "@/lib/project-groups";
 import { projectSlug } from "@/lib/portfolio-project-content";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 /* ── 이미지 로드 실패 시 fallback을 보여주는 래퍼 ── */
 function SafeImage(props: ImageProps & { fallbackText?: string }) {
@@ -130,7 +132,7 @@ function filterRepeatedMediaBlocks(blocks: ContentBlock[], mediaUrl?: string) {
 }
 
 /* ── 케이스 스터디 자동 생성 ── */
-function buildCaseStudy(item: ProjectItem): CaseStudyBlock[] {
+function buildCaseStudy(item: ProjectItem, lang: "ko" | "en"): CaseStudyBlock[] {
   if (item.caseStudy && item.caseStudy.length > 0) return item.caseStudy;
 
   const desc = item.description ?? [];
@@ -139,34 +141,34 @@ function buildCaseStudy(item: ProjectItem): CaseStudyBlock[] {
   const blocks: CaseStudyBlock[] = [];
 
   blocks.push({
-    heading: "프로젝트 개요",
+    heading: locale["projects.overview"][lang],
     body: [item.summary || desc[0]],
   });
 
   if (desc.length > 1) {
     blocks.push({
-      heading: "주요 구현",
+      heading: locale["projects.implementation"][lang],
       body: desc.slice(1, Math.min(4, desc.length)),
     });
   }
 
   if (desc.length >= 4) {
     blocks.push({
-      heading: "기술적 고민",
+      heading: locale["projects.technicalChallenges"][lang],
       body: desc.slice(Math.min(4, desc.length - 1), desc.length),
     });
   }
 
   if (item.techStack.length > 0) {
     blocks.push({
-      heading: "기술 스택",
+      heading: locale["projects.techStack"][lang],
       body: [item.techStack.join(", ")],
     });
   }
 
   blocks.push({
-    heading: "결과 및 배운 점",
-    body: ["프로젝트를 통해 실무 수준의 설계와 구현 역량을 확보했습니다."],
+    heading: locale["projects.results"][lang],
+    body: [locale["projects.defaultResult"][lang]],
   });
 
   return blocks;
@@ -184,6 +186,7 @@ function MediaPreview({
   techStack?: string[];
   onMediaRatioChange?: (ratio: number) => void;
 }) {
+  const { lang } = useLanguage();
   if (!media || !media.url) {
     if (title && techStack) {
       return <ProjectMiniScene title={title} techStack={techStack} />;
@@ -223,7 +226,7 @@ function MediaPreview({
       fill
       className="object-contain"
       sizes="(max-width: 768px) 100vw, 460px"
-      fallbackText={media.title || title || "프로젝트 이미지"}
+      fallbackText={media.title || title || locale["projects.projectImage"][lang]}
       onLoad={(event) => {
         const image = event.currentTarget as HTMLImageElement;
         if (image.naturalWidth && image.naturalHeight) {
@@ -241,12 +244,13 @@ function ProjectMediaGallery({
   items?: ProjectMedia[];
   mainUrl?: string;
 }) {
+  const { lang } = useLanguage();
   const galleryItems = (items ?? []).filter((item) => !isSameMediaUrl(item.url, mainUrl));
   if (galleryItems.length === 0) return null;
 
   return (
     <section className="pj-media-section">
-      <h4 className="pj-modal__section-title">프로젝트 미디어</h4>
+      <h4 className="pj-modal__section-title">{locale["projects.media"][lang]}</h4>
       <div className="pj-media-grid">
         {galleryItems.map((item, index) => (
           <figure key={`${item.url}-${index}`} className="pj-media-item">
@@ -843,8 +847,9 @@ function ProjectModal({
   hasPrev: boolean;
   hasNext: boolean;
 }) {
+  const { lang } = useLanguage();
   const num = String(index + 1).padStart(2, "0");
-  const blocks = buildCaseStudy(project);
+  const blocks = buildCaseStudy(project, lang);
   const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
   const detailContentBlocks = project.contentBlocks
     ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)
@@ -1198,8 +1203,9 @@ export function ProjectDetailPageContent({
   project: ProjectItem;
   index: number;
 }) {
+  const { lang } = useLanguage();
   const num = String(index + 1).padStart(2, "0");
-  const blocks = buildCaseStudy(project);
+  const blocks = buildCaseStudy(project, lang);
   const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
   const detailContentBlocks = project.contentBlocks
     ? filterRepeatedMediaBlocks(project.contentBlocks, repeatedCardImageUrl)

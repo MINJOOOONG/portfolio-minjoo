@@ -2,6 +2,8 @@
 
 import { memo } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 const PROFILE = {
   name: "서민주",
@@ -24,6 +26,7 @@ const links = [
 ];
 
 export const Hero = memo(function Hero() {
+  const { lang } = useLanguage();
   return (
     <div className="hero-grid-bg flex flex-col items-center justify-center min-h-screen text-center gap-6 px-5 sm:px-8">
       {/* Profile photo */}
@@ -49,12 +52,12 @@ export const Hero = memo(function Hero() {
       {/* Status badge */}
       <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-medium text-[var(--notion-primary)]" style={{ background: "var(--notion-tint-lavender)" }}>
         <span className="w-1.5 h-1.5 rounded-full bg-[var(--notion-primary)] animate-pulse" />
-        {PROFILE.status}
+        {locale["hero.status"][lang]}
       </span>
 
       {/* Summary */}
       <p className="text-sm sm:text-base leading-[2] text-muted-foreground/70 max-w-lg mx-auto">
-        {PROFILE.summary}
+        {locale["hero.summary"][lang]}
       </p>
 
       {/* Links */}

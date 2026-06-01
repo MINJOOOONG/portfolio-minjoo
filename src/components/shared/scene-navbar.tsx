@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BotMessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PortfolioAskBar } from "@/components/shared/portfolio-ask-bar";
+import { LanguageToggle } from "@/components/shared/language-toggle";
 
 const SECTION_IDS = ["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"];
 
@@ -104,6 +105,7 @@ export const SceneNavbar = memo(function SceneNavbar() {
                 </button>
               ))}
             </nav>
+            <LanguageToggle />
           </div>
         </div>
       </header>
@@ -122,6 +124,9 @@ export const SceneNavbar = memo(function SceneNavbar() {
           >
             <BotMessageSquare className="h-[18px] w-[18px]" />
           </Link>
+
+          {/* Language toggle */}
+          <LanguageToggle />
 
           {/* Divider */}
           <div className="shrink-0 w-px h-6 bg-[var(--notion-hairline)]" />

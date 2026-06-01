@@ -11,6 +11,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 interface AskResponse {
   answer: string;
@@ -26,6 +28,7 @@ interface ChatMessage {
 }
 
 export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
+  const { lang } = useLanguage();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -34,7 +37,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
 
   useEffect(() => {
     setToday(
-      new Intl.DateTimeFormat("ko-KR", {
+      new Intl.DateTimeFormat(lang === "en" ? "en-US" : "ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
@@ -73,7 +76,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           {
             id: `assistant-${Date.now()}`,
             role: "assistant",
-            content: res.ok ? data.answer : data.error || "오류가 발생했습니다.",
+            content: res.ok ? data.answer : data.error || locale["ask.error"][lang],
             sources: res.ok ? data.sources : [],
           },
         ]);
@@ -83,7 +86,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           {
             id: `assistant-${Date.now()}`,
             role: "assistant",
-            content: "AI 어시스턴트에 연결할 수 없습니다.",
+            content: locale["ask.connectionError"][lang],
             sources: [],
           },
         ]);
@@ -107,11 +110,11 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           <Link
             href="/portfolio#about"
             className="inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
-            aria-label="포트폴리오로 돌아가기"
+            aria-label={locale["assistant.back"][lang]}
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-base font-semibold tracking-normal">RAG AI와 대화 중</h1>
+          <h1 className="text-base font-semibold tracking-normal">{locale["assistant.title"][lang]}</h1>
           <div className="w-10" />
         </div>
       </header>
@@ -126,7 +129,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         <div className="mb-8 flex justify-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
             <span className="h-2 w-2 rounded-full bg-foreground" />
-            RAG AI와 연결했습니다
+            {locale["assistant.connected"][lang]}
           </span>
         </div>
 
@@ -135,13 +138,11 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
             <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-foreground shadow-sm">
               <Sparkles className="h-5 w-5" />
             </div>
-            <p className="text-2xl font-bold leading-snug tracking-normal">
-              서민주 포트폴리오에 대해
-              <br />
-              궁금한 내용을 물어보세요.
+            <p className="text-2xl font-bold leading-snug tracking-normal whitespace-pre-line">
+              {locale["assistant.greeting"][lang]}
             </p>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              프로젝트, 기술 스택, 경험, AI 활용 방식에 대해 답변합니다.
+              {locale["assistant.description"][lang]}
             </p>
           </div>
 
@@ -175,7 +176,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           {loading && (
             <div className="mr-auto inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm text-muted-foreground shadow-sm">
               <Loader2 className="h-4 w-4 animate-spin" />
-              답변을 준비하고 있습니다
+              {locale["assistant.preparing"][lang]}
             </div>
           )}
         </div>
@@ -185,21 +186,21 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         <div className="mx-auto max-w-[720px]">
           <div className="mb-3 flex items-start gap-2 rounded-xl bg-[#F7F6F3] px-4 py-3 text-sm leading-snug text-muted-foreground">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
-            <p>개인정보나 민감한 정보를 입력하지 말아 주세요.</p>
+            <p>{locale["assistant.privacyWarning"][lang]}</p>
           </div>
           <form onSubmit={handleSubmit} className="flex items-center gap-3">
             <input
               ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="메시지를 입력해 주세요"
+              placeholder={locale["assistant.placeholder"][lang]}
               className="min-w-0 flex-1 rounded-2xl bg-[#F1F3F5] px-4 py-3 text-sm outline-none placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/35"
             />
             <button
               type="submit"
               disabled={!query.trim() || loading}
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-foreground text-white transition-opacity disabled:opacity-35"
-              aria-label="메시지 보내기"
+              aria-label={locale["assistant.send"][lang]}
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
             </button>

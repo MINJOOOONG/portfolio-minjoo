@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { AboutSection } from "@/data/about-sections";
 import { keywordAnnotations } from "@/data/about-sections";
 import { AboutKeywordAnnotation } from "./about-keyword-annotation";
+import { useLanguage, type Lang } from "@/lib/i18n/language-context";
 
 interface AboutDetailPanelProps {
   section: AboutSection | undefined;
 }
 
-function renderAnnotatedText(text: string): ReactNode[] {
+function renderAnnotatedText(text: string, lang: Lang): ReactNode[] {
   const keywords = Object.keys(keywordAnnotations).sort(
     (a, b) => b.length - a.length
   );
@@ -23,12 +24,13 @@ function renderAnnotatedText(text: string): ReactNode[] {
   const parts = text.split(regex);
 
   return parts.map((part, i) => {
-    if (keywordAnnotations[part]) {
+    const annotation = keywordAnnotations[part];
+    if (annotation) {
       return (
         <AboutKeywordAnnotation
           key={`${part}-${i}`}
           keyword={part}
-          description={keywordAnnotations[part]}
+          description={typeof annotation === "string" ? annotation : (lang === "en" ? annotation.en : annotation.ko)}
         />
       );
     }
@@ -37,6 +39,7 @@ function renderAnnotatedText(text: string): ReactNode[] {
 }
 
 export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
+  const { lang } = useLanguage();
   const handleDetailLink = (targetId: string) => {
     window.dispatchEvent(new CustomEvent("slide-nav-goto", { detail: targetId }));
   };
@@ -50,7 +53,7 @@ export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
       <AnimatePresence mode="wait">
         {section ? (
           <motion.div
-            key={section.number}
+            key={`${section.number}-${lang}`}
             className="w-full"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -70,18 +73,18 @@ export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
 
             {/* Lead sentence — editorial headline */}
             <p data-cursor-highlight className="font-sans text-[20px] sm:text-[22px] font-semibold leading-[1.55] tracking-[-0.02em] text-foreground mb-8">
-              {section.sentence}
+              {lang === "en" ? section.sentenceEn : section.sentence}
             </p>
 
             {/* Body paragraphs */}
             <div className="space-y-6">
-              {section.paragraphs.map((paragraph, i) => (
+              {(lang === "en" ? section.paragraphsEn : section.paragraphs).map((paragraph, i) => (
                 <p
                   key={i}
                   data-cursor-highlight
                   className="font-sans text-[15px] sm:text-[16px] leading-[1.82] tracking-[0.005em] text-foreground/65 word-break-keep-all"
                 >
-                  {renderAnnotatedText(paragraph)}
+                  {renderAnnotatedText(paragraph, lang)}
                 </p>
               ))}
             </div>
@@ -114,7 +117,7 @@ export function AboutDetailPanel({ section }: AboutDetailPanelProps) {
             transition={{ duration: 0.15 }}
           >
             <p className="font-sans text-[14px] text-foreground/20">
-              항목을 선택하세요
+              {lang === "en" ? "Select an item" : "항목을 선택하세요"}
             </p>
           </motion.div>
         )}

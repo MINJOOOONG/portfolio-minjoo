@@ -10,6 +10,8 @@ import {
   type PointerEvent,
   type TouchEvent,
 } from "react";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 export function EntryPage() {
   const router = useRouter();
@@ -53,12 +55,14 @@ export function EntryPage() {
     [go]
   );
 
+  const { lang } = useLanguage();
+
   return (
     <main
       className={`entry-overlay ${leaving ? "entry-overlay--leaving" : ""}`}
       role="button"
       tabIndex={0}
-      aria-label="포트폴리오로 들어가기"
+      aria-label={locale["entry.ariaLabel"][lang]}
       data-cursor="ENTER"
       onClick={go}
       onKeyDown={onKey}

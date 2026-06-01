@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { Search, X, Loader2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/language-context";
+import locale from "@/lib/i18n/locale";
 
 interface AskResponse {
   answer: string;
@@ -11,6 +13,7 @@ interface AskResponse {
 }
 
 export const PortfolioAskBar = memo(function PortfolioAskBar() {
+  const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -51,13 +54,13 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
       const data: AskResponse = await res.json();
 
       if (!res.ok) {
-        setResult({ answer: data.error || "오류가 발생했습니다.", sources: [] });
+        setResult({ answer: data.error || locale["ask.error"][lang], sources: [] });
       } else {
         setResult(data);
       }
     } catch {
       setResult({
-        answer: "AI 어시스턴트에 연결할 수 없습니다.",
+        answer: locale["ask.connectionError"][lang],
         sources: [],
       });
     } finally {
@@ -77,7 +80,7 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
         <button
           onClick={() => setOpen(true)}
           className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="AI 검색 열기"
+          aria-label={locale["ask.openSearch"][lang]}
         >
           <Search className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Ask AI</span>

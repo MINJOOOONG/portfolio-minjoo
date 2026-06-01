@@ -2,13 +2,16 @@
 
 import { useState, memo } from "react";
 import { SlideHeading } from "./about";
+import { useLanguage } from "@/lib/i18n/language-context";
 
 export interface ExperienceItem {
   company: string;
   role: string;
   period: string;
   summary: string;
+  summaryEn?: string;
   achievements: string[];
+  achievementsEn?: string[];
   status?: string;
   techStack?: string[];
   companyIconUrl?: string;
@@ -208,7 +211,10 @@ function CardHeader({ item }: { item: ExperienceItem }) {
 
 /* ── View Card ── */
 function ViewCard({ item }: { item: ExperienceItem }) {
-  const baseDetailItems = [item.summary, ...(item.achievements ?? [])].filter(Boolean);
+  const { lang } = useLanguage();
+  const summary = lang === "en" && item.summaryEn ? item.summaryEn : item.summary;
+  const achievements = lang === "en" && item.achievementsEn ? item.achievementsEn : item.achievements;
+  const baseDetailItems = [summary, ...(achievements ?? [])].filter(Boolean);
   const desktopDetailItems = baseDetailItems.slice(0, 4);
   const mobileDetailItems = baseDetailItems.slice(0, 3);
   const [leadItem, ...mobileBulletItems] = mobileDetailItems;
