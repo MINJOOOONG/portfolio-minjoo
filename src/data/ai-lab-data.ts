@@ -5,10 +5,10 @@
 
 export type AILabArchiveSectionId =
   | "overview"
-  | "standards"
-  | "rules-principles"
+  | "standards-rules"
   | "ai-glossary"
   | "toolkit"
+  | "history"
   | "media-note";
 
 export interface AILabArchiveNavItem {
@@ -20,28 +20,93 @@ export interface AILabArchiveNavItem {
 
 export const aiLabArchiveNavItems: AILabArchiveNavItem[] = [
   { id: "overview", label: "Overview", eyebrow: "" },
-  { id: "standards", label: "Standards", eyebrow: "" },
-  { id: "rules-principles", label: "Rules & Principles", eyebrow: "" },
+  { id: "standards-rules", label: "Standards", eyebrow: "" },
   { id: "ai-glossary", label: "Glossary", eyebrow: "" },
   { id: "toolkit", label: "Toolkit", eyebrow: "" },
+  { id: "history", label: "History", eyebrow: "" },
   { id: "media-note", label: "Media Notes", eyebrow: "" },
 ];
 
 /* ── Section Title Translations ── */
 
 export const aiLabSectionTitles: Record<string, { ko: string; en: string }> = {
-  overviewTitle: { ko: "이 랩을 만든 이유", en: "Why I Built This Lab" },
+  overviewTitle: { ko: "Overview", en: "Overview" },
   safetyTitle: { ko: "AI 사용 시 확인해야 하는 위험 요소", en: "Risk Factors to Check When Using AI" },
   nistTitle: { ko: "NIST AI RMF — 4단계 프레임워크", en: "NIST AI RMF — 4-Step Framework" },
   reviewTitle: { ko: "AI 결과물 평가 기준", en: "AI Output Evaluation Criteria" },
   glossaryTitle: { ko: "용어 사전", en: "Glossary" },
   toolkitTitle: { ko: "AI 도구 리뷰", en: "AI Tool Reviews" },
+  standardsRulesTitle: { ko: "Standards", en: "Standards" },
+  historyTitle: { ko: "History", en: "History" },
   modelTitle: { ko: "모델 비교", en: "Model Comparison" },
   modelGuideTitle: { ko: "작업별 모델 선택 가이드", en: "Model Selection Guide by Task" },
   rulesTitle: { ko: "공식 문서 아카이브", en: "Official Document Archive" },
   releaseTitle: { ko: "릴리즈 노트", en: "Release Notes" },
   euTableTitle: { ko: "EU AI Act 위험 등급 분류", en: "EU AI Act Risk Classification" },
   mediaTitle: { ko: "미디어 노트", en: "Media Notes" },
+};
+
+export const aiLabSectionIntros: Record<AILabArchiveSectionId, Record<"ko" | "en", string[]>> = {
+  overview: {
+    ko: [
+      "AI Lab은 AI를 단순히 사용하는 공간이 아니라, 변화하는 AI 산업을 제 언어로 공부하고 정리하는 공간입니다.",
+      "트렌드, 기준, 도구, 기록을 함께 묶어 AI를 어떻게 이해하고 활용할지 계속 업데이트합니다.",
+    ],
+    en: [
+      "AI Lab is not just a space for using AI, but a place where I study and organize the changing AI industry in my own language.",
+      "I keep updating how I understand and use AI by connecting trends, standards, tools, and records.",
+    ],
+  },
+  "standards-rules": {
+    ko: [
+      "AI를 잘 쓰는 방법보다 먼저 정리해야 할 것은 신뢰할 수 있게 쓰는 기준이라고 봅니다.",
+      "공식 문서와 규제 가이드라인을 공부하면서, 제가 AI 결과물을 사용할 때 반드시 확인해야 한다고 정리한 기준입니다.",
+    ],
+    en: [
+      "Before focusing on how to use AI well, I believe the first step is defining how to use it reliably.",
+      "These are the standards I use when reviewing AI outputs, based on official documents and regulatory guidance.",
+    ],
+  },
+  "ai-glossary": {
+    ko: [
+      "AI 문서와 도구를 공부할 때 반복해서 등장하는 개념을 제 기준으로 정리한 용어 사전입니다.",
+      "단어 뜻을 외우기보다, 실제 사용과 평가 맥락에서 어떤 의미인지 이해하기 위해 모았습니다.",
+    ],
+    en: [
+      "This glossary organizes the concepts that repeatedly appear while studying AI documents and tools.",
+      "It is built to understand what each term means in practical use and evaluation contexts, not just to memorize definitions.",
+    ],
+  },
+  toolkit: {
+    ko: [
+      "직접 사용해 본 AI 도구를 작업 목적과 한계 기준으로 정리한 공간입니다.",
+      "무엇이 좋은 도구인지보다, 어떤 상황에서 어떤 도구를 선택해야 하는지 판단하기 위해 기록합니다.",
+    ],
+    en: [
+      "This section organizes AI tools I have used by work purpose and practical limitations.",
+      "I record them to judge which tool fits which situation, rather than simply deciding which tool is best.",
+    ],
+  },
+  history: {
+    ko: [
+      "2000년대 이후 AI 산업의 주요 변화를 시간 순서로 정리한 타임라인입니다.",
+      "모델과 제품, 규제의 흐름을 함께 보면서 지금의 AI 생태계가 어떻게 만들어졌는지 이해하기 위해 정리합니다.",
+    ],
+    en: [
+      "This timeline organizes major changes in the AI industry since the 2000s.",
+      "It connects model, product, and regulation shifts to understand how today's AI ecosystem was formed.",
+    ],
+  },
+  "media-note": {
+    ko: [
+      "AI 관련 영상과 글을 보고 핵심 내용만 정리한 개인 학습 기록입니다.",
+      "감상평보다, 제 작업 기준과 AI를 바라보는 관점에 남길 만한 메시지를 중심으로 요약합니다.",
+    ],
+    en: [
+      "This is a personal learning record that summarizes the core points from AI-related videos and articles.",
+      "Instead of general impressions, I focus on messages worth keeping in my work standards and view of AI.",
+    ],
+  },
 };
 
 /* ── Shared Types ── */
@@ -337,6 +402,82 @@ export const reviewFrameworkItems: ReviewFrameworkItem[] = [
 
 export const evaluationQaConnection = "QA에서 TC(Test Case)를 먼저 정의하고 반복 검증하듯, AI 답변도 평가 기준을 먼저 정의하고 반복 검증합니다. 차이점은 AI 답변은 같은 입력에도 결과가 달라질 수 있어, 평가 기준이 더 명확해야 한다는 것입니다.";
 
+export const aiUsageStandardsIntro = aiLabSectionIntros["standards-rules"];
+
+export interface AIUsageStandard {
+  title: string;
+  titleEn: string;
+  rule: string;
+  ruleEn: string;
+  reason: string;
+  reasonEn: string;
+  evidence: string[];
+  evidenceEn: string[];
+}
+
+export const aiUsageStandards: AIUsageStandard[] = [
+  {
+    title: "근거 없는 답변은 사용하지 않는다",
+    titleEn: "Do not use answers without evidence",
+    rule: "AI가 만든 답변은 원본 문서, 데이터, 정책과 대조할 수 있을 때만 사용합니다.",
+    ruleEn: "Use AI-generated answers only when they can be checked against source documents, data, or policies.",
+    reason: "LLM은 그럴듯한 문장을 만들 수 있지만, 그 자체가 사실이라는 보장은 없습니다. 출처가 없으면 검증도 재현도 어렵습니다.",
+    reasonEn: "LLMs can produce plausible text, but that does not guarantee factual correctness. Without sources, verification and reproduction are difficult.",
+    evidence: ["NIST AI RMF — Measure", "OpenAI Model Spec", "RAG / Grounding 기준"],
+    evidenceEn: ["NIST AI RMF — Measure", "OpenAI Model Spec", "RAG / Grounding practice"],
+  },
+  {
+    title: "고위험 판단은 사람이 최종 승인한다",
+    titleEn: "Keep final human approval for high-risk decisions",
+    rule: "금융, 개인정보, 법률, 안전처럼 피해가 커질 수 있는 영역에서는 AI가 단독으로 결론을 내리거나 실행하지 않게 합니다.",
+    ruleEn: "In domains like finance, privacy, law, and safety, AI should not make or execute final decisions alone.",
+    reason: "AI의 자동화가 편리하더라도 책임은 사람과 조직에 남습니다. 위험도가 높을수록 승인 지점과 기록이 필요합니다.",
+    reasonEn: "Even when automation is convenient, accountability remains with people and organizations. Higher risk requires approval checkpoints and records.",
+    evidence: ["EU AI Act — Human Oversight", "NIST AI RMF — Govern", "OpenAI Usage Policies"],
+    evidenceEn: ["EU AI Act — Human Oversight", "NIST AI RMF — Govern", "OpenAI Usage Policies"],
+  },
+  {
+    title: "개인정보와 민감정보는 입력하지 않는다",
+    titleEn: "Do not put personal or sensitive data into AI tools",
+    rule: "프롬프트와 첨부 파일에 개인정보, 인증 정보, 내부 기밀이 포함되지 않았는지 먼저 확인합니다.",
+    ruleEn: "Check prompts and attachments first to ensure they do not include personal data, credentials, or confidential internal information.",
+    reason: "AI 도구 사용에서 가장 즉각적인 리스크는 데이터 유출입니다. 편의보다 데이터 최소화가 우선입니다.",
+    reasonEn: "The most immediate risk in AI tool usage is data leakage. Data minimization comes before convenience.",
+    evidence: ["Google Gemini API Policy", "Microsoft Responsible AI Standard", "개인정보보호법 / EU AI Act"],
+    evidenceEn: ["Google Gemini API Policy", "Microsoft Responsible AI Standard", "Privacy laws / EU AI Act"],
+  },
+  {
+    title: "평가 기준을 먼저 정하고 반복 검증한다",
+    titleEn: "Define evaluation criteria first, then test repeatedly",
+    rule: "정확성, 근거, 완전성, 일관성, 업무 활용성 기준을 먼저 정한 뒤 AI 결과를 반복 확인합니다.",
+    ruleEn: "Define criteria such as accuracy, groundedness, completeness, consistency, and usefulness before repeatedly checking AI outputs.",
+    reason: "같은 질문에도 AI 답변은 달라질 수 있습니다. 기준이 없으면 좋은 답변과 위험한 답변을 구분하기 어렵습니다.",
+    reasonEn: "AI responses can vary even for the same question. Without criteria, it is hard to distinguish useful answers from risky ones.",
+    evidence: ["NIST AI RMF — Measure", "QA Test Case 방식", "AI Evaluation Framework"],
+    evidenceEn: ["NIST AI RMF — Measure", "QA test case practice", "AI evaluation framework"],
+  },
+  {
+    title: "편향 가능성은 조건을 바꿔 테스트한다",
+    titleEn: "Test possible bias by changing conditions",
+    rule: "성별, 연령, 지역, 직업 등 조건만 바꿨을 때 답변의 톤이나 결론이 달라지는지 확인합니다.",
+    ruleEn: "Check whether tone or conclusions change when only conditions such as gender, age, region, or occupation are changed.",
+    reason: "편향은 모델만의 문제가 아니라 데이터, 프롬프트, 평가 방식에서 모두 발생할 수 있습니다.",
+    reasonEn: "Bias can come not only from the model, but also from data, prompts, and evaluation methods.",
+    evidence: ["Google Responsible AI Practices", "Microsoft Responsible AI Standard", "NIST AI RMF — Map / Measure"],
+    evidenceEn: ["Google Responsible AI Practices", "Microsoft Responsible AI Standard", "NIST AI RMF — Map / Measure"],
+  },
+  {
+    title: "자동화는 되돌릴 수 있는 일부터 적용한다",
+    titleEn: "Apply automation first to reversible work",
+    rule: "AI Agent나 자동 실행 기능은 초안 작성, 분류, 요약처럼 되돌릴 수 있는 작업부터 적용합니다.",
+    ruleEn: "Apply AI agents or automated execution first to reversible tasks such as drafting, classification, and summarization.",
+    reason: "AI가 도구를 호출하고 행동하는 범위가 넓어질수록 실수의 영향도 커집니다. 자동화 범위는 위험도에 맞게 제한해야 합니다.",
+    reasonEn: "As AI gains more ability to call tools and take actions, the impact of mistakes grows. Automation scope should match the risk level.",
+    evidence: ["NIST AI RMF — Manage", "EU AI Act — Risk-based approach", "Agent / Tool Calling 안전 기준"],
+    evidenceEn: ["NIST AI RMF — Manage", "EU AI Act — Risk-based approach", "Agent / Tool Calling safety practice"],
+  },
+];
+
 export interface AutomationIdea {
   title: string;
   description: string;
@@ -365,164 +506,61 @@ export interface GlossaryTerm {
   term: string;
   definition: string;
   definitionEn: string;
-  whyItMatters: string;
-  whyItMattersEn: string;
-  myNote: string;
-  myNoteEn: string;
   category: Exclude<GlossaryCategory, "All">;
 }
 
 export const glossaryTerms: GlossaryTerm[] = [
-  {
-    term: "LLM (Large Language Model)",
-    definition: "대규모 텍스트 데이터로 학습된 언어 모델. GPT, Claude, Gemini 등이 대표적입니다.",
-    definitionEn: "A language model trained on large-scale text data. GPT, Claude, and Gemini are representative examples.",
-    whyItMatters: "AI 서비스의 핵심 엔진이므로, 모델의 특성과 한계를 이해해야 적절한 평가 기준을 세울 수 있습니다.",
-    whyItMattersEn: "As the core engine of AI services, understanding a model's characteristics and limitations is essential for setting proper evaluation criteria.",
-    myNote: "같은 프롬프트라도 모델마다 결과가 다릅니다. 평가할 때 모델 버전까지 기록해야 재현이 가능합니다.",
-    myNoteEn: "Even with the same prompt, results differ by model. Recording model versions during evaluation is necessary for reproducibility.",
-    category: "Architecture",
-  },
-  {
-    term: "RAG (Retrieval-Augmented Generation)",
-    definition: "외부 문서를 검색한 뒤 그 내용을 LLM에 전달하여 답변을 생성하는 방식입니다.",
-    definitionEn: "A method that retrieves external documents and passes their content to an LLM to generate responses.",
-    whyItMatters: "할루시네이션을 줄이는 핵심 기법이지만, 검색 품질이 나쁘면 오히려 잘못된 근거 기반 답변을 만듭니다.",
-    whyItMattersEn: "A key technique for reducing hallucinations, but poor retrieval quality can produce responses based on incorrect evidence.",
-    myNote: "RAG의 품질은 '검색이 얼마나 정확한가'에 90% 달려 있습니다. 임베딩 모델과 청킹 전략이 핵심입니다.",
-    myNoteEn: "RAG quality depends 90% on retrieval accuracy. The embedding model and chunking strategy are critical.",
-    category: "Architecture",
-  },
-  {
-    term: "Embedding",
-    definition: "텍스트를 수치 벡터로 변환하는 과정. 의미가 비슷한 텍스트는 벡터 공간에서 가까이 위치합니다.",
-    definitionEn: "The process of converting text into numerical vectors. Semantically similar texts are positioned closer in vector space.",
-    whyItMatters: "RAG 검색, 유사도 측정, 클러스터링의 기반 기술입니다.",
-    whyItMattersEn: "The foundational technology for RAG retrieval, similarity measurement, and clustering.",
-    myNote: "한국어 임베딩은 영어 대비 성능이 낮을 수 있어, 한국어 특화 모델이나 다국어 모델 선택이 중요합니다.",
-    myNoteEn: "Korean embeddings may underperform compared to English, making the choice of Korean-specific or multilingual models important.",
-    category: "Architecture",
-  },
-  {
-    term: "Vector DB",
-    definition: "임베딩 벡터를 저장하고 유사도 검색을 수행하는 데이터베이스. Pinecone, Weaviate, ChromaDB 등이 있습니다.",
-    definitionEn: "A database that stores embedding vectors and performs similarity searches. Examples include Pinecone, Weaviate, and ChromaDB.",
-    whyItMatters: "RAG 시스템의 검색 엔진 역할을 합니다. 인덱싱 방식과 검색 속도가 서비스 품질에 직결됩니다.",
-    whyItMattersEn: "Serves as the search engine for RAG systems. Indexing method and search speed directly impact service quality.",
-    myNote: "포트폴리오 RAG에서는 ChromaDB를 사용했습니다. 소규모 문서에서는 충분하지만, 대규모에서는 성능 테스트가 필요합니다.",
-    myNoteEn: "I used ChromaDB for my portfolio RAG. It works well for small document sets, but performance testing is needed at scale.",
-    category: "Architecture",
-  },
-  {
-    term: "Prompt Injection",
-    definition: "사용자가 프롬프트를 조작하여 AI의 원래 지시를 무시하게 만드는 공격 기법입니다.",
-    definitionEn: "An attack technique where users manipulate prompts to make the AI ignore its original instructions.",
-    whyItMatters: "시스템 프롬프트를 노출하거나, 의도하지 않은 동작을 유발할 수 있어 보안 테스트 필수 항목입니다.",
-    whyItMattersEn: "Can expose system prompts or trigger unintended behavior, making it an essential security testing item.",
-    myNote: "QA 관점에서 보면 입력값 검증과 같습니다. AI에게도 '허용된 범위'를 명확히 정의해야 합니다.",
-    myNoteEn: "From a QA perspective, this is equivalent to input validation. The 'allowed range' must be clearly defined for AI as well.",
-    category: "Safety",
-  },
-  {
-    term: "Guardrail",
-    definition: "AI 출력을 사전/사후로 필터링하여 유해하거나 부적절한 답변을 차단하는 장치입니다.",
-    definitionEn: "A mechanism that filters AI output before or after generation to block harmful or inappropriate responses.",
-    whyItMatters: "모델 자체의 안전장치와 별도로, 서비스 레벨에서 추가 방어층을 구축합니다.",
-    whyItMattersEn: "Builds an additional defense layer at the service level, separate from the model's built-in safety mechanisms.",
-    myNote: "Guardrail은 '마지막 방어선'입니다. 프롬프트 설계로 1차 방어하고, Guardrail로 2차 필터링하는 구조가 효과적입니다.",
-    myNoteEn: "Guardrails are the 'last line of defense.' A structure with prompt design as the first layer and guardrails as the second filter is effective.",
-    category: "Safety",
-  },
-  {
-    term: "Hallucination",
-    definition: "AI가 그럴듯하지만 사실이 아닌 정보를 자신감 있게 생성하는 현상입니다.",
-    definitionEn: "The phenomenon where AI confidently generates plausible but factually incorrect information.",
-    whyItMatters: "금융, 의료, 법률 등 정확성이 중요한 도메인에서는 직접적인 피해로 이어질 수 있습니다.",
-    whyItMattersEn: "Can lead to direct harm in domains where accuracy is critical, such as finance, healthcare, and law.",
-    myNote: "할루시네이션은 '버그'가 아니라 LLM의 구조적 특성입니다. 완전히 없앨 수 없으므로, 감지하고 관리하는 것이 핵심입니다.",
-    myNoteEn: "Hallucination is not a 'bug' but a structural characteristic of LLMs. Since it cannot be fully eliminated, detection and management are key.",
-    category: "Safety",
-  },
-  {
-    term: "Bias",
-    definition: "학습 데이터, 프롬프트, 평가 방식에 의해 AI가 특정 집단에 불공정한 결과를 만드는 현상입니다.",
-    definitionEn: "The phenomenon where AI produces unfair results for specific groups due to training data, prompts, or evaluation methods.",
-    whyItMatters: "채용, 신용평가, 보험 심사 등에서 차별적 결과를 초래할 수 있어 법적 리스크가 큽니다.",
-    whyItMattersEn: "Can cause discriminatory outcomes in hiring, credit scoring, and insurance assessments, creating significant legal risk.",
-    myNote: "편향 테스트는 '같은 질문, 다른 조건'으로 비교하는 것이 가장 직관적입니다.",
-    myNoteEn: "The most intuitive approach to bias testing is comparing 'same question, different conditions.'",
-    category: "Safety",
-  },
-  {
-    term: "Red Teaming",
-    definition: "AI 시스템의 취약점을 찾기 위해 의도적으로 공격적이거나 극단적인 입력을 시도하는 평가 방법입니다.",
-    definitionEn: "An evaluation method that intentionally uses aggressive or extreme inputs to find vulnerabilities in AI systems.",
-    whyItMatters: "일반 사용자 테스트로는 발견하기 어려운 안전성 문제를 사전에 식별합니다.",
-    whyItMattersEn: "Identifies safety issues that are difficult to discover through normal user testing.",
-    myNote: "QA의 탐색적 테스트(Exploratory Testing)와 비슷합니다. 시나리오를 미리 정하되, 테스트 중 발견한 패턴으로 추가 시나리오를 만듭니다.",
-    myNoteEn: "Similar to exploratory testing in QA. Pre-define scenarios, but create additional ones based on patterns discovered during testing.",
-    category: "Evaluation",
-  },
-  {
-    term: "Evaluation (AI 평가)",
-    definition: "AI 모델이나 서비스의 품질을 정량적/정성적으로 측정하는 과정입니다.",
-    definitionEn: "The process of measuring the quality of AI models or services both quantitatively and qualitatively.",
-    whyItMatters: "평가 없이는 개선할 수 없습니다. 평가 기준이 서비스 품질의 기준이 됩니다.",
-    whyItMattersEn: "Without evaluation, improvement is impossible. Evaluation criteria become the standard for service quality.",
-    myNote: "TC 기반 QA처럼, AI 평가도 '기준 → 테스트 → 기록 → 개선' 사이클이 핵심입니다.",
-    myNoteEn: "Like TC-based QA, the core of AI evaluation is the 'criteria > test > record > improve' cycle.",
-    category: "Evaluation",
-  },
-  {
-    term: "Human-in-the-Loop",
-    definition: "AI의 판단이나 출력에 사람의 검토와 승인을 포함하는 설계 방식입니다.",
-    definitionEn: "A design approach that includes human review and approval in AI decisions or outputs.",
-    whyItMatters: "고위험 의사결정에서 AI 단독 실행을 막고, 최종 책임을 사람에게 둡니다.",
-    whyItMattersEn: "Prevents AI from acting autonomously in high-risk decisions and places final responsibility with humans.",
-    myNote: "모든 곳에 사람을 넣으면 비효율적입니다. '자동화해도 되는 것'과 '사람이 봐야 하는 것'을 구분하는 것이 설계의 핵심입니다.",
-    myNoteEn: "Inserting humans everywhere is inefficient. The key design challenge is distinguishing 'what can be automated' from 'what requires human oversight.'",
-    category: "Evaluation",
-  },
-  {
-    term: "Grounding",
-    definition: "AI 답변이 실제 데이터나 문서에 기반하도록 하는 기법입니다. RAG가 대표적입니다.",
-    definitionEn: "A technique ensuring AI responses are based on actual data or documents. RAG is the most common example.",
-    whyItMatters: "근거가 있어야 답변을 검증할 수 있고, 문제 시 추적이 가능합니다.",
-    whyItMattersEn: "Evidence-based responses enable verification and traceability when issues arise.",
-    myNote: "Grounding은 '답변에 출처를 달자'가 아니라, '출처 기반으로만 답하게 하자'입니다.",
-    myNoteEn: "Grounding is not about 'adding sources to responses' but about 'responding only based on sources.'",
-    category: "Architecture",
-  },
-  {
-    term: "Context Window",
-    definition: "LLM이 한 번에 처리할 수 있는 텍스트의 최대 길이(토큰 수)입니다.",
-    definitionEn: "The maximum length of text (number of tokens) an LLM can process at once.",
-    whyItMatters: "컨텍스트 윈도우를 초과하면 이전 내용을 잊거나, 입력이 잘립니다. RAG 설계 시 청크 크기와 직결됩니다.",
-    whyItMattersEn: "Exceeding the context window causes the model to forget earlier content or truncates input. Directly related to chunk size in RAG design.",
-    myNote: "컨텍스트 윈도우가 크다고 좋은 것은 아닙니다. 긴 입력에서 '중간 부분'의 정보를 놓치는 Lost in the Middle 현상이 있습니다.",
-    myNoteEn: "A larger context window is not always better. The 'Lost in the Middle' phenomenon causes models to miss information in the middle of long inputs.",
-    category: "Architecture",
-  },
-  {
-    term: "Agent",
-    definition: "LLM이 도구를 사용하고, 계획을 세우고, 반복적으로 행동하여 목표를 달성하는 시스템입니다.",
-    definitionEn: "A system where an LLM uses tools, makes plans, and acts iteratively to achieve goals.",
-    whyItMatters: "단순 QA를 넘어, AI가 스스로 검색, 코드 실행, API 호출 등을 수행합니다. 자율성이 높을수록 안전성 평가가 중요합니다.",
-    whyItMattersEn: "Beyond simple Q&A, AI autonomously performs searches, code execution, and API calls. Higher autonomy demands more rigorous safety evaluation.",
-    myNote: "Agent의 자율성이 높을수록 '무엇을 하면 안 되는지'를 명확히 정의해야 합니다. Guardrail이 더 중요해집니다.",
-    myNoteEn: "The higher an agent's autonomy, the more clearly 'what it must not do' needs to be defined. Guardrails become even more important.",
-    category: "Technique",
-  },
-  {
-    term: "Tool Calling",
-    definition: "LLM이 외부 함수나 API를 호출하여 정보를 가져오거나 작업을 수행하는 기능입니다.",
-    definitionEn: "The capability for an LLM to call external functions or APIs to retrieve information or perform tasks.",
-    whyItMatters: "Agent의 핵심 능력이지만, 잘못된 도구 호출은 데이터 손실이나 보안 문제로 이어질 수 있습니다.",
-    whyItMattersEn: "A core capability of agents, but incorrect tool calls can lead to data loss or security issues.",
-    myNote: "Tool Calling은 '무엇을 호출할 수 있는지'뿐만 아니라, '어떤 조건에서 호출을 거부해야 하는지'도 설계해야 합니다.",
-    myNoteEn: "Tool calling design must cover not only 'what can be called' but also 'under what conditions calls should be refused.'",
-    category: "Technique",
-  },
+  // ── Architecture ──
+  { term: "LLM (Large Language Model)", definition: "대규모 텍스트 데이터로 학습된 언어 모델. GPT, Claude, Gemini 등이 대표적입니다.", definitionEn: "A language model trained on large-scale text data. GPT, Claude, and Gemini are representative examples.", category: "Architecture" },
+  { term: "SLM (Small Language Model)", definition: "경량화된 언어 모델. Phi, Gemma 등 온디바이스 실행이나 특정 도메인에 최적화된 모델입니다.", definitionEn: "A lightweight language model optimized for on-device execution or specific domains, such as Phi and Gemma.", category: "Architecture" },
+  { term: "RAG (Retrieval-Augmented Generation)", definition: "외부 문서를 검색한 뒤 그 내용을 LLM에 전달하여 답변을 생성하는 방식입니다.", definitionEn: "A method that retrieves external documents and passes their content to an LLM to generate responses.", category: "Architecture" },
+  { term: "Embedding", definition: "텍스트를 수치 벡터로 변환하는 과정. 의미가 비슷한 텍스트는 벡터 공간에서 가까이 위치합니다.", definitionEn: "The process of converting text into numerical vectors. Semantically similar texts are positioned closer in vector space.", category: "Architecture" },
+  { term: "Vector DB", definition: "임베딩 벡터를 저장하고 유사도 검색을 수행하는 데이터베이스. Pinecone, FAISS, ChromaDB 등이 있습니다.", definitionEn: "A database that stores embedding vectors and performs similarity searches. Examples include Pinecone, FAISS, and ChromaDB.", category: "Architecture" },
+  { term: "Context Window", definition: "LLM이 한 번에 처리할 수 있는 텍스트의 최대 길이(토큰 수)입니다.", definitionEn: "The maximum length of text (number of tokens) an LLM can process at once.", category: "Architecture" },
+  { term: "Token", definition: "LLM이 텍스트를 처리하는 최소 단위. 단어, 서브워드, 또는 문자 단위로 분할됩니다.", definitionEn: "The smallest unit an LLM uses to process text. Can be split at word, subword, or character level.", category: "Architecture" },
+  { term: "Grounding", definition: "AI 답변이 실제 데이터나 문서에 기반하도록 하는 기법입니다. RAG가 대표적입니다.", definitionEn: "A technique ensuring AI responses are based on actual data or documents. RAG is the most common example.", category: "Architecture" },
+  { term: "Transformer", definition: "Self-Attention 메커니즘을 사용하는 딥러닝 아키텍처. 현대 LLM의 기반 구조입니다.", definitionEn: "A deep learning architecture using self-attention mechanisms. The foundation of modern LLMs.", category: "Architecture" },
+  { term: "Attention", definition: "입력 시퀀스에서 어떤 부분에 집중할지 결정하는 메커니즘. Transformer의 핵심 구성요소입니다.", definitionEn: "A mechanism that determines which parts of the input sequence to focus on. The core component of Transformers.", category: "Architecture" },
+  { term: "Diffusion Model", definition: "노이즈를 점진적으로 제거하며 이미지를 생성하는 모델. Stable Diffusion, DALL·E 3 등에 사용됩니다.", definitionEn: "A model that generates images by progressively removing noise. Used in Stable Diffusion, DALL·E 3, etc.", category: "Architecture" },
+  { term: "Multimodal", definition: "텍스트, 이미지, 오디오, 비디오 등 여러 형태의 데이터를 동시에 처리할 수 있는 AI 모델입니다.", definitionEn: "An AI model capable of processing multiple data types simultaneously, including text, images, audio, and video.", category: "Architecture" },
+  { term: "Latent Space", definition: "고차원 데이터를 압축한 저차원 표현 공간. 생성 모델이 이 공간에서 새로운 데이터를 생성합니다.", definitionEn: "A lower-dimensional representation space created by compressing high-dimensional data. Generative models create new data in this space.", category: "Architecture" },
+
+  // ── Technique ──
+  { term: "Prompt Engineering", definition: "AI에게 원하는 결과를 얻기 위해 입력(프롬프트)을 설계하고 최적화하는 기법입니다.", definitionEn: "The technique of designing and optimizing inputs (prompts) to get desired results from AI.", category: "Technique" },
+  { term: "Few-shot Learning", definition: "프롬프트에 몇 개의 예시를 포함하여 모델이 패턴을 학습하고 유사한 응답을 생성하게 하는 기법입니다.", definitionEn: "A technique where a few examples are included in the prompt so the model learns patterns and generates similar responses.", category: "Technique" },
+  { term: "Zero-shot Learning", definition: "예시 없이 지시만으로 모델이 작업을 수행하게 하는 기법입니다.", definitionEn: "A technique where the model performs tasks with only instructions and no examples.", category: "Technique" },
+  { term: "Chain-of-Thought (CoT)", definition: "모델이 단계별로 추론 과정을 출력하도록 유도하여 복잡한 문제 해결 능력을 높이는 기법입니다.", definitionEn: "A technique that improves complex problem-solving by prompting the model to output reasoning steps.", category: "Technique" },
+  { term: "Agent", definition: "LLM이 도구를 사용하고, 계획을 세우고, 반복적으로 행동하여 목표를 달성하는 시스템입니다.", definitionEn: "A system where an LLM uses tools, makes plans, and acts iteratively to achieve goals.", category: "Technique" },
+  { term: "Tool Calling (Function Calling)", definition: "LLM이 외부 함수나 API를 호출하여 정보를 가져오거나 작업을 수행하는 기능입니다.", definitionEn: "The capability for an LLM to call external functions or APIs to retrieve information or perform tasks.", category: "Technique" },
+  { term: "MCP (Model Context Protocol)", definition: "AI 모델이 외부 도구 및 데이터 소스와 상호작용하기 위한 표준 프로토콜입니다.", definitionEn: "A standard protocol for AI models to interact with external tools and data sources.", category: "Technique" },
+  { term: "Fine-tuning", definition: "사전 학습된 모델을 특정 도메인이나 작업에 맞게 추가 학습시키는 과정입니다.", definitionEn: "The process of additionally training a pre-trained model for a specific domain or task.", category: "Technique" },
+  { term: "LoRA (Low-Rank Adaptation)", definition: "전체 모델 가중치를 수정하지 않고 소수의 파라미터만 학습하여 효율적으로 파인튜닝하는 기법입니다.", definitionEn: "A technique for efficient fine-tuning by training only a small number of parameters without modifying the entire model weights.", category: "Technique" },
+  { term: "RLHF (Reinforcement Learning from Human Feedback)", definition: "사람의 피드백을 보상 신호로 사용하여 모델을 학습시키는 강화학습 기법입니다.", definitionEn: "A reinforcement learning technique that uses human feedback as reward signals to train models.", category: "Technique" },
+  { term: "Temperature", definition: "모델 출력의 무작위성을 조절하는 파라미터. 낮으면 결정적, 높으면 창의적 응답을 생성합니다.", definitionEn: "A parameter controlling output randomness. Lower values produce deterministic responses, higher values produce creative ones.", category: "Technique" },
+  { term: "Top-p (Nucleus Sampling)", definition: "누적 확률이 p 이하인 토큰들 중에서만 다음 토큰을 선택하는 샘플링 방식입니다.", definitionEn: "A sampling method that selects the next token only from tokens whose cumulative probability is at most p.", category: "Technique" },
+  { term: "Chunking", definition: "긴 문서를 일정 크기의 조각으로 분할하는 과정. RAG에서 검색 품질에 직접 영향을 줍니다.", definitionEn: "The process of splitting long documents into fixed-size segments. Directly impacts retrieval quality in RAG.", category: "Technique" },
+  { term: "Semantic Search", definition: "키워드 매칭이 아닌 의미 기반으로 검색하는 방식. 임베딩 벡터 유사도를 활용합니다.", definitionEn: "A search method based on meaning rather than keyword matching. Uses embedding vector similarity.", category: "Technique" },
+  { term: "Agentic Coding", definition: "AI Agent가 코드 작성, 실행, 디버깅까지 자율적으로 수행하는 개발 방식입니다.", definitionEn: "A development approach where AI agents autonomously write, execute, and debug code.", category: "Technique" },
+
+  // ── Safety ──
+  { term: "Hallucination", definition: "AI가 그럴듯하지만 사실이 아닌 정보를 자신감 있게 생성하는 현상입니다.", definitionEn: "The phenomenon where AI confidently generates plausible but factually incorrect information.", category: "Safety" },
+  { term: "Prompt Injection", definition: "사용자가 프롬프트를 조작하여 AI의 원래 지시를 무시하게 만드는 공격 기법입니다.", definitionEn: "An attack technique where users manipulate prompts to make the AI ignore its original instructions.", category: "Safety" },
+  { term: "Jailbreaking", definition: "모델의 안전 제한을 우회하여 금지된 응답을 유도하는 기법입니다.", definitionEn: "A technique to bypass model safety restrictions and induce prohibited responses.", category: "Safety" },
+  { term: "Guardrail", definition: "AI 출력을 사전/사후로 필터링하여 유해하거나 부적절한 답변을 차단하는 장치입니다.", definitionEn: "A mechanism that filters AI output before or after generation to block harmful or inappropriate responses.", category: "Safety" },
+  { term: "Bias", definition: "학습 데이터, 프롬프트, 평가 방식에 의해 AI가 특정 집단에 불공정한 결과를 만드는 현상입니다.", definitionEn: "The phenomenon where AI produces unfair results for specific groups due to training data, prompts, or evaluation methods.", category: "Safety" },
+  { term: "Alignment", definition: "AI 모델의 행동을 인간의 의도, 가치, 윤리에 맞추는 과정입니다.", definitionEn: "The process of aligning AI model behavior with human intentions, values, and ethics.", category: "Safety" },
+  { term: "Data Poisoning", definition: "학습 데이터에 악의적인 데이터를 주입하여 모델의 동작을 조작하는 공격입니다.", definitionEn: "An attack that manipulates model behavior by injecting malicious data into training data.", category: "Safety" },
+  { term: "Adversarial Attack", definition: "모델을 속이기 위해 의도적으로 조작된 입력을 사용하는 공격 기법입니다.", definitionEn: "An attack technique using intentionally crafted inputs designed to deceive the model.", category: "Safety" },
+
+  // ── Evaluation ──
+  { term: "Red Teaming", definition: "AI 시스템의 취약점을 찾기 위해 의도적으로 공격적이거나 극단적인 입력을 시도하는 평가 방법입니다.", definitionEn: "An evaluation method that intentionally uses aggressive or extreme inputs to find vulnerabilities in AI systems.", category: "Evaluation" },
+  { term: "Benchmark", definition: "모델 성능을 정량적으로 비교하기 위한 표준 테스트 세트. MMLU, HumanEval, MT-Bench 등이 있습니다.", definitionEn: "Standard test sets for quantitatively comparing model performance. Examples include MMLU, HumanEval, and MT-Bench.", category: "Evaluation" },
+  { term: "Human-in-the-Loop", definition: "AI의 판단이나 출력에 사람의 검토와 승인을 포함하는 설계 방식입니다.", definitionEn: "A design approach that includes human review and approval in AI decisions or outputs.", category: "Evaluation" },
+  { term: "Evaluation (AI 평가)", definition: "AI 모델이나 서비스의 품질을 정량적/정성적으로 측정하는 과정입니다.", definitionEn: "The process of measuring the quality of AI models or services both quantitatively and qualitatively.", category: "Evaluation" },
+  { term: "A/B Testing (AI)", definition: "두 가지 AI 모델이나 프롬프트 변형의 성능을 실제 사용자 데이터로 비교하는 실험 방법입니다.", definitionEn: "An experimental method comparing the performance of two AI models or prompt variations using real user data.", category: "Evaluation" },
+  { term: "Perplexity", definition: "언어 모델이 텍스트를 얼마나 잘 예측하는지 측정하는 지표. 낮을수록 좋은 성능을 의미합니다.", definitionEn: "A metric measuring how well a language model predicts text. Lower values indicate better performance.", category: "Evaluation" },
+  { term: "BLEU / ROUGE", definition: "생성된 텍스트와 참조 텍스트 간의 유사도를 측정하는 자동 평가 지표입니다.", definitionEn: "Automated evaluation metrics that measure similarity between generated text and reference text.", category: "Evaluation" },
+  { term: "Latency", definition: "AI 모델이 요청을 받고 응답을 생성하기까지 걸리는 시간입니다.", definitionEn: "The time it takes for an AI model to receive a request and generate a response.", category: "Evaluation" },
 ];
 
 /* ── 05. Media Notes (LOCKED — DO NOT MODIFY) ── */
@@ -552,9 +590,9 @@ export const mediaNotes: MediaNote[] = [
     id: "ai-agent-engineering-workflow",
     sourceType: "YouTube",
     url: "https://www.youtube.com/watch?v=KPovWIJGomc",
-    title: "AI Agent Engineering Workflow",
+    title: "AI 시대 절대 해고되지 않을 사람은 '이런 특징'이 있다",
     topic: "AI Agent / Engineering Mindset / Workflow",
-    summary: "AI Agent를 효과적으로 활용하기 위한 엔지니어링 마인드셋과 워크플로우에 대한 내용입니다.",
+    summary: "AI 혁명은 기존 조직과 커리어의 안전망을 빠르게 가볍게 만들고, 대기업·직함·반복 업무에 기대는 방식만으로는 오래 버티기 어렵다는 내용입니다. 앞으로 끝까지 필요한 사람은 AI보다 빠르게 답을 내는 사람이 아니라, 변화의 맥락을 읽고 문제를 다시 정의하며 자신이 만든 결과의 의미와 책임을 설명할 수 있는 사람입니다. 결국 해고되지 않는 사람은 AI와 경쟁하기보다 AI를 도구로 삼아 더 나은 질문, 판단, 실행 구조를 만들어내는 사람이라고 정리할 수 있습니다.",
     myTake: "단순히 AI에게 질문하는 것이 아니라, 작업 기준과 검증 절차를 설계하는 것이 중요하다는 점을 체감했습니다.",
     insight: "AI Agent는 단순 답변 도구보다 반복되는 작업 흐름과 의사결정 구조를 정리할 때 더 큰 가치가 있습니다.",
     appliedTo: "Claude Code를 사용할 때 구조 탐색 → Plan Mode → 작은 단위 수정 → 브라우저 검증 순서로 요청하는 규칙에 반영했습니다.",
@@ -1106,6 +1144,124 @@ export const euAiActRiskTableEn: DataTableData = {
     { cells: ["Minimal Risk", "Low", "No obligations", "Spam filters, AI games, most commercial AI"] },
   ],
 };
+
+/* ── 09. AI Industry History ── */
+
+export interface AIHistoryEvent {
+  year: string;
+  title: string;
+  titleEn: string;
+  description: string;
+  descriptionEn: string;
+  category: "research" | "product" | "regulation" | "milestone";
+}
+
+export const aiHistoryTimeline: AIHistoryEvent[] = [
+  {
+    year: "2006",
+    title: "딥러닝 연구의 재부상",
+    titleEn: "Deep Learning Research Reemerges",
+    description: "Geoffrey Hinton의 Deep Belief Networks 연구를 계기로 신경망 기반 학습이 다시 주목받기 시작했습니다.",
+    descriptionEn: "Geoffrey Hinton's work on Deep Belief Networks helped bring neural network-based learning back into focus.",
+    category: "research",
+  },
+  {
+    year: "2011",
+    title: "IBM Watson, Jeopardy! 우승",
+    titleEn: "IBM Watson Wins Jeopardy!",
+    description: "IBM Watson이 자연어 질문 이해와 대규모 지식 검색 능력을 보여주며 AI의 실용 가능성을 대중에게 각인시켰습니다.",
+    descriptionEn: "IBM Watson demonstrated natural language question answering and large-scale knowledge retrieval, making AI's practical potential visible to the public.",
+    category: "milestone",
+  },
+  {
+    year: "2012",
+    title: "AlexNet, ImageNet 우승",
+    titleEn: "AlexNet Wins ImageNet",
+    description: "AlexNet이 ImageNet 대회에서 압도적인 성능을 보이며 CNN 기반 딥러닝 시대를 열었습니다.",
+    descriptionEn: "AlexNet delivered a major performance leap in the ImageNet challenge and opened the CNN-driven deep learning era.",
+    category: "research",
+  },
+  {
+    year: "2014",
+    title: "GAN 발표",
+    titleEn: "GANs Introduced",
+    description: "Generative Adversarial Networks가 발표되며 생성 모델 연구가 이미지 생성과 합성 영역으로 빠르게 확장되었습니다.",
+    descriptionEn: "Generative Adversarial Networks were introduced, accelerating generative model research for image generation and synthesis.",
+    category: "research",
+  },
+  {
+    year: "2016",
+    title: "AlphaGo vs 이세돌",
+    titleEn: "AlphaGo vs. Lee Sedol",
+    description: "AlphaGo가 이세돌 9단과의 대국에서 승리하며 강화학습과 딥러닝의 가능성을 전 세계에 보여주었습니다.",
+    descriptionEn: "AlphaGo's victory over Lee Sedol showed the world the potential of reinforcement learning and deep learning.",
+    category: "milestone",
+  },
+  {
+    year: "2017",
+    title: "Transformer 아키텍처 탄생",
+    titleEn: "Transformer Architecture Emerges",
+    description: "\"Attention Is All You Need\" 논문이 발표되며 현대 LLM의 기반이 되는 Transformer 구조가 등장했습니다.",
+    descriptionEn: "The paper \"Attention Is All You Need\" introduced the Transformer architecture, which became the foundation of modern LLMs.",
+    category: "research",
+  },
+  {
+    year: "2018",
+    title: "BERT와 GPT-1 공개",
+    titleEn: "BERT and GPT-1 Released",
+    description: "BERT와 GPT-1이 공개되며 사전학습 언어 모델이 자연어 처리의 중심 접근 방식으로 자리 잡기 시작했습니다.",
+    descriptionEn: "BERT and GPT-1 helped establish pretrained language models as the central approach in natural language processing.",
+    category: "research",
+  },
+  {
+    year: "2020",
+    title: "GPT-3 공개",
+    titleEn: "GPT-3 Released",
+    description: "GPT-3가 Few-shot learning 성능을 보여주며 대규모 언어 모델의 범용 AI 가능성을 크게 부각했습니다.",
+    descriptionEn: "GPT-3 demonstrated few-shot learning and made the general-purpose potential of large language models much more visible.",
+    category: "product",
+  },
+  {
+    year: "2021",
+    title: "AI 코딩과 이미지 생성 도구 확산",
+    titleEn: "AI Coding and Image Generation Tools Spread",
+    description: "GitHub Copilot과 DALL·E가 공개되며 AI가 코드 작성과 창작 도구로 실무에 들어오기 시작했습니다.",
+    descriptionEn: "GitHub Copilot and DALL·E showed AI entering practical workflows as a coding and creative tool.",
+    category: "product",
+  },
+  {
+    year: "2022",
+    title: "ChatGPT와 Stable Diffusion",
+    titleEn: "ChatGPT and Stable Diffusion",
+    description: "ChatGPT 출시와 Stable Diffusion 공개로 생성형 AI가 개발자와 일반 사용자 모두에게 빠르게 대중화되었습니다.",
+    descriptionEn: "The launch of ChatGPT and release of Stable Diffusion rapidly popularized generative AI for both developers and everyday users.",
+    category: "milestone",
+  },
+  {
+    year: "2023",
+    title: "멀티모달 모델과 AI 규제 논의 확대",
+    titleEn: "Multimodal Models and AI Regulation Expand",
+    description: "GPT-4, Claude 2, Llama 2가 등장하고 EU AI Act 합의가 진행되며 성능 경쟁과 규제 논의가 함께 본격화되었습니다.",
+    descriptionEn: "GPT-4, Claude 2, and Llama 2 arrived while EU AI Act negotiations advanced, intensifying both model competition and regulation discussions.",
+    category: "regulation",
+  },
+  {
+    year: "2024",
+    title: "실시간 멀티모달과 AI Agent 시대",
+    titleEn: "Real-Time Multimodal AI and Agent Workflows",
+    description: "Claude 3.5 Sonnet, GPT-4o, Gemini 1.5, Sora 등으로 멀티모달 처리와 에이전트형 워크플로가 실무 화두가 되었습니다.",
+    descriptionEn: "Claude 3.5 Sonnet, GPT-4o, Gemini 1.5, Sora, and similar releases made multimodal processing and agent workflows central practical topics.",
+    category: "product",
+  },
+  {
+    year: "2025",
+    title: "Agentic Coding과 AI 규제 실행",
+    titleEn: "Agentic Coding and AI Regulation Execution",
+    description: "Claude Code, Opus 4, OpenAI o3, MCP 표준화 흐름과 함께 에이전트형 코딩이 확산되고 AI 규제가 단계적으로 시행되기 시작했습니다.",
+    descriptionEn: "Claude Code, Opus 4, OpenAI o3, and MCP standardization pushed agentic coding forward while AI regulation began phased enforcement.",
+    category: "regulation",
+  },
+];
 
 /* ── 09. Model Comparison ── */
 

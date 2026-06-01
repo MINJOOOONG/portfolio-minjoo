@@ -79,15 +79,11 @@ export const ContactSection = memo(function ContactSection({
             </div>
           </div>
 
-          {/* Right: Name + Tagline + Badges */}
+          {/* Right: Name + Badges */}
           <div className="flex min-w-0 flex-col items-start text-left flex-1 gap-4 sm:gap-6 md:pt-2">
             <h3 className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] text-[var(--notion-navy)] leading-[0.95]">
               {contactProfile.name}
             </h3>
-
-            <p className="text-[15px] leading-[1.8] text-[var(--notion-slate)] max-w-sm">
-              {contactProfile.tagline}
-            </p>
 
             {/* Links */}
             <div className="flex flex-wrap gap-3">

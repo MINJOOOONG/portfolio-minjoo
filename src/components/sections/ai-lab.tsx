@@ -2,7 +2,6 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import {
-  CheckCircle2,
   ChevronDown,
   ExternalLink,
   FileText,
@@ -17,46 +16,22 @@ import {
   AI_TOOL_FILTERS,
   GLOSSARY_CATEGORIES,
   aiLabArchiveNavItems,
+  aiLabSectionIntros,
   aiLabSectionTitles,
+  aiHistoryTimeline,
+  aiUsageStandards,
   aiTools,
-  automationIdeas,
-  euAiActRiskTable,
-  euAiActRiskTableEn,
-  evaluationQaConnection,
   getYouTubeId,
   glossaryTerms,
   mediaNotes,
-  modelFamilies,
-  modelSelectionGuide,
-  modelSelectionGuideEn,
-  nistRmfSteps,
-  officialDocuments,
   overviewIntroEn,
-  overviewNotes,
-  overviewPurpose,
-  releaseNotes,
-  reviewFrameworkIntro,
-  reviewFrameworkIntroEn,
-  reviewFrameworkItems,
-  rulesPrinciplesIntro,
-  rulesPrinciplesIntroEn,
-  safetyIntro,
-  safetyIntroEn,
-  safetyRiskCards,
+  type AIHistoryEvent,
+  type AIUsageStandard,
   type AILabArchiveSectionId,
-  type OverviewNote,
-  type AILabTextCard,
   type AITool,
   type AIToolFilter,
-  type DataTableData,
   type GlossaryCategory,
-  type GlossaryTerm,
   type MediaNote,
-  type ModelFamily,
-  type OfficialDocument,
-  type ReleaseNote,
-  type ReviewFrameworkItem,
-  type SafetyRiskCard,
 } from "@/data/ai-lab-data";
 import { useLanguage, type Lang } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
@@ -76,6 +51,28 @@ const glossaryCategoryLabels: Record<GlossaryCategory, string> = {
   Evaluation: "Evaluation",
   Architecture: "Architecture",
   Technique: "Technique",
+};
+const standardEvidenceUrls: Record<string, string> = {
+  "NIST AI RMF — Measure": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "NIST AI RMF — Govern": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "NIST AI RMF — Manage": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "NIST AI RMF — Map / Measure": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "OpenAI Model Spec": "https://model-spec.openai.com/",
+  "OpenAI Usage Policies": "https://openai.com/policies/usage-policies/",
+  "RAG / Grounding 기준": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "RAG / Grounding practice": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "EU AI Act — Human Oversight": "https://artificialintelligenceact.eu/",
+  "EU AI Act — Risk-based approach": "https://artificialintelligenceact.eu/",
+  "Google Gemini API Policy": "https://ai.google.dev/gemini-api/terms",
+  "Google Responsible AI Practices": "https://ai.google/responsibility/responsible-ai-practices/",
+  "Microsoft Responsible AI Standard": "https://www.microsoft.com/en-us/ai/principles-and-approach",
+  "개인정보보호법 / EU AI Act": "https://artificialintelligenceact.eu/",
+  "Privacy laws / EU AI Act": "https://artificialintelligenceact.eu/",
+  "QA Test Case 방식": "/portfolio#experience",
+  "QA test case practice": "/portfolio#experience",
+  "AI Evaluation Framework": "https://www.nist.gov/itl/ai-risk-management-framework",
+  "Agent / Tool Calling 안전 기준": "https://modelcontextprotocol.io/",
+  "Agent / Tool Calling safety practice": "https://modelcontextprotocol.io/",
 };
 
 /* ── Main Component ── */
@@ -99,8 +96,6 @@ export const AILab = memo(function AILab() {
         "AI가 답을 만들 수 있는 시대에, 정답을 아는 능력의 가치는 낮아지고 있습니다. 대신 문제를 정의하고, 방향을 설정하고, 기준을 세우는 사람의 역할이 커지고 있습니다. 실행은 AI가 대신하더라도, 판단과 맥락은 직접 경험에서만 나옵니다.",
         "AI Lab은 그 변화에 뒤처지지 않기 위해 만든 공간입니다. 안전성, 평가 기준, 공식 정책, 도구 변화를 직접 추적하고 정리하며 배운 것을 내 언어와 기준으로 바꾸는 연습을 수시로 업데이트하고 있습니다.",
       ];
-
-  const evaluationQaEn = "Just as QA defines test cases first and validates repeatedly, AI outputs should also be evaluated by defining criteria first and validating repeatedly. The difference is that AI responses can vary even with the same input, so evaluation criteria must be even more explicit.";
 
   return (
     <div className="ai-lab-section" style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
@@ -138,149 +133,28 @@ export const AILab = memo(function AILab() {
                     <p key={i}>{p}</p>
                   ))}
                 </div>
-
               </ArchiveSection>
             )}
 
-            {/* ── 2. Standards (Safety + Review Framework) ── */}
-            {activeTab === "standards" && (
-              <ArchiveSection id="standards" title="Standards">
-                {/* ─ Safety ─ */}
-                <div className="mb-6 sm:mb-10 max-w-2xl">
-                  <p className="text-[13px] sm:text-sm leading-[1.9] text-[var(--notion-slate)]">
-                    {lang === "en" ? safetyIntroEn : safetyIntro}
-                  </p>
-                </div>
-
-                <SubsectionLabel title={locale["aiLab.safetySubtitle"][lang]} />
-                <div className="mt-3 space-y-0 border-t border-[var(--notion-hairline)]">
-                  {safetyRiskCards.map((card, index) => (
-                    <SafetyRiskItem key={card.risk} card={card} index={index} lang={lang} />
-                  ))}
-                </div>
-
-                <div className="mt-10 sm:mt-14">
-                  <SubsectionLabel title="NIST AI RMF 4 Steps" />
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {nistRmfSteps.map((card, index) => (
-                      <NistStepItem key={card.title} card={card} index={index} lang={lang} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* ─ Divider ─ */}
-                <div className="my-10 sm:my-14 h-px bg-[var(--notion-hairline)]" />
-
-                {/* ─ Review Framework ─ */}
-                <SubsectionLabel title={locale["aiLab.reviewSubtitle"][lang]} />
-                <div className="mt-4 mb-6 sm:mb-8 max-w-2xl">
-                  <p className="text-[13px] sm:text-sm leading-[1.9] text-[var(--notion-slate)]">
-                    {lang === "en" ? reviewFrameworkIntroEn : reviewFrameworkIntro}
-                  </p>
-                </div>
-
-                <div className="border border-[var(--notion-hairline)] rounded-md bg-[var(--notion-surface)] px-4 sm:px-5 py-3 sm:py-4 mb-6 sm:mb-8">
-                  <p className="text-xs leading-[1.8] text-[var(--notion-ink)]">
-                    {lang === "en" ? evaluationQaEn : evaluationQaConnection}
-                  </p>
-                </div>
-
-                <div className="space-y-0 border-t border-[var(--notion-hairline)]">
-                  {reviewFrameworkItems.map((item, index) => (
-                    <ReviewFrameworkItemComponent key={item.criterion} item={item} index={index} lang={lang} />
-                  ))}
-                </div>
-
-                <div className="mt-10 sm:mt-14">
-                  <SubsectionLabel title="Automation Ideas" />
-                  <LineGrid>
-                    {automationIdeas.map((idea, index) => (
-                      <TextItem key={idea.title} card={idea} index={index} lang={lang} />
-                    ))}
-                  </LineGrid>
-                </div>
-              </ArchiveSection>
-            )}
-
-            {/* ── 3. Rules & Principles ── */}
-            {activeTab === "rules-principles" && (
-              <ArchiveSection id="rules-principles" title="Rules & Principles">
-                <div className="mb-6 sm:mb-10 max-w-2xl">
-                  <p className="text-[13px] sm:text-sm leading-[1.9] text-[var(--notion-slate)]">
-                    {lang === "en" ? rulesPrinciplesIntroEn : rulesPrinciplesIntro}
-                  </p>
-                </div>
-
-                {/* ─ Official Documents by category ─ */}
-                <SubsectionLabel title="Company Policies & Principles" />
-                <div className="mt-3 space-y-0 border-t border-[var(--notion-hairline)]">
-                  {officialDocuments
-                    .filter(d => d.category === "policy" || d.category === "principle")
-                    .map((doc) => (
-                      <OfficialDocumentItem key={`${doc.organization}-${doc.title}`} doc={doc} lang={lang} />
-                    ))}
-                </div>
-
-                <div className="my-10 sm:my-14 h-px bg-[var(--notion-hairline)]" />
-
-                <SubsectionLabel title="Regulations & Standards" />
-                <div className="mt-3 space-y-0 border-t border-[var(--notion-hairline)]">
-                  {officialDocuments
-                    .filter(d => d.category === "regulation" || d.category === "standard")
-                    .map((doc) => (
-                      <OfficialDocumentItem key={`${doc.organization}-${doc.title}`} doc={doc} lang={lang} />
-                    ))}
-                </div>
-
-                <div className="mt-10 sm:mt-14">
-                  <SubsectionLabel title={aiLabSectionTitles.euTableTitle[lang]} />
-                  <div className="mt-4">
-                    <DataTable data={lang === "en" ? euAiActRiskTableEn : euAiActRiskTable} />
-                  </div>
-                </div>
-
-                {/* ─ Release Notes / Timeline ─ */}
-                <div className="my-10 sm:my-14 h-px bg-[var(--notion-hairline)]" />
-
-                <SubsectionLabel title="Release Notes & Timeline" />
-                <div className="mt-3 space-y-0 border-t border-[var(--notion-hairline)]">
-                  {releaseNotes.map((note) => (
-                    <ReleaseNoteItem key={`${note.date}-${note.title}`} note={note} lang={lang} />
-                  ))}
-                </div>
+            {/* ── 2. Standards ── */}
+            {activeTab === "standards-rules" && (
+              <ArchiveSection id="standards-rules" title={aiLabSectionTitles.standardsRulesTitle[lang]}>
+                <StandardsRulesSection standards={aiUsageStandards} lang={lang} />
               </ArchiveSection>
             )}
 
             {/* ── 4. Glossary ── */}
             {activeTab === "ai-glossary" && (
               <ArchiveSection id="ai-glossary" title="Glossary">
+                <SectionIntro lines={aiLabSectionIntros["ai-glossary"][lang]} />
                 <GlossarySection />
               </ArchiveSection>
             )}
 
-            {/* ── 5. Toolkit (Models + AI Tools) ── */}
+            {/* ── 5. Toolkit (AI Tools) ── */}
             {activeTab === "toolkit" && (
               <ArchiveSection id="toolkit" title="Toolkit">
-                {/* ─ Model Comparison ─ */}
-                <SubsectionLabel title="Model Comparison" />
-                <div className="mt-4 space-y-6">
-                  {modelFamilies.map((family) => (
-                    <ModelFamilyCard key={family.provider} family={family} lang={lang} />
-                  ))}
-                </div>
-
-                <div className="mt-8 sm:mt-10">
-                  <SubsectionLabel title={aiLabSectionTitles.modelGuideTitle[lang]} />
-                  <div className="mt-4">
-                    <DataTable data={lang === "en" ? modelSelectionGuideEn : modelSelectionGuide} />
-                  </div>
-                </div>
-
-                {/* ─ Divider ─ */}
-                <div className="my-10 sm:my-14 h-px bg-[var(--notion-hairline)]" />
-
-                {/* ─ AI Tools ─ */}
-                <SubsectionLabel title="AI Tools" />
+                <SectionIntro lines={aiLabSectionIntros.toolkit[lang]} />
                 <div className="mt-4">
                   <ToolsGrid
                     activeFilter={activeToolFilter}
@@ -292,9 +166,18 @@ export const AILab = memo(function AILab() {
               </ArchiveSection>
             )}
 
-            {/* ── 6. Media Notes ── */}
+            {/* ── 6. History ── */}
+            {activeTab === "history" && (
+              <ArchiveSection id="history" title={aiLabSectionTitles.historyTitle[lang]}>
+                <SectionIntro lines={aiLabSectionIntros.history[lang]} />
+                <HistoryTimeline events={aiHistoryTimeline} lang={lang} />
+              </ArchiveSection>
+            )}
+
+            {/* ── 7. Media Notes ── */}
             {activeTab === "media-note" && (
               <ArchiveSection id="media-note" title="Media Notes">
+                <SectionIntro lines={aiLabSectionIntros["media-note"][lang]} />
                 <MediaNotesList />
               </ArchiveSection>
             )}
@@ -360,25 +243,17 @@ function ArchiveSection({
   );
 }
 
-function LineGrid({
-  children,
-  compact = false,
-}: {
-  children: React.ReactNode;
-  compact?: boolean;
-}) {
+function SectionIntro({ lines }: { lines: string[] }) {
   return (
-    <div className={`grid grid-cols-1 ${compact ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"} gap-x-10 border-y border-[var(--notion-hairline)]`}>
-      {children}
+    <div className="py-5 sm:py-6">
+      <div className="space-y-3 text-[13px] sm:text-sm leading-[1.9] text-[var(--notion-slate)]">
+        {lines.map((line) => (
+          <p key={line} className="lg:whitespace-nowrap">
+            {line}
+          </p>
+        ))}
+      </div>
     </div>
-  );
-}
-
-function SubsectionLabel({ title }: { title: string }) {
-  return (
-    <h4 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--notion-stone)] pt-2">
-      {title}
-    </h4>
   );
 }
 
@@ -398,171 +273,65 @@ function TagList({ tags }: { tags?: string[] }) {
   );
 }
 
-/* ── Content Items ── */
+/* ── Standards ── */
 
-function OverviewNoteItem({ note, index }: { note: OverviewNote; index: number }) {
+function StandardsRulesSection({ standards, lang }: { standards: AIUsageStandard[]; lang: Lang }) {
   return (
-    <div className="flex gap-3 sm:gap-4">
-      <span className="shrink-0 text-[11px] font-bold tabular-nums text-[var(--notion-stone)]/40 pt-0.5">
-        {String(index + 1).padStart(2, "0")}
-      </span>
+    <div className="space-y-6 sm:space-y-8">
+      <SectionIntro lines={aiLabSectionIntros["standards-rules"][lang]} />
+
       <div>
-        <h4 className="text-[13px] sm:text-sm font-semibold text-[var(--notion-ink)] leading-snug mb-1.5">
-          {note.heading}
-        </h4>
-        <p className="text-[12px] sm:text-[13px] leading-[1.75] text-[var(--notion-slate)]">
-          {note.body}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function TextItem({
-  card,
-  index,
-  compact = false,
-  lang = "ko",
-}: {
-  card: AILabTextCard;
-  index: number;
-  compact?: boolean;
-  lang?: Lang;
-}) {
-  return (
-    <article className={`${compact ? "py-4" : "py-5"} border-b border-[var(--notion-hairline)] last:border-b-0 md:[&:nth-last-child(-n+2)]:border-b-0`}>
-      <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-      <h4 className="text-[13px] sm:text-sm font-bold text-[var(--notion-ink)] leading-snug mt-3">
-        {card.title}
-      </h4>
-      <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-3">
-        {lang === "en" && card.descriptionEn ? card.descriptionEn : card.description}
-      </p>
-      <TagList tags={card.tags} />
-    </article>
-  );
-}
-
-/* ── Safety Section (Editorial Style) ── */
-
-function SafetyRiskItem({ card, index, lang }: { card: SafetyRiskCard; index: number; lang: Lang }) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <article className="border-b border-[var(--notion-hairline)]">
-      <button
-        type="button"
-        onClick={() => setExpanded((p) => !p)}
-        className="w-full flex items-start sm:items-center justify-between py-4 sm:py-5 text-left gap-3"
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums shrink-0">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug">{card.risk}</h4>
-          </div>
-          <p className="text-xs text-[var(--notion-slate)] leading-relaxed ml-[calc(10px+0.75rem)]">
-            {lang === "en" ? card.shortDescEn : card.shortDesc}
-          </p>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 shrink-0 mt-1 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {expanded && (
-        <div className="pb-5 pl-[calc(10px+0.75rem)] space-y-4">
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
-              Why it matters
-            </span>
-            <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? card.whyItMattersEn : card.whyItMatters}</p>
-          </div>
-          <div className="border-l-2 border-[var(--notion-ink)]/20 pl-3">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
-              My evaluation rule
-            </span>
-            <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{lang === "en" ? card.myEvaluationRuleEn : card.myEvaluationRule}</p>
-          </div>
-          {card.source && (
-            <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
-              Ref: {card.source}
-            </span>
-          )}
-        </div>
-      )}
-    </article>
-  );
-}
-
-function NistStepItem({ card, index, lang }: { card: AILabTextCard; index: number; lang: Lang }) {
-  return (
-    <div className="border border-[var(--notion-hairline)] rounded-md px-4 sm:px-5 py-4">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        <h4 className="text-[13px] sm:text-sm font-bold text-[var(--notion-ink)]">{card.title}</h4>
-      </div>
-      <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{lang === "en" && card.descriptionEn ? card.descriptionEn : card.description}</p>
-    </div>
-  );
-}
-
-/* ── Review Framework (Editorial Style) ── */
-
-function ReviewFrameworkItemComponent({ item, index, lang }: { item: ReviewFrameworkItem; index: number; lang: Lang }) {
-  const [expanded, setExpanded] = useState(false);
-  const question = lang === "en" ? item.questionEn : item.question;
-  const description = lang === "en" ? item.descriptionEn : item.description;
-  const checkpoints = lang === "en" ? item.checkpointsEn : item.checkpoints;
-  return (
-    <article className="border-b border-[var(--notion-hairline)]">
-      <button
-        type="button"
-        onClick={() => setExpanded((p) => !p)}
-        className="w-full flex items-start sm:items-center justify-between py-4 sm:py-5 text-left gap-3"
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-[10px] font-semibold text-[var(--notion-stone)] tabular-nums shrink-0">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h4 className="text-sm font-bold text-[var(--notion-ink)] leading-snug">{item.criterion}</h4>
-            <span className="text-xs text-[var(--notion-slate)] hidden sm:inline">— {question}</span>
-          </div>
-          <p className="text-xs text-[var(--notion-slate)] leading-relaxed ml-[calc(10px+0.75rem)] sm:hidden">
-            {question}
-          </p>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 shrink-0 mt-1 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {expanded && (
-        <div className="pb-5 pl-[calc(10px+0.75rem)] space-y-4">
-          <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{description}</p>
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
-              Checkpoints
-            </span>
-            <ul className="mt-2 space-y-1.5">
-              {checkpoints.map((cp, i) => (
-                <li key={i} className="flex gap-2 text-xs leading-[1.7] text-[var(--notion-ink)]">
-                  <span className="text-[var(--notion-stone)] shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-3 h-3" strokeWidth={1.5} />
+        {standards.map((standard, index) => {
+          const evidence = lang === "en" ? standard.evidenceEn : standard.evidence;
+          return (
+            <article
+              key={standard.title}
+              className="border-b border-[var(--notion-hairline)] py-5 sm:py-6"
+            >
+              <div className="min-w-0">
+                <h4 className="text-sm sm:text-[15px] font-bold leading-snug text-[var(--notion-ink)]">
+                  <span className="mr-2 tabular-nums text-[var(--notion-stone)]">
+                    {index + 1}.
                   </span>
-                  {cp}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-    </article>
+                  {lang === "en" ? standard.titleEn : standard.title}
+                </h4>
+                <p className="mt-3 text-[13px] leading-[1.9] text-[var(--notion-slate)]">
+                  {lang === "en" ? standard.reasonEn : standard.reason}
+                  <span> </span>
+                  <mark className="box-decoration-clone rounded-sm bg-[#fff1a8] px-1 py-0.5 text-[var(--notion-ink)]">
+                    {lang === "en" ? standard.ruleEn : standard.rule}
+                  </mark>
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] leading-relaxed">
+                  <span className="font-semibold text-[var(--notion-stone)]">
+                    {lang === "en" ? "Reference :" : "참고 :"}
+                  </span>
+                  {evidence.map((item, evidenceIndex) => {
+                    const href = standardEvidenceUrls[item] ?? "#";
+                    return (
+                      <span key={item} className="inline-flex items-center gap-2">
+                        <a
+                          href={href}
+                          target={href.startsWith("/") ? undefined : "_blank"}
+                          rel={href.startsWith("/") ? undefined : "noopener noreferrer"}
+                          className="text-[var(--notion-slate)] underline decoration-[var(--notion-muted)] underline-offset-4 transition-colors hover:text-[var(--notion-ink)]"
+                        >
+                          {item}
+                        </a>
+                        {evidenceIndex < evidence.length - 1 && (
+                          <span className="text-[var(--notion-muted)]">/</span>
+                        )}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+    </div>
   );
 }
 
@@ -616,23 +385,34 @@ function GlossarySection() {
         </div>
       </div>
 
-      {/* Desktop: table view */}
-      <div className="hidden md:block overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
+      {/* Mobile: simple list */}
+      <div className="sm:hidden border-t border-[var(--notion-hairline)]">
+        {filtered.map((term) => (
+          <div key={term.term} className="py-3 border-b border-[var(--notion-hairline)]">
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="text-[13px] font-semibold text-[var(--notion-ink)] leading-snug">{term.term}</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-stone)] shrink-0">{term.category}</span>
+            </div>
+            <p className="text-xs leading-[1.75] text-[var(--notion-slate)]">{lang === "en" ? term.definitionEn : term.definition}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden sm:block overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
-              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] w-[180px]">{locale["aiLab.glossaryTerm"][lang]}</th>
+              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] w-[200px]">{locale["aiLab.glossaryTerm"][lang]}</th>
               <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">{locale["aiLab.glossaryDescription"][lang]}</th>
-              <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] hidden lg:table-cell">My Note</th>
               <th className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)] w-[100px]">{locale["aiLab.glossaryCategory"][lang]}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((term) => (
               <tr key={term.term} className="border-b border-[var(--notion-hairline)] last:border-b-0 hover:bg-[var(--notion-surface)]/50 transition-colors">
-                <td className="px-4 py-3 font-medium text-[var(--notion-ink)] leading-[1.7] align-top">{term.term}</td>
+                <td className="px-4 py-3 font-medium text-[var(--notion-ink)] leading-[1.7] align-top whitespace-nowrap">{term.term}</td>
                 <td className="px-4 py-3 text-[var(--notion-slate)] leading-[1.7] align-top">{lang === "en" ? term.definitionEn : term.definition}</td>
-                <td className="px-4 py-3 text-[var(--notion-ink)] leading-[1.7] align-top hidden lg:table-cell">{lang === "en" ? term.myNoteEn : term.myNote}</td>
                 <td className="px-4 py-3 align-top">
                   <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)]">
                     {term.category}
@@ -644,13 +424,6 @@ function GlossarySection() {
         </table>
       </div>
 
-      {/* Mobile: accordion view */}
-      <div className="md:hidden space-y-0 border-t border-[var(--notion-hairline)]">
-        {filtered.map((term) => (
-          <GlossaryAccordionItem key={term.term} term={term} lang={lang} />
-        ))}
-      </div>
-
       {filtered.length === 0 && (
         <p className="text-xs text-[var(--notion-muted)] text-center py-8">
           {locale["aiLab.glossaryNoResults"][lang]}
@@ -660,233 +433,63 @@ function GlossarySection() {
   );
 }
 
-function GlossaryAccordionItem({ term, lang }: { term: GlossaryTerm; lang: Lang }) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <div className="border-b border-[var(--notion-hairline)]">
-      <button
-        type="button"
-        onClick={() => setExpanded((p) => !p)}
-        className="w-full flex items-center justify-between py-3.5 text-left gap-3"
-      >
-        <div className="flex items-center gap-2 min-w-0">
-          <h4 className="text-[13px] font-semibold text-[var(--notion-ink)] leading-snug truncate">{term.term}</h4>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)] shrink-0">
-            {term.category}
-          </span>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 shrink-0 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {expanded && (
-        <div className="pb-4 space-y-3">
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">{locale["aiLab.glossaryDescription"][lang]}</span>
-            <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? term.definitionEn : term.definition}</p>
-          </div>
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Why it matters</span>
-            <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? term.whyItMattersEn : term.whyItMatters}</p>
-          </div>
-          <div className="border-l-2 border-[var(--notion-ink)]/20 pl-3">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">My Note</span>
-            <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{lang === "en" ? term.myNoteEn : term.myNote}</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+/* ── History Timeline ── */
 
-/* ── Official Document Archive ── */
-
-const categoryLabels: Record<OfficialDocument["category"], string> = {
-  policy: "Policy",
-  principle: "Principle",
-  regulation: "Regulation",
-  standard: "Standard",
+const historyCategoryMeta: Record<
+  AIHistoryEvent["category"],
+  { label: Record<Lang, string>; className: string }
+> = {
+  research: {
+    label: { ko: "연구", en: "Research" },
+    className: "bg-sky-50 text-sky-700 border-sky-100",
+  },
+  product: {
+    label: { ko: "제품", en: "Product" },
+    className: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  },
+  regulation: {
+    label: { ko: "규제", en: "Regulation" },
+    className: "bg-amber-50 text-amber-700 border-amber-100",
+  },
+  milestone: {
+    label: { ko: "전환점", en: "Milestone" },
+    className: "bg-rose-50 text-rose-700 border-rose-100",
+  },
 };
 
-function OfficialDocumentItem({ doc, lang }: { doc: OfficialDocument; lang: Lang }) {
-  const [expanded, setExpanded] = useState(false);
-  const summary = lang === "en" ? doc.summaryEn : doc.summary;
-  const keyPoints = lang === "en" ? doc.keyPointsEn : doc.keyPoints;
+function HistoryTimeline({ events, lang }: { events: AIHistoryEvent[]; lang: Lang }) {
   return (
-    <article className="border-b border-[var(--notion-hairline)]">
-      <button
-        type="button"
-        onClick={() => setExpanded((p) => !p)}
-        className="w-full flex items-start sm:items-center justify-between py-4 sm:py-5 text-left gap-3"
-      >
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)] shrink-0">
-              {doc.organization}
-            </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded border border-[var(--notion-hairline)] text-[var(--notion-stone)] shrink-0">
-              {categoryLabels[doc.category]}
-            </span>
-          </div>
-          <h4 className="text-[13px] sm:text-sm font-bold text-[var(--notion-ink)] leading-snug">{doc.title}</h4>
-        </div>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 shrink-0 mt-1 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {expanded && (
-        <div className="pb-5 space-y-4">
-          <p className="text-xs leading-[1.8] text-[var(--notion-slate)]">{summary}</p>
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">
-              Key Points
-            </span>
-            <ul className="mt-2 space-y-1.5">
-              {keyPoints.map((point, i) => (
-                <li key={i} className="flex gap-2 text-xs leading-[1.7] text-[var(--notion-ink)]">
-                  <span className="text-[var(--notion-stone)] shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-3 h-3" strokeWidth={1.5} />
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <a
-            href={doc.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors"
+    <div className="relative border-t border-[var(--notion-hairline)]">
+      <div className="hidden sm:block absolute left-[84px] top-0 bottom-0 w-px bg-[var(--notion-hairline)]" />
+      {events.map((event) => {
+        const meta = historyCategoryMeta[event.category];
+        return (
+          <article
+            key={`${event.year}-${event.title}`}
+            className="relative border-b border-[var(--notion-hairline)] py-4 sm:grid sm:grid-cols-[72px_1fr] sm:gap-x-8 sm:py-5"
           >
-            <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
-            {locale["aiLab.viewDoc"][lang]}
-          </a>
-        </div>
-      )}
-    </article>
-  );
-}
-
-function ReleaseNoteItem({ note, lang }: { note: ReleaseNote; lang: Lang }) {
-  return (
-    <article className="border-b border-[var(--notion-hairline)] py-4">
-      <div className="flex items-start gap-3 sm:gap-4">
-        <div className="shrink-0 w-[60px] sm:w-[72px]">
-          <span className="text-[11px] font-semibold tabular-nums text-[var(--notion-stone)]">{note.date}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--notion-surface)] text-[var(--notion-slate)] shrink-0">
-              {note.organization}
-            </span>
-          </div>
-          <h4 className="text-[13px] font-semibold text-[var(--notion-ink)] leading-snug mb-1">{note.title}</h4>
-          <p className="text-xs leading-[1.7] text-[var(--notion-slate)]">{lang === "en" ? note.summaryEn : note.summary}</p>
-          <a
-            href={note.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-2 text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors"
-          >
-            <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
-            {locale["aiLab.source"][lang]}
-          </a>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* ── Other Components ── */
-
-function ModelFamilyCard({ family, lang }: { family: ModelFamily; lang: Lang }) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <article className="border border-[var(--notion-hairline)] rounded-md">
-      <button
-        type="button"
-        onClick={() => setExpanded((p) => !p)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left"
-      >
-        <h4 className="text-sm font-bold text-[var(--notion-ink)]">{family.provider}</h4>
-        <ChevronDown
-          className={`w-4 h-4 text-[var(--notion-stone)] transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-          strokeWidth={1.5}
-        />
-      </button>
-      {expanded && (
-        <div className="px-5 pb-5 border-t border-[var(--notion-hairline)] pt-4">
-          <div className="space-y-6">
-            {family.models.map((model) => (
-              <div key={model.model} className="space-y-2">
-                <h5 className="text-xs font-bold text-[var(--notion-ink)]">{model.model}</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Strength</span>
-                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? model.strengthEn : model.strength}</p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Best use case</span>
-                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? model.bestUseCaseEn : model.bestUseCase}</p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">Limitation</span>
-                    <p className="text-xs leading-[1.8] text-[var(--notion-slate)] mt-1">{lang === "en" ? model.limitationEn : model.limitation}</p>
-                  </div>
-                  <div className="border-l-2 border-[var(--notion-hairline)] pl-3">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]">My usage rule</span>
-                    <p className="text-xs leading-[1.8] text-[var(--notion-ink)] mt-1">{lang === "en" ? model.myUsageRuleEn : model.myUsageRule}</p>
-                  </div>
-                </div>
+            <div className="mb-2 sm:mb-0">
+              <span className="text-[13px] font-bold tabular-nums text-[var(--notion-ink)]">
+                {event.year}
+              </span>
+            </div>
+            <span className="hidden sm:block absolute left-[80px] top-6 h-2 w-2 rounded-full border border-[var(--notion-stone)] bg-white" />
+            <div className="min-w-0">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className={`rounded border px-2 py-0.5 text-[10px] font-medium ${meta.className}`}>
+                  {meta.label[lang]}
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </article>
-  );
-}
-
-/* ── Data Table ── */
-
-function DataTable({ data }: { data: DataTableData }) {
-  return (
-    <div className="overflow-x-auto border border-[var(--notion-hairline)] rounded-md">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b border-[var(--notion-hairline)] bg-[var(--notion-surface)]">
-            {data.headers.map((header) => (
-              <th
-                key={header}
-                className="text-left px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--notion-stone)]"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.rows.map((row, i) => (
-            <tr
-              key={i}
-              className="border-b border-[var(--notion-hairline)] last:border-b-0"
-            >
-              {row.cells.map((cell, j) => (
-                <td
-                  key={j}
-                  className={`px-4 py-3 leading-[1.7] ${
-                    j === 0 ? "font-medium text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"
-                  }`}
-                >
-                  {cell}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              <h4 className="text-sm font-bold leading-snug text-[var(--notion-ink)]">
+                {lang === "en" ? event.titleEn : event.title}
+              </h4>
+              <p className="mt-2 text-xs leading-[1.75] text-[var(--notion-slate)]">
+                {lang === "en" ? event.descriptionEn : event.description}
+              </p>
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }
@@ -1018,14 +621,14 @@ const sourceIcon = {
 function MediaNotesList() {
   return (
     <div>
-      {mediaNotes.map((note, idx) => (
-        <MediaNoteCard key={note.id} note={note} index={idx} />
+      {mediaNotes.map((note) => (
+        <MediaNoteCard key={note.id} note={note} />
       ))}
     </div>
   );
 }
 
-function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
+function MediaNoteCard({ note }: { note: MediaNote }) {
   const { lang } = useLanguage();
   const Icon = sourceIcon[note.sourceType];
   const youtubeId = note.sourceType === "YouTube" ? getYouTubeId(note.url) : null;
@@ -1033,20 +636,6 @@ function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
 
   return (
     <section className="border-t border-[var(--notion-hairline)] pt-8 pb-10 first:border-t-0 first:pt-0">
-      <div className="flex items-center gap-3 mb-5">
-        <span className="text-[10px] font-semibold text-[var(--notion-stone)] uppercase tracking-[0.2em]">
-          {locale["aiLab.record"][lang]} / {String(index + 1).padStart(2, "0")}
-        </span>
-        <span className="text-[10px] text-[var(--notion-muted)]">/</span>
-        <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-[var(--notion-stone)] uppercase tracking-wider">
-          <Icon className="w-3 h-3" strokeWidth={1.5} />
-          {note.sourceType}
-        </span>
-      </div>
-
-      <h4 className="text-base font-bold text-[var(--notion-ink)] leading-snug mb-1">{note.title}</h4>
-      <p className="text-[11px] text-[var(--notion-stone)] mb-6">{note.topic}</p>
-
       <div className="grid gap-10 grid-cols-1 lg:grid-cols-[480px_1fr]">
         <div>
           {embedUrl ? (
@@ -1067,36 +656,21 @@ function MediaNoteCard({ note, index }: { note: MediaNote; index: number }) {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2 mt-4">
-            {note.keywords.map((kw) => (
-              <span key={kw} className="text-[10px] text-[var(--notion-slate)]">{kw}</span>
-            ))}
-          </div>
-
           <a href={note.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 text-[10px] text-[var(--notion-stone)] hover:text-[var(--notion-ink)] transition-colors">
             <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
             {locale["aiLab.viewOriginal"][lang]}
           </a>
         </div>
 
-        <div className="space-y-6">
-          <MediaNoteText title={locale["aiLab.summary"][lang]} body={note.summary} />
-          <MediaNoteText title={locale["aiLab.myTake"][lang]} body={note.myTake} strong />
-          <MediaNoteText title={locale["aiLab.insight"][lang]} body={note.insight} />
-          <div className="border-l border-[var(--notion-hairline)] pl-4">
-            <MediaNoteText title={locale["aiLab.appliedTo"][lang]} body={note.appliedTo} strong />
-          </div>
+        <div className="space-y-3 lg:pt-1">
+          <h4 className="text-lg sm:text-xl font-bold leading-snug text-[var(--notion-ink)]">
+            {note.title}
+          </h4>
+          <p className="text-sm leading-[1.9] text-[var(--notion-slate)]">
+            {note.summary}
+          </p>
         </div>
       </div>
     </section>
-  );
-}
-
-function MediaNoteText({ title, body, strong = false }: { title: string; body: string; strong?: boolean }) {
-  return (
-    <div>
-      <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">{title}</h5>
-      <p className={`text-sm leading-[1.9] ${strong ? "text-[var(--notion-ink)]" : "text-[var(--notion-slate)]"}`}>{body}</p>
-    </div>
   );
 }

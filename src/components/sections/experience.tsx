@@ -34,11 +34,17 @@ const NOTION_TINTS = [
 
 /* ── Timeline dot ── */
 function TimelineIcon({ item, active }: { item: ExperienceItem; active: boolean }) {
+  const isToss = item.company.includes("Toss");
+
   return (
     <span
-      className={`relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-white shadow-sm ${
-        active ? "border-foreground/15 ring-[3px] ring-foreground/5" : "border-foreground/12"
-      }`}
+      className={
+        isToss
+          ? "relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-visible"
+          : `relative z-10 inline-flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border bg-white shadow-sm ${
+              active ? "border-foreground/15 ring-[3px] ring-foreground/5" : "border-foreground/12"
+            }`
+      }
     >
       <CompanyIcon item={item} framed={false} />
     </span>

@@ -7,7 +7,6 @@ export interface ContactLink {
 export const contactProfile = {
   name: "MINJOO SUH",
   title: "",
-  tagline: "Building reliable products from QA insight to backend systems.",
   photo: "/images/profile.JPEG",
 };
 
