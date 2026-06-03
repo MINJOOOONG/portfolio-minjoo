@@ -1,11 +1,15 @@
+import dynamic from "next/dynamic";
 import { getSettings, parseJsonSetting } from "@/lib/settings";
 import { About } from "@/components/sections/about";
 import { ContactSection } from "@/components/sections/profile";
 import { Experience, type ExperienceItem } from "@/components/sections/experience";
 import { Projects, type ProjectItem } from "@/components/sections/projects";
 import { Articles } from "@/components/sections/articles";
-import { AILab } from "@/components/sections/ai-lab";
 import { Skills } from "@/components/sections/skills";
+
+const AILab = dynamic(
+  () => import("@/components/sections/ai-lab").then((m) => m.AILab),
+);
 import { type CertificationItem, type EducationItem } from "@/components/sections/education";
 import { SceneLayout } from "@/components/shared/scene-layout";
 import { isArticleProject } from "@/lib/project-groups";

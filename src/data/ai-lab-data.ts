@@ -59,7 +59,7 @@ export const aiLabSectionIntros: Record<AILabArchiveSectionId, Record<"ko" | "en
   },
   "standards-rules": {
     ko: [
-      "AI를 잘 쓰는 방법보다 먼저 정리해야 할 것은 신뢰할 수 있게 쓰는 기준이라고 봅니다.",
+      "AI를 신뢰할 수 있게 쓰기 위한 기준을 정리합니다.",
       "공식 문서와 규제 가이드라인을 공부하면서, 제가 AI 결과물을 사용할 때 반드시 확인해야 한다고 정리한 기준입니다.",
     ],
     en: [
@@ -70,7 +70,7 @@ export const aiLabSectionIntros: Record<AILabArchiveSectionId, Record<"ko" | "en
   "ai-glossary": {
     ko: [
       "AI 문서와 도구를 공부할 때 반복해서 등장하는 개념을 제 기준으로 정리한 용어 사전입니다.",
-      "단어 뜻을 외우기보다, 실제 사용과 평가 맥락에서 어떤 의미인지 이해하기 위해 모았습니다.",
+      "실제 사용과 평가 맥락에서 어떤 의미인지 이해하기 위해 모았습니다.",
     ],
     en: [
       "This glossary organizes the concepts that repeatedly appear while studying AI documents and tools.",
@@ -80,7 +80,7 @@ export const aiLabSectionIntros: Record<AILabArchiveSectionId, Record<"ko" | "en
   toolkit: {
     ko: [
       "직접 사용해 본 AI 도구를 작업 목적과 한계 기준으로 정리한 공간입니다.",
-      "무엇이 좋은 도구인지보다, 어떤 상황에서 어떤 도구를 선택해야 하는지 판단하기 위해 기록합니다.",
+      "어떤 상황에서 어떤 도구를 선택해야 하는지 판단하기 위해 기록합니다.",
     ],
     en: [
       "This section organizes AI tools I have used by work purpose and practical limitations.",
@@ -100,7 +100,7 @@ export const aiLabSectionIntros: Record<AILabArchiveSectionId, Record<"ko" | "en
   "media-note": {
     ko: [
       "AI 관련 영상과 글을 보고 핵심 내용만 정리한 개인 학습 기록입니다.",
-      "감상평보다, 제 작업 기준과 AI를 바라보는 관점에 남길 만한 메시지를 중심으로 요약합니다.",
+      "제 작업 기준과 AI를 바라보는 관점에 남길 만한 메시지를 중심으로 요약합니다.",
     ],
     en: [
       "This is a personal learning record that summarizes the core points from AI-related videos and articles.",

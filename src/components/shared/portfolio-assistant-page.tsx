@@ -46,7 +46,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         .replaceAll(". ", ".")
         .replace(/\.$/, "")
     );
-  }, []);
+  }, [lang]);
 
   const submitQuestion = useCallback(
     async (question: string) => {
@@ -95,7 +95,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [loading]
+    [loading, lang]
   );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
