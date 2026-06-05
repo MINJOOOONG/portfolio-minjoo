@@ -221,8 +221,9 @@ function ViewCard({ item }: { item: ExperienceItem }) {
   const summary = lang === "en" && item.summaryEn ? item.summaryEn : item.summary;
   const achievements = lang === "en" && item.achievementsEn ? item.achievementsEn : item.achievements;
   const baseDetailItems = [summary, ...(achievements ?? [])].filter(Boolean);
-  const desktopDetailItems = baseDetailItems.slice(0, 4);
-  const mobileDetailItems = baseDetailItems.slice(0, 3);
+  const shouldShowFullCopy = item.company.includes("Toss");
+  const desktopDetailItems = shouldShowFullCopy ? baseDetailItems : baseDetailItems.slice(0, 4);
+  const mobileDetailItems = shouldShowFullCopy ? baseDetailItems : baseDetailItems.slice(0, 3);
   const [leadItem, ...mobileBulletItems] = mobileDetailItems;
 
   const isActive = !!item.status;

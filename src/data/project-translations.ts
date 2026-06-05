@@ -15,7 +15,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "포트폴리오 웹사이트": {
     titleEn: "Portfolio Website",
     summaryEn:
-      "An interactive portfolio website where I personally implemented planning, design, frontend, backend, and RAG-based AI search using AI Agents. Designed with PPT-style section navigation, custom cursor, Three.js 3D backgrounds, and AI search integrated with section navigation so users can actively explore projects and experiences.",
+      "An interactive portfolio website with AI Agent workflow and RAG-based search.",
     descriptionEn: [
       "Separated SSR and client interaction using Next.js App Router and React Server Components to achieve both fast initial loading and rich user experience",
       "Implemented per-project 3D background scenes with Three.js + @react-three/fiber, applying immersive interactions like mouse response and scroll parallax",
@@ -158,7 +158,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "개인 기술 블로그 joodev": {
     titleEn: "Tech Blog — JooDev",
     summaryEn:
-      "A CMS-based blog platform designed and developed from scratch to solve inefficiencies in technical documentation and content management.",
+      "A CMS-based personal tech blog for writing and managing technical content.",
     descriptionEn: [
       "Applied SSR with Next.js App Router and React Server Components, separating data flow per page and reducing unnecessary client state",
       "Designed a scalable data model with Prisma and PostgreSQL for posts, tags, images, and admin data",
@@ -167,7 +167,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Provided post CRUD, visibility management, and content exploration in Admin page to reduce operational management costs",
     ],
     teamSizeEn: "Solo",
-    achievementEn: "TipTap editor customization, tag/category system, Admin CMS implementation",
+    achievementEn: "TipTap editor, tag/category system, Admin CMS",
     roleEn: "Planning, Full-stack Development, Deployment",
     periodEn: "2025.04 - Present",
     contentBlocksEn: [
@@ -214,7 +214,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "E-commerce Backend Engineering": {
     titleEn: "E-commerce Backend Engineering",
     summaryEn:
-      "A bootcamp project where I designed order, payment, and event flows in the e-commerce domain while learning backend transactions and data consistency.",
+      "An e-commerce backend project implementing order, payment, and event flows.",
     descriptionEn: [
       "Decomposed requirements into feature units, iterating weekly through implementation, testing, and retrospectives to verify API behavior and edge cases",
       "Incorporated mentor feedback from PR and code reviews to improve code quality focusing on pass/fail criteria, exception handling, and testability",
@@ -224,7 +224,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Used AI Agents like Claude and Codex to speed up design review, test case derivation, and refactoring candidate discovery",
     ],
     teamSizeEn: "Bootcamp Project",
-    achievementEn: "Redis-based queue, Kafka event flow, real-time ranking, Spring Batch daily snapshot implementation",
+    achievementEn: "Redis queue, Kafka events, real-time ranking, Spring Batch",
     roleEn: "Backend Architecture Design & Implementation",
     periodEn: "2025.01 - 2025.03",
     contentBlocksEn: [
@@ -259,7 +259,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "아두이노를 이용한 사회적 제품 제작": {
     titleEn: "Arduino-based Social Product Development",
     summaryEn:
-      "A team project implementing prototype products to improve everyday social problems using Arduino, OpenCV, and Python.",
+      "A team prototype using Arduino and OpenCV to address everyday social problems.",
     descriptionEn: [
       "Narrowed down product ideas based on problem severity, user situations, and implementation feasibility, then designed sensor input and visual processing flows together",
       "Connected Arduino hardware inputs with Python logic to create a working prototype for real-world use cases",
@@ -268,7 +268,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Accumulated experience in reducing features to a completable form and creating verifiable demos within limited equipment and time",
     ],
     teamSizeEn: "4 Members",
-    achievementEn: "Arduino + OpenCV integrated prototype, bidirectional sensor-software communication",
+    achievementEn: "Arduino + OpenCV integrated prototype",
     roleEn: "Hardware-Software Integration Development",
     periodEn: "2023.09 - 2023.12",
     contentBlocksEn: [
@@ -305,15 +305,18 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "FSM과 BT 구조를 활용한 게임 인공지능 분석": {
     titleEn: "Game AI Analysis: FSM vs Behavior Tree",
     summaryEn:
-      "A research project that directly implemented game AI structures and quantitatively compared FSM and Behavior Tree suitability based on performance metrics.",
+      "A graduation thesis comparing FSM and Behavior Tree under identical conditions in a Unity 2021.3 2D action game prototype.",
     descriptionEn: [
-      "Compared and analyzed FSM and Behavior Tree-based AI structures, verifying structural behavior differences and performance gaps in actual game environments",
-      "Directly implemented FSM/BT structures with identical logic in Unity and conducted repeated tests under the same scenarios",
-      "Collected key metrics including response speed, error patterns, and processing flows using Unity Profiler for quantitative performance analysis",
-      "Derived situation-specific AI structure selection criteria based on differences in maintainability, extensibility, and response methods per structure",
+      "Built a Vampire Survivors-like 2D action game and implemented four AI subsystems in both FSM and BT forms: monster AI, infinite map logic, wave spawning, and weapon switching.",
+      "Ran 60-second tests five times per structure under identical game conditions, using 50 monster entities and collecting data through Unity Time.time API plus a custom CSV event logger.",
+      "In quantitative results, BT improved response speed by 21% (140ms → 110ms), reduced error rate by 72% (7.4% → 2.1%), and shortened transition time by 47% (85ms → 45ms) compared with FSM.",
+      "BT also showed 44% higher behavioral diversity (3.2 → 4.6 actions/min), producing less repetitive and more natural behavior in complex situations.",
+      "A 10-participant 5-point Likert survey rated BT higher in immersion (4.4 vs 3.1), naturalness (4.5 vs 2.8), and maintainability (4.3 vs 2.6).",
+      "Confirmed that FSM is simple and intuitive for small state sets, but state explosion, condition conflicts, and evaluation-order dependency appear as states and transitions increase.",
+      "Proposed a hybrid selection guideline: use FSM for simple animation/game-mode transitions and BT for complex NPC or system AI.",
     ],
     teamSizeEn: "Graduation Thesis",
-    achievementEn: "Quantitative FSM/BT performance comparison through identical scenario experiments, structure selection criteria derivation",
+    achievementEn: "Validated BT's performance, stability, and user-experience advantages with experimental data",
     roleEn: "Research Design, Unity Implementation, Thesis Writing",
     periodEn: "2024.03 - 2025.02",
     contentBlocksEn: [
@@ -353,7 +356,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "UNIST 해상 물류 창업 오디션": {
     titleEn: "UNIST Maritime Logistics Startup Audition",
     summaryEn:
-      "A year-long product execution experience of planning, validating a startup item, being selected in the final round, and receiving startup funding.",
+      "A startup audition project for a maritime logistics education product.",
     descriptionEn: [
       "Led the entire process as PM: problem definition, item planning, prototype development, commercialization validation, and presentation",
       "Designed maritime accident training content combining Unity-based VR simulation with Arduino hardware for realistic operational feel",
@@ -400,7 +403,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "2024 K-HTML 대학대항전 해커톤": {
     titleEn: "2024 K-HTML University Hackathon",
     summaryEn:
-      "A hackathon project implementing a service using Python, HTML, Azure OpenAI, and AWS to improve social issues in Yongin city, within a time limit.",
+      "A hackathon service using Azure OpenAI for local social issues.",
     descriptionEn: [
       "Participated as the HUFS representative team, performing everything from problem definition to UI design and service implementation",
       "Designed UI structure and interactions based on user behavior flows, implementing with HTML, CSS, and JavaScript",
@@ -409,7 +412,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Completed a functional result within the time limit by iterating through problem definition, UI design, implementation, and verification in short cycles",
     ],
     teamSizeEn: "Team Project",
-    achievementEn: "Azure OpenAI-integrated service MVP completed within 48 hours",
+    achievementEn: "Azure OpenAI MVP completed within 48 hours",
     roleEn: "UI/UX Design, Frontend Development",
     periodEn: "2024.07",
     contentBlocksEn: [
@@ -448,7 +451,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "미니 산학 연계 캡스톤 프로젝트": {
     titleEn: "Mini Industry-Academia Capstone Project",
     summaryEn:
-      "A project organizing service ideas and conducting implementation experiments based on AWS and Azure OpenAI through cloud and generative AI training programs.",
+      "A cloud and generative AI training project with service experiments.",
     descriptionEn: [
       "Learned AWS and Microsoft-based generative AI workflows through 40-hour cloud and AI intensive training",
       "Concretized project direction through visits to Microsoft and Google Korea headquarters to see real cloud/AI service operation cases",
@@ -457,7 +460,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Built perspective of using AI as a tool that helps solve product problems, not just a feature",
     ],
     teamSizeEn: "Solo",
-    achievementEn: "AWS Lambda serverless AI API pipeline construction experiment",
+    achievementEn: "AWS Lambda AI API pipeline experiment",
     roleEn: "Service Design, Implementation Experiment",
     periodEn: "2024.06 - 2024.08",
     contentBlocksEn: [
@@ -492,7 +495,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "폴가이즈 기반 레고 파티클 게임": {
     titleEn: "Fall Guys-inspired Lego Particle Party Game",
     summaryEn:
-      "A bootcamp team project implementing multiplayer mini-games with a Lego particle concept inspired by Fall Guys' party game feel, using Unreal Engine 5.",
+      "A UE5 team project implementing UI for a Lego-style multiplayer mini-game.",
     descriptionEn: [
       "Implemented player movement, round progression, and UI display flows using Unreal Engine 5 and C++",
       "Designed player-needed interfaces including overhead direction arrows, pre-game countdown, and option UI",
@@ -501,7 +504,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Improved UI details focusing on immediate feedback and screen readability, crucial for Fall Guys-style games",
     ],
     teamSizeEn: "Team Project",
-    achievementEn: "UE5 C++ game UI system design and implementation",
+    achievementEn: "UE5 C++ game UI system implementation",
     roleEn: "UI/UX Design, UMG Widget Implementation",
     periodEn: "2025.01 - 2025.02",
     contentBlocksEn: [
@@ -547,7 +550,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "AWS DeepRacer 경진 대회 1등": {
     titleEn: "AWS DeepRacer Competition — 1st Place",
     summaryEn:
-      "Experimented with reinforcement learning-based autonomous driving models and achieved 1st place in the AWS DeepRacer competition through log-based improvement.",
+      "A reinforcement learning project that achieved 1st place in AWS DeepRacer.",
     descriptionEn: [
       "Learned reinforcement learning, reward function design, and model training structures through AWS DeepRacer ML training",
       "Directly designed reward functions and adjusted hyperparameters for autonomous driving model development and performance improvement",
@@ -555,7 +558,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Analyzed training logs and result data to quantitatively evaluate performance and derive improvement directions, achieving final 1st place",
     ],
     teamSizeEn: "Team Project",
-    achievementEn: "Achieved 1st place in AWS DeepRacer competition through reinforcement learning model optimization",
+    achievementEn: "1st place through RL model tuning",
     roleEn: "Model Design, Log Analysis, Parameter Tuning",
     periodEn: "2024.09",
     contentBlocksEn: [
@@ -586,7 +589,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "QA Minjoo Helper": {
     titleEn: "QA Minjoo Helper",
     summaryEn:
-      "An AI-powered work assistance tool for recording and summarizing TC modification requests during QA work.",
+      "An AI work assistant for recording and summarizing QA TC changes.",
     descriptionEn: [
       "Personally designed and developed a tool for real-time recording and managing modification/addition/deletion requests during QA testing",
       "Implemented real-time data synchronization for sharing modification history among team members using Supabase",
@@ -595,7 +598,7 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       "Deployed on Vercel as a web-based tool accessible to all team members",
     ],
     teamSizeEn: "Solo",
-    achievementEn: "Test modification/addition/deletion history recording and shareable auto-summary",
+    achievementEn: "TC change history recording and auto-summary",
     roleEn: "Planning, UI Design, Frontend Development, Data Structure Design",
     periodEn: "2025.05 - Present",
     contentBlocksEn: [

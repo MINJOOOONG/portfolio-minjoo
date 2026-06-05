@@ -44,6 +44,7 @@ const locale = {
 
   // ── articles.tsx ──
   "articles.heading": { ko: "논문 / 연구", en: "Papers / Research" },
+  "articles.copyPageLink": { ko: "페이지 링크 복사", en: "Copy Page Link" },
 
   // ── entry-loader.tsx ──
   "entry.ariaLabel": { ko: "포트폴리오로 들어가기", en: "Enter portfolio" },

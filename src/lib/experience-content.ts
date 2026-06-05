@@ -1,27 +1,27 @@
 import type { ExperienceItem } from "@/components/sections/experience";
 
-const CURRENT_EXPERIENCE_COPY: Record<string, Partial<Pick<ExperienceItem, "role" | "summary" | "summaryEn" | "achievements" | "achievementsEn" | "companyIconUrl" | "companyIconFallback">>> = {
+const CURRENT_EXPERIENCE_COPY: Record<string, Partial<Pick<ExperienceItem, "role" | "summary" | "summaryEn" | "achievements" | "achievementsEn" | "techStack" | "companyIconUrl" | "companyIconFallback">>> = {
   "Viva Republica (Toss)": {
+    role: "Toss Core Commerce QA Assistant",
     companyIconUrl: "https://favicon.im/toss.im?larger=true",
     companyIconFallback: "T",
     summary:
-      "커머스 운영 시나리오와 사용자 흐름을 분석하며, 기능 검증 범위와 반복 QA 프로세스를 정리하고 있습니다.",
+      "현재 Toss Core의 Commerce 팀에서 QA Assistant로 근무하며, 주 단위 버전 업데이트와 잦은 배포가 이루어지는 애자일한 모바일 커머스 서비스의 품질 검증을 담당하고 있습니다.",
     summaryEn:
-      "Analyzed commerce operational scenarios and user flows while organizing functional verification scope and repetitive QA processes.",
+      "I currently work as a QA Assistant on Toss Core's Commerce team, responsible for quality verification of an agile mobile commerce service with weekly version updates and frequent releases.",
     achievements: [
-      "Deus·Notion 기반 기획서를 분석해 운영 시나리오, 검증 조건, 예외 흐름을 기능 단위로 정리했습니다.",
-      "TestRail·Jira 기반으로 테스트 케이스, 재현 조건, 처리 상태, Regression Test 범위를 관리했습니다.",
-      "Slack 이슈 공유 시 발생 조건, 영향 범위, 담당자 확인 상태를 함께 정리했습니다.",
-      "반복 QA 과정에서 발견한 비효율 흐름과 운영 리스크를 개선 포인트로 정리했습니다.",
-      "요구사항 변경 시 검증 기준과 확인 범위를 다시 정리하며 배포 전 품질 리스크를 확인했습니다.",
+      "주요 업무로는 Web, iOS, Android 환경에서 회귀 테스트와 탐색 테스트를 수행하고 있습니다. Toss 내부 Figma 기반 디자인 시스템인 Deus와 Notion에 정리된 기획서 및 디자인 사양을 확인하며, 신규 기능과 UI/UX 변경 사항이 제품 요구사항, 정책 및 컴플라이언스 기준, 기능 품질 기준에 맞게 동작하는지 검증합니다.",
+      "또한 웹에서 등록되거나 변경된 상품 정보가 iOS와 Android 앱에서 정상적으로 노출되고 동작하는지 확인하는 등 커머스 서비스의 end-to-end 흐름을 검증합니다. 새로운 프로젝트가 진행될 때마다 테스트 케이스를 작성하고 수정하며, 예외 케이스를 식별하고 사용자 및 품질 관점에서 의견을 제시합니다.",
+      "이슈 발생 시 재현 절차, 기대 결과, 실제 결과, 영향 범위, 발생 조건을 명확히 정리하고, Jira와 Slack을 통해 PM, 디자이너, 엔지니어와 협업하며 이슈를 추적합니다.",
+      "또한 업무 과정에서 Claude와 Codex 등 AI Agent를 적극적으로 활용하여 생산성과 문제 해결 효율을 높이고 있습니다. 반복적인 QA 업무의 수작업 부담을 줄이기 위해 간단한 자동화 스크립트나 구조화된 업무 흐름을 만들며, 테스트 효율성과 일관성, 프로세스 품질을 개선하고 있습니다.",
     ],
     achievementsEn: [
-      "Analyzed Deus/Notion-based specs to organize operational scenarios, verification conditions, and exception flows by feature.",
-      "Managed test cases, reproduction conditions, processing status, and Regression Test scope using TestRail and Jira.",
-      "When sharing issues on Slack, documented trigger conditions, impact scope, and assignee confirmation status together.",
-      "Identified inefficient flows and operational risks during repetitive QA processes and organized them as improvement points.",
-      "Re-organized verification criteria and scope when requirements changed, confirming quality risks before deployment.",
+      "My main work includes regression and exploratory testing across Web, iOS, and Android. I review Deus, Toss's internal Figma-based design system, along with specs and design requirements documented in Notion, verifying that new features and UI/UX changes meet product requirements, policy and compliance standards, and functional quality criteria.",
+      "I verify the end-to-end commerce flow, including whether product information registered or changed on the web is displayed and works correctly in the iOS and Android apps. For each new project, I write and update test cases, identify edge cases, and provide feedback from user and quality perspectives.",
+      "When issues occur, I clearly document reproduction steps, expected results, actual results, impact scope, and occurrence conditions, then track issues by collaborating with PMs, designers, and engineers through Jira and Slack.",
+      "I also actively use AI Agents such as Claude and Codex to improve productivity and problem-solving efficiency. To reduce manual burden in repetitive QA work, I create simple automation scripts and structured workflows, improving test efficiency, consistency, and process quality.",
     ],
+    techStack: ["Web", "iOS", "Android", "Deus", "Notion", "Jira", "Slack", "Claude", "Codex"],
   },
   Riwonsoft: {
     role: "QA Tester",

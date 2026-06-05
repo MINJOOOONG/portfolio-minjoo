@@ -2,6 +2,7 @@
 
 import { memo, useState } from "react";
 import dynamic from "next/dynamic";
+import { LinkIcon } from "lucide-react";
 import { SlideHeading } from "./about";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { useStaggerReveal } from "@/hooks/use-stagger-reveal";
@@ -22,6 +23,8 @@ const DEFAULT_PDF_RATIO = 595.2756 / 841.8898;
 
 function ArticleItem({ item }: { item: ProjectItem }) {
   const [mediaRatio, setMediaRatio] = useState(DEFAULT_PDF_RATIO);
+  const [copied, setCopied] = useState(false);
+  const { lang } = useLanguage();
   const textRef = useScrollReveal<HTMLDivElement>({ y: 40, duration: 1.0 });
   const techRef = useStaggerReveal<HTMLDivElement>({
     childSelector: "> span",
@@ -88,16 +91,21 @@ function ArticleItem({ item }: { item: ProjectItem }) {
           </div>
         )}
 
-        {item.media?.url && (
-          <a
-            href={item.media.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 sm:mt-5 inline-flex h-7 sm:h-9 items-center rounded-md border border-border bg-transparent px-2.5 sm:px-3.5 text-xs sm:text-sm font-medium text-muted-foreground transition-colors duration-150 hover:border-foreground/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
-          >
-            View PDF
-          </a>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            const url = `${window.location.origin}/portfolio#articles`;
+            navigator.clipboard.writeText(url).then(() => {
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            });
+          }}
+          className="mt-3 sm:mt-5 inline-flex h-7 sm:h-9 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 sm:px-3.5 text-xs sm:text-sm font-medium text-muted-foreground transition-colors duration-150 hover:border-foreground/30 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45"
+          aria-label={locale["articles.copyPageLink"][lang]}
+        >
+          <LinkIcon className="h-3.5 w-3.5" strokeWidth={1.7} />
+          {copied ? locale["projects.copied"][lang] : locale["articles.copyPageLink"][lang]}
+        </button>
       </div>
     </article>
   );
