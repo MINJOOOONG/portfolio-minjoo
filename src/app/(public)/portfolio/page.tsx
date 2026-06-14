@@ -1,6 +1,6 @@
 import { PortfolioPage } from "@/components/shared/portfolio-page";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default function PortfolioRoute() {
   return <PortfolioPage />;
