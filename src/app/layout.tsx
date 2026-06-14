@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { MagneticCursor } from "@/components/shared/magnetic-cursor";
 import { LanguageProvider } from "@/lib/i18n/language-context";
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -39,7 +33,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistMono.variable} font-sans antialiased`}
+        className="font-sans antialiased"
         style={{ backgroundColor: "#FFFFFF" }}
       >
         <LanguageProvider>
