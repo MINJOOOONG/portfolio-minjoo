@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="620" viewBox="0 0 980 620" role="img" aria-labelledby="title desc">
+  <title id="title">Redis Sorted Set queue and entry token flow</title>
+  <desc id="desc">Users enter a queue, poll position, scheduler issues tokens atomically with Lua, and order API validates then consumes token.</desc>
+  <defs>
+    <style>.bg{fill:#fbfaf7}.box{fill:#fff;stroke:#d8d3c8;stroke-width:1.5}.redis{fill:#e8f3ef;stroke:#79a68f}.api{fill:#f7f3ea;stroke:#b8a982}.data{fill:#eef2fb;stroke:#7a91c8}.text{font-family:Inter,Arial,sans-serif;fill:#222;font-size:15px}.small{font-size:12px;fill:#555}.title{font-size:24px;font-weight:700}.label{font-size:13px;font-weight:700}.arrow{stroke:#6f6a60;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#6f6a60"/></marker>
+  </defs>
+  <rect class="bg" width="980" height="620"/>
+  <text class="text title" x="40" y="48">Redis Queue + Entry Token</text>
+  <text class="text small" x="42" y="74">Separate traffic intake from order execution: queue is the buffer, scheduler is the valve, token is the gate.</text>
+  <rect class="api" x="70" y="125" width="150" height="70" rx="12"/>
+  <text class="text" x="105" y="154">Client</text>
+  <text class="small text" x="95" y="176">enter / poll / order</text>
+  <rect class="api" x="280" y="125" width="160" height="70" rx="12"/>
+  <text class="text" x="315" y="154">Queue API</text>
+  <text class="small text" x="310" y="176">POST enter, GET position</text>
+  <rect class="redis" x="500" y="105" width="190" height="110" rx="12"/>
+  <text class="text" x="550" y="137">Redis ZSET</text>
+  <text class="small text" x="528" y="162">ZADD NX userId score</text>
+  <text class="small text" x="528" y="184">ZRANK position O(logN)</text>
+  <rect class="api" x="760" y="125" width="150" height="70" rx="12"/>
+  <text class="text" x="793" y="154">Scheduler</text>
+  <text class="small text" x="789" y="176">fixedDelay 1000</text>
+  <path class="arrow" d="M220 160 H275"/>
+  <path class="arrow" d="M440 160 H495"/>
+  <path class="arrow" d="M690 160 H755"/>
+
+  <rect class="redis" x="300" y="320" width="230" height="100" rx="12"/>
+  <text class="text" x="360" y="352">Lua Script</text>
+  <text class="small text" x="330" y="376">ZPOPMIN N + SET token EX</text>
+  <text class="small text" x="330" y="398">one RTT, atomic, no lost user</text>
+  <rect class="redis" x="610" y="320" width="190" height="100" rx="12"/>
+  <text class="text" x="645" y="352">Entry Token</text>
+  <text class="small text" x="638" y="376">entry-token:{userId}</text>
+  <text class="small text" x="638" y="398">TTL auto recovery</text>
+  <path class="arrow" d="M835 195 C835 285 430 245 415 315"/>
+  <path class="arrow" d="M530 370 H605"/>
+
+  <rect class="api" x="165" y="485" width="190" height="70" rx="12"/>
+  <text class="text" x="205" y="514">Interceptor</text>
+  <text class="small text" x="192" y="536">validate, do not delete</text>
+  <rect class="data" x="440" y="485" width="190" height="70" rx="12"/>
+  <text class="text" x="487" y="514">Order Core</text>
+  <text class="small text" x="483" y="536">DB transaction</text>
+  <rect class="redis" x="715" y="485" width="150" height="70" rx="12"/>
+  <text class="text" x="748" y="514">Consume</text>
+  <text class="small text" x="752" y="536">DEL on success</text>
+  <path class="arrow" d="M610 420 C520 455 310 430 260 480"/>
+  <path class="arrow" d="M355 520 H435"/>
+  <path class="arrow" d="M630 520 H710"/>
+</svg>

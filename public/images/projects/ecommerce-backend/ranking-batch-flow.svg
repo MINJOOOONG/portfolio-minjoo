@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="600" viewBox="0 0 980 600" role="img" aria-labelledby="title desc">
+  <title id="title">Real-time ranking and batch aggregation flow</title>
+  <desc id="desc">Kafka user events update Redis ZSET in real time. Spring Batch snapshots daily metrics and aggregates weekly or monthly materialized tables.</desc>
+  <defs>
+    <style>.bg{fill:#fbfaf7}.box{fill:#fff;stroke:#d8d3c8;stroke-width:1.5}.redis{fill:#e8f3ef;stroke:#79a68f}.data{fill:#eef2fb;stroke:#7a91c8}.batch{fill:#f7f3ea;stroke:#b8a982}.text{font-family:Inter,Arial,sans-serif;fill:#222;font-size:15px}.small{font-size:12px;fill:#555}.title{font-size:24px;font-weight:700}.arrow{stroke:#6f6a60;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#6f6a60"/></marker>
+  </defs>
+  <rect class="bg" width="980" height="600"/>
+  <text class="text title" x="40" y="48">Ranking Pipeline: Real-time + Batch</text>
+  <text class="text small" x="42" y="74">Redis serves fresh rankings, while Spring Batch creates stable daily, weekly, and monthly views.</text>
+  <rect class="box" x="70" y="130" width="150" height="70" rx="12"/>
+  <text class="text" x="102" y="160">User Event</text>
+  <text class="small text" x="91" y="182">view / like / order</text>
+  <rect class="data" x="285" y="130" width="150" height="70" rx="12"/>
+  <text class="text" x="329" y="160">Kafka</text>
+  <text class="small text" x="316" y="182">batch listener</text>
+  <rect class="batch" x="500" y="130" width="165" height="70" rx="12"/>
+  <text class="text" x="535" y="160">Score Policy</text>
+  <text class="small text" x="525" y="182">VIEW 1 / LIKE 3 / ORDER 10</text>
+  <rect class="redis" x="730" y="130" width="170" height="70" rx="12"/>
+  <text class="text" x="775" y="160">Redis ZSET</text>
+  <text class="small text" x="762" y="182">ZINCRBY, ZREVRANGE</text>
+  <path class="arrow" d="M220 165 H280"/>
+  <path class="arrow" d="M435 165 H495"/>
+  <path class="arrow" d="M665 165 H725"/>
+
+  <rect class="batch" x="135" y="330" width="180" height="80" rx="12"/>
+  <text class="text" x="166" y="360">Daily Snapshot</text>
+  <text class="small text" x="164" y="384">Redis to product_metrics</text>
+  <rect class="batch" x="400" y="330" width="180" height="80" rx="12"/>
+  <text class="text" x="439" y="360">Rank Job</text>
+  <text class="small text" x="432" y="384">Reader -> Processor -> Writer</text>
+  <rect class="data" x="665" y="330" width="180" height="80" rx="12"/>
+  <text class="text" x="700" y="360">Read Model</text>
+  <text class="small text" x="698" y="384">weekly/monthly MV table</text>
+  <path class="arrow" d="M815 200 C810 275 225 260 225 325"/>
+  <path class="arrow" d="M315 370 H395"/>
+  <path class="arrow" d="M580 370 H660"/>
+  <rect class="box" x="240" y="480" width="500" height="56" rx="12"/>
+  <text class="text" x="285" y="512">API chooses period: TODAY from Redis, WEEK/MONTH from read model.</text>
+</svg>

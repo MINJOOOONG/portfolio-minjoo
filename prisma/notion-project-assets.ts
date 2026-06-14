@@ -735,38 +735,253 @@ export const notionProjectAssets = {
     contentBlocks: [
       // ── 01 ──
       { type: "section-heading", title: "01 — 프로젝트를 시작한 이유" },
-      { type: "text", heading: "백엔드 트랜잭션과 데이터 정합성 학습", body: [
-        "이커머스 도메인의 주문, 결제, 이벤트 흐름을 설계하며 백엔드 트랜잭션과 데이터 정합성을 학습한 부트캠프 프로젝트입니다. 요구사항을 기능 단위로 분해하고 매주 구현, 테스트, 회고를 반복하며 API 동작과 예외 케이스를 함께 검증했습니다.",
+      { type: "text", heading: "동시성과 데이터 정합성, 실제로 부딪혀 보기", body: [
+        "이커머스 도메인에서 가장 빈번하게 발생하는 문제는 '동시 요청 시 데이터가 꼬이는 것'입니다. 재고 오버셀, 쿠폰 중복 사용, 결제-주문 상태 불일치 같은 문제는 단순 CRUD로는 해결할 수 없고, 트랜잭션 경계 설계, 분산 락, 이벤트 아키텍처를 종합적으로 이해해야 합니다.",
+        "이 프로젝트는 10주 동안 매주 하나의 핵심 주제(TDD → CRUD → 도메인 설계 → 동시성 제어 → 캐싱 → 결제 연동 → 이벤트 아키텍처 → 선착순 처리 → 실시간 랭킹 → 배치 처리)를 깊이 파고들며, 요구사항 분석 → 설계 → 구현 → PR → 멘토 코드 리뷰 → 기술 블로그 정리를 반복한 성장 기록입니다.",
       ] },
 
       // ── 02 ──
       { type: "section-heading", title: "02 — 설계 목표와 기술 구조" },
-      { type: "text", heading: "도메인 설계와 이벤트 아키텍처", body: [
-        "시퀀스 다이어그램, ERD, 클래스 설계를 작성해 주문, 결제, 재고, 이벤트 발행 흐름의 책임 경계를 정의했습니다. Kafka 기반 이벤트 아키텍처를 도입해 결제 이후 후속 처리를 비동기 구조로 분리하고 서비스 간 결합도를 낮췄습니다.",
+      { type: "text", heading: "Clean Architecture 기반 4-Layer 구조", body: [
+        "Interfaces(Controller/DTO) → Application(UseCase/Facade) → Domain(Entity/Service) → Infrastructure(Repository/External API) 4계층으로 분리하여, 도메인 로직이 프레임워크나 인프라에 의존하지 않도록 설계했습니다.",
+        "Application Layer의 Facade가 여러 도메인 서비스를 조합하는 유스케이스를 담당하고, @Transactional 경계를 Facade 메서드 단위로 설정하여 트랜잭션 범위를 명확히 제어했습니다.",
       ] },
-      { type: "code", title: "Kafka 이벤트 발행 구조", language: "java", code: "@Transactional\npublic OrderResult createOrder(OrderCommand cmd) {\n    Order order = orderService.create(cmd);\n    paymentService.process(order);\n    // 결제 완료 후 이벤트 발행 → 비동기 후속 처리\n    eventPublisher.publish(\n        new OrderCompletedEvent(order.getId())\n    );\n    return OrderResult.from(order);\n}" },
+      { type: "image", url: "/images/projects/ecommerce-backend/architecture-overview.svg", caption: "전체 아키텍처 — 4-Layer 구조를 중심으로 Redis, Kafka, PG, Batch를 외부 인프라로 분리" },
+      { type: "code", title: "@Transactional 경계와 Facade 패턴", language: "java", code: "@Component\n@RequiredArgsConstructor\npublic class OrderFacade {\n    private final OrderService orderService;\n    private final StockService stockService;\n    private final PaymentService paymentService;\n    private final OutboxEventRepository outboxRepository;\n\n    @Transactional  // Facade 레벨에서 트랜잭션 경계 설정\n    public OrderResult placeOrder(OrderCommand cmd) {\n        // 1. 재고 차감 (Redis Lua → DB 동기화)\n        stockService.decreaseStock(cmd.getProductId(), cmd.getQuantity());\n        // 2. 주문 생성\n        Order order = orderService.create(cmd);\n        // 3. 결제 처리\n        PaymentResult payment = paymentService.process(order);\n        // 4. Outbox 이벤트 저장 (같은 트랜잭션 내)\n        outboxRepository.save(\n            OutboxEvent.of(\"order.completed\", order.getId())\n        );\n        return OrderResult.from(order, payment);\n    }\n}" },
+      { type: "text", heading: "이벤트 기반 비동기 아키텍처", body: [
+        "결제 완료 후의 후속 처리(랭킹 갱신, 알림 발송, 포인트 적립)를 Kafka 이벤트로 분리하여 주문 서비스와 후속 서비스 간 결합도를 제거했습니다. Consumer Group별 독립 처리로 한 Consumer의 장애가 다른 Consumer에 영향을 주지 않도록 격리했습니다.",
+        "핵심 설계 원칙: 동기 흐름(주문 → 재고 차감 → 결제)은 @Transactional로 원자성 보장, 비동기 흐름(랭킹 갱신, 알림)은 Kafka로 분리하여 장애 전파를 차단합니다.",
+      ] },
 
       // ── 03 ──
       { type: "section-heading", title: "03 — 주요 기능 구현" },
-      { type: "text", heading: "Redis 대기열과 실시간 랭킹", body: [
-        "Redis 기반 대기열로 선착순 이벤트 처리를 구현하고, Sorted Set을 활용한 실시간 랭킹 시스템을 설계했습니다. Spring Batch를 활용해 일간 스냅샷을 생성하는 배치 처리 구조를 구현했습니다.",
+      { type: "text", heading: "Redis Lua 스크립트 기반 동시성 제어", body: [
+        "재고 차감에서 가장 중요한 것은 '확인과 차감이 원자적으로 이루어지는 것'입니다. Java 레벨에서 if (stock > 0) stock-- 를 하면 check-then-act 경쟁 조건이 발생합니다. Redis Lua 스크립트는 싱글 스레드로 실행되므로 확인과 차감이 하나의 원자적 연산으로 처리됩니다.",
+        "DB 비관적 락(SELECT ... FOR UPDATE)은 커넥션을 점유하므로 동시 요청이 많은 선착순 시나리오에서 커넥션 풀 고갈 위험이 있고, Redis 분산 락(Redisson)은 락 획득/해제 오버헤드가 있어 단순 차감에는 과도합니다. Lua 스크립트가 가장 가벼우면서 정확한 선택이었습니다.",
       ] },
-      { type: "text", heading: "데이터 정합성 보장", body: [
-        "결제/주문 흐름에서 중복 요청과 이벤트 재처리 상황을 가정하고 Outbox 패턴과 Idempotency Key를 적용해 데이터 정합성 문제를 설계 단계에서 방지했습니다.",
+      { type: "code", title: "Redis Lua 스크립트 — 재고 원자적 차감", language: "lua", code: "-- KEYS[1]: stock:{productId}\n-- ARGV[1]: 차감 수량\nlocal stock = tonumber(redis.call('GET', KEYS[1]))\nif stock == nil then\n    return -1  -- 재고 키 없음\nend\nif stock < tonumber(ARGV[1]) then\n    return 0   -- 재고 부족\nend\nredis.call('DECRBY', KEYS[1], ARGV[1])\nreturn 1       -- 차감 성공" },
+      { type: "text", heading: "Transactional Outbox 패턴", body: [
+        "@TransactionalEventListener를 사용하면 트랜잭션 커밋 후 이벤트를 발행하지만, 커밋과 Kafka 발행 사이에 애플리케이션이 죽으면 이벤트가 유실됩니다. Outbox 패턴은 이벤트를 비즈니스 데이터와 같은 DB 트랜잭션 내에 저장하므로 '커밋됐는데 이벤트는 없는' 상태가 원천적으로 불가능합니다.",
+        "별도 스케줄러가 Outbox 테이블을 폴링하여 PENDING 상태 이벤트를 Kafka로 발행하고, 발행 성공 시 PUBLISHED로 상태를 변경합니다. Kafka 장애 시에도 이벤트가 DB에 보존되어 복구 후 재발행이 가능합니다.",
       ] },
-      { type: "code", title: "Outbox 패턴 적용", language: "java", code: "// Outbox 테이블에 이벤트 저장 → 별도 폴링으로 발행\n@Transactional\npublic void processPayment(Payment payment) {\n    paymentRepository.save(payment);\n    outboxRepository.save(\n        OutboxEvent.of(\"payment.completed\", payment.getId())\n    );\n    // Kafka 발행은 별도 스케줄러가 Outbox 폴링하여 처리\n}" },
+      { type: "code", title: "Outbox 이벤트 스케줄러", language: "java", code: "@Scheduled(fixedDelay = 1000)  // 1초 간격 폴링\n@Transactional\npublic void publishPendingEvents() {\n    List<OutboxEvent> events = outboxRepository\n        .findByStatusOrderByCreatedAtAsc(EventStatus.PENDING);\n    \n    for (OutboxEvent event : events) {\n        try {\n            kafkaTemplate.send(event.getTopic(), event.getPayload());\n            event.markAsPublished();\n        } catch (Exception e) {\n            event.incrementRetryCount();\n            if (event.getRetryCount() >= MAX_RETRY) {\n                event.markAsFailed();\n            }\n        }\n    }\n}" },
+      { type: "text", heading: "선착순 대기열 (Redis Queue)", body: [
+        "이벤트 오픈 시 순간적으로 몰리는 트래픽을 Redis List(LPUSH)로 대기열에 적재하고, Consumer가 RPOP으로 순차 처리합니다. 대기열 진입 시점에 Lua 스크립트로 재고 확인과 대기열 추가를 원자적으로 수행하여, 재고 이상의 요청이 대기열에 진입하는 것 자체를 차단합니다.",
+        "Redis Stream 대비 List를 선택한 이유: Stream은 Consumer Group, ACK, 재처리 같은 기능이 풍부하지만, 단순 선착순 큐에는 오버스펙이고 List의 LPUSH/RPOP이 더 직관적이며 성능 오버헤드가 적습니다.",
+      ] },
+      { type: "text", heading: "실시간 랭킹 (Redis Sorted Set + Spring Batch)", body: [
+        "판매 이벤트마다 ZINCRBY로 상품별 점수를 증가시키고, ZREVRANGE로 Top-N을 O(log N + M)에 조회합니다. DB 집계 쿼리(GROUP BY + ORDER BY)는 데이터가 커질수록 풀 테이블 스캔에 가까워지므로, 실시간 조회는 Redis에 위임하고 정확한 일간 집계는 Spring Batch로 분리했습니다.",
+        "Spring Batch는 Chunk-oriented Processing(ItemReader → ItemProcessor → ItemWriter)으로 일간 판매 메트릭을 집계합니다. chunk size를 500으로 설정하여 메모리 사용량을 제한하면서도 처리량을 확보하고, skip/retry 정책으로 부분 실패 시에도 전체 배치가 중단되지 않도록 설계했습니다.",
+      ] },
 
-      // ── 04 ──
-      { type: "section-heading", title: "04 — 문제 해결 / 트러블슈팅" },
-      { type: "text", heading: "코드 리뷰와 AI Agent 활용", body: [
-        "PR 및 코드 리뷰에서 받은 멘토 피드백을 반영해 pass/fail 기준, 예외 처리, 테스트 가능성을 중심으로 코드 품질을 개선했습니다. Claude와 Codex 등 AI Agent를 활용해 설계 검토, 테스트 케이스 도출, 리팩토링 후보 탐색 속도를 높였습니다.",
+      // ── 04 ── Architecture
+      { type: "section-heading", title: "04 — 시스템 아키텍처" },
+      { type: "text", heading: "Order Flow — 선착순 주문 처리", body: [
+        "Client → API Gateway → Redis Lua(재고 확인) → Redis Queue(LPUSH) → Consumer(RPOP) → Order Service(@Transactional) → MySQL + Outbox Table",
+        "요청이 들어오면 DB에 직접 접근하지 않고, Redis Lua로 재고를 먼저 확인합니다. 재고가 있으면 Redis Queue에 적재하고, Consumer가 순차적으로 꺼내 주문을 생성합니다. 이 구조로 DB 커넥션 풀 고갈 없이 순간 트래픽을 흡수합니다.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/queue-token-flow.svg", caption: "대기열 아키텍처 — Redis Sorted Set으로 순번을 관리하고 Scheduler + Lua로 입장 토큰을 원자적으로 발급" },
+      { type: "text", heading: "Event Flow — Outbox → Kafka → Consumer", body: [
+        "Order Service(@Transactional 내 Outbox 저장) → Outbox Scheduler(1초 폴링) → Kafka Topic(order.completed) → Consumer Group A(랭킹 갱신) / Consumer Group B(알림)",
+        "Consumer Group을 분리하여 랭킹 갱신 Consumer의 장애가 알림 Consumer에 전파되지 않습니다. 각 Consumer는 독립적인 offset을 관리하므로 개별 재처리가 가능합니다.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/outbox-kafka-flow.svg", caption: "Outbox 이벤트 흐름 — DB 트랜잭션 안에서 이벤트를 저장하고 Relay가 Kafka로 발행, Consumer는 EventHandled로 멱등 처리" },
+      { type: "text", heading: "Recovery Flow — 결제 실패 자동 복구", body: [
+        "Payment(status=PENDING) → Scheduler(30초 간격) → PG API 재조회 → 성공 시 COMPLETED / 실패 시 보상 트랜잭션(재고 원복 + 주문 CANCELLED)",
+        "보상 트랜잭션은 @Transactional(propagation = REQUIRES_NEW)로 원래 트랜잭션과 분리하여, 보상 로직 자체의 실패가 원래 트랜잭션에 영향을 주지 않도록 격리했습니다.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/payment-recovery-flow.svg", caption: "결제 복구 흐름 — PG 타임아웃을 PENDING 상태로 흡수하고 Callback/Scheduler가 최종 상태를 확정" },
+      { type: "text", heading: "Batch Flow — 일간 메트릭 집계", body: [
+        "Spring Batch Job(매일 02:00) → JpaPagingItemReader(판매 데이터) → ItemProcessor(집계 로직) → JpaItemWriter(ranking_snapshot 테이블) → Ranking API 캐시 갱신",
+        "chunk size 500, skip limit 10으로 설정하여 일부 데이터 오류 시에도 배치가 중단되지 않고 완료됩니다.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/ranking-batch-flow.svg", caption: "랭킹 파이프라인 — Kafka 이벤트는 Redis ZSET 실시간 랭킹으로, Spring Batch는 일/주/월 조회 모델로 분리" },
+      { type: "callout", variant: "info", title: "설계 원칙", body: [
+        "모든 흐름은 '정상 동작'이 아닌 '장애 상황에서도 데이터가 유실되지 않는 구조'를 우선으로 설계했습니다.",
+        "동기 처리(주문·결제·재고)는 @Transactional로 원자성을 보장하고, 비동기 처리(랭킹·알림)는 Kafka로 분리하여 장애 전파를 차단합니다.",
+        "모든 외부 호출(PG, Kafka)은 실패를 전제로 설계하고, 재시도·보상·멱등성으로 최종 정합성(Eventual Consistency)을 확보합니다.",
       ] },
 
-      // ── 05 ──
-      { type: "section-heading", title: "05 — 주요 성과" },
-      { type: "text", heading: "백엔드 설계 역량 확보", body: [
-        "Redis 기반 대기열, Kafka 이벤트 흐름, 실시간 랭킹, Spring Batch 일간 스냅샷을 구현하며 이커머스 백엔드의 핵심 패턴을 실전으로 학습했습니다. Outbox 패턴과 Idempotency Key 적용으로 데이터 정합성을 설계 단계에서 보장하는 경험을 쌓았습니다.",
+      // ── 05 ── Problem Solving
+      { type: "section-heading", title: "05 — 문제 해결 기록" },
+
+      { type: "text", heading: "1. 재고 오버셀 방지", body: [
+        "문제 — 동시 주문 시 check-then-act 경쟁 조건으로 재고가 음수로 떨어지는 오버셀 발생. JMeter로 동시 100건 요청을 보내면 재고 10개인 상품에 대해 30건 이상이 주문 성공하는 현상 확인.",
+        "고민 — (1) DB 비관적 락(SELECT ... FOR UPDATE): 정합성은 보장되지만 커넥션 점유 시간이 길어 HikariCP 커넥션 풀 고갈 위험. (2) Redisson 분산 락: 락 획득/해제 네트워크 왕복 오버헤드, 단순 차감에는 과도. (3) Redis Lua 스크립트: 싱글 스레드 실행으로 원자성 보장, 네트워크 왕복 1회.",
+        "선택 — Redis Lua 스크립트로 재고 확인과 차감을 하나의 원자적 연산으로 처리. GET → 비교 → DECRBY가 중간에 끊기지 않으므로 경쟁 조건이 원천 차단됩니다.",
+        "결과 — 동시 100건 요청 테스트에서 오버셀 0건 달성. DB 부하 없이 Redis 레벨에서 재고를 제어하여 커넥션 풀 안정성을 확보했습니다.",
       ] },
+
+      { type: "text", heading: "2. 쿠폰 중복 사용 방지", body: [
+        "문제 — 동일 사용자가 같은 쿠폰으로 동시에 여러 건의 주문을 요청하면, 애플리케이션 레벨 체크(findByUserIdAndCouponId)로는 두 요청 모두 '미사용' 상태를 읽어 중복 사용이 발생.",
+        "고민 — (1) DB Unique 제약(user_id + coupon_id): 정합성은 보장되지만 DB 트랜잭션까지 가야 확인 가능. (2) Redis Set(SADD): 원자적 중복 체크, DB 접근 불필요. (3) 애플리케이션 레벨 synchronized: 단일 인스턴스에서만 유효, 분산 환경 불가.",
+        "선택 — Redis Set에 SADD coupon:{couponId}:users {userId}를 실행하여, 반환값 1이면 최초 사용(성공), 0이면 이미 사용(거부). 원자적 연산이므로 동시 요청에서도 정확히 1건만 성공합니다.",
+        "결과 — 중복 사용 시도를 Redis 레벨에서 즉시 거부하여 불필요한 DB 트랜잭션을 제거하고, 쿠폰 사용 체크 응답 시간을 sub-millisecond로 단축했습니다.",
+      ] },
+
+      { type: "text", heading: "3. 결제 실패 복구 (보상 트랜잭션)", body: [
+        "문제 — PG 응답 타임아웃(3초 초과) 또는 네트워크 오류로 결제 결과를 알 수 없는 상태 발생. 이때 재고는 이미 차감된 상태이므로, 결제 실패 확인 시 재고 원복이 필요.",
+        "고민 — (1) 즉시 재시도: PG 장애 시 재시도도 실패하여 의미 없음. (2) 스케줄러 기반 재조회: PG가 복구된 후 결과를 확인할 수 있어 안정적. (3) 사용자 수동 확인: UX 관점에서 최악.",
+        "선택 — 결제 상태를 PENDING으로 저장 → 스케줄러가 30초 간격으로 PG API에 결제 결과를 재조회 → 실패 확인 시 보상 트랜잭션을 실행합니다. 보상 트랜잭션은 @Transactional(propagation = REQUIRES_NEW)로 분리하여 독립적으로 커밋됩니다.",
+        "결과 — 결제 결과 불확실 상태를 시스템이 자동으로 해소합니다. 보상 트랜잭션 실패 시에도 원래 트랜잭션에 영향 없이, 다음 폴링에서 재시도됩니다.",
+      ] },
+
+      { type: "text", heading: "4. 이벤트 유실 방지 (Outbox 패턴)", body: [
+        "문제 — @TransactionalEventListener로 트랜잭션 커밋 후 Kafka에 이벤트를 발행하면, 커밋 성공 → Kafka 발행 실패(네트워크 오류, Broker 다운) 시 이벤트가 유실됩니다. 주문은 완료됐는데 랭킹 갱신·알림이 누락됩니다.",
+        "고민 — (1) @TransactionalEventListener: 트랜잭션 커밋과 이벤트 발행이 원자적이지 않음. (2) Outbox 패턴: 이벤트를 DB에 저장하므로 원자성 보장, 인프라 추가 비용 낮음. (3) CDC(Debezium): DB binlog를 감지하여 자동 발행하지만 인프라 복잡도 높음.",
+        "선택 — Outbox 패턴을 적용했습니다. 비즈니스 로직과 Outbox 이벤트 저장이 같은 @Transactional 내에서 실행되므로, '커밋됐는데 이벤트 없음' 상태가 불가능합니다. 별도 스케줄러가 폴링하여 Kafka로 발행하고, 재시도 3회 초과 시 FAILED 처리 후 알림을 발송합니다.",
+        "결과 — Kafka 장애 시에도 이벤트가 DB에 보존되어 복구 후 재발행이 가능합니다. CDC 대비 인프라 추가 없이 구현할 수 있어 프로젝트 규모에 적합했습니다.",
+      ] },
+
+      { type: "text", heading: "5. 선착순 트래픽 처리", body: [
+        "문제 — 이벤트 오픈 시 순간적으로 수백 건의 동시 요청이 들어오면, 각 요청이 DB 커넥션을 점유하여 HikariCP 풀이 고갈되고 전체 서비스가 응답 불가 상태에 빠짐.",
+        "고민 — (1) DB 큐 테이블: 결국 DB에 부하가 집중되어 근본적 해결이 안 됨. (2) Redis List: 인메모리 처리로 DB 부하 분산, LPUSH/RPOP으로 순서 보장. (3) Redis Stream: Consumer Group, ACK 등 기능이 풍부하지만 단순 선착순에는 오버스펙.",
+        "선택 — Redis List(LPUSH/RPOP)로 요청을 대기열에 적재하고, Consumer가 순차적으로 처리합니다. 대기열 진입 시 Lua 스크립트로 재고 확인과 대기열 추가를 원자적으로 수행하여, 재고 이상의 요청이 대기열에 들어가는 것 자체를 차단합니다.",
+        "결과 — DB 커넥션 사용을 Consumer 1개로 제한하여 풀 고갈을 원천 차단하고, 처리 순서를 보장하면서 오버셀 없이 선착순 로직을 구현했습니다.",
+      ] },
+
+      { type: "text", heading: "6. 실시간 랭킹 설계", body: [
+        "문제 — 판매량 기반 실시간 랭킹을 매번 DB에서 SELECT COUNT(*) ... GROUP BY product_id ORDER BY count DESC로 조회하면, 데이터 증가에 따라 응답 시간이 선형적으로 늘어남.",
+        "고민 — (1) DB 집계 쿼리: 인덱스를 타도 GROUP BY + ORDER BY 조합은 임시 테이블을 생성하여 성능 저하. (2) Redis Sorted Set: O(log N) 삽입, O(log N + M) 범위 조회로 데이터 규모와 무관하게 일정한 성능. (3) 캐시 + 배치 갱신: 실시간성 부족.",
+        "선택 — Kafka Consumer에서 판매 이벤트를 수신할 때마다 ZINCRBY ranking:daily {productId} 1로 점수를 증가시키고, ZREVRANGE ranking:daily 0 9로 Top-10을 즉시 조회합니다. 일간 정확한 집계는 Spring Batch로 별도 처리하여 하이브리드 구조를 구성했습니다.",
+        "결과 — 실시간 랭킹 조회 응답 시간을 O(log N) 수준으로 유지하면서, Spring Batch로 일간 정확도를 보완합니다. 실시간성과 정확성을 모두 확보하는 트레이드오프를 설계 단계에서 결정했습니다.",
+      ] },
+
+      // ── 06 ── Code Review & Testing
+      { type: "section-heading", title: "06 — 코드 리뷰와 테스트 전략" },
+      { type: "text", heading: "멘토 코드 리뷰 반영", body: [
+        "매주 PR을 제출하고 멘토로부터 코드 리뷰를 받았습니다. 주요 피드백: (1) 서비스 레이어에서 도메인 로직을 분리할 것 — OrderService가 가격 계산, 할인 적용, 재고 확인을 모두 담당하던 것을 Order 엔티티와 StockService로 책임 분리. (2) 예외 처리 구체화 — RuntimeException 대신 InsufficientStockException, DuplicateCouponException 등 도메인 예외 정의. (3) 테스트 가능성 — 외부 의존(Redis, Kafka)을 인터페이스로 추상화하여 단위 테스트에서 Mock 주입 가능하도록 리팩토링.",
+      ] },
+      { type: "text", heading: "테스트 전략", body: [
+        "단위 테스트: 도메인 로직(가격 계산, 할인 적용, 상태 전이)은 외부 의존 없이 순수 JUnit으로 검증. given-when-then 패턴을 일관 적용.",
+        "통합 테스트: @SpringBootTest + Testcontainers로 실제 Redis/MySQL 환경에서 동시성 시나리오 검증. ExecutorService로 100개 스레드를 동시 실행하여 오버셀, 중복 사용 등을 테스트.",
+        "API 테스트: MockMvc로 Controller 레이어의 요청/응답 구조, HTTP 상태 코드, 에러 응답 포맷을 검증.",
+      ] },
+      { type: "code", title: "동시성 테스트 — 재고 오버셀 검증", language: "java", code: "@Test\nvoid 동시_100건_주문에도_재고는_음수가_되지_않는다() throws Exception {\n    // given\n    stockService.setStock(productId, 10);  // 재고 10개\n    int threadCount = 100;\n    ExecutorService executor = Executors.newFixedThreadPool(32);\n    CountDownLatch latch = new CountDownLatch(threadCount);\n\n    // when\n    for (int i = 0; i < threadCount; i++) {\n        executor.submit(() -> {\n            try {\n                orderFacade.placeOrder(new OrderCommand(productId, 1));\n            } catch (InsufficientStockException ignored) {\n            } finally {\n                latch.countDown();\n            }\n        });\n    }\n    latch.await();\n\n    // then\n    long successCount = orderRepository.countByProductId(productId);\n    assertThat(successCount).isEqualTo(10);\n    assertThat(stockService.getStock(productId)).isZero();\n}" },
+
+      // ── 07 ── Key Achievements
+      { type: "section-heading", title: "07 — 주요 성과" },
+      { type: "text", heading: "동시성 제어 설계 역량", body: [
+        "Redis Lua 스크립트로 동시 100건 요청에서 오버셀 0건을 달성하고, DB 비관적 락 / Redisson 분산 락 / Lua 스크립트 간의 트레이드오프(정합성, 성능, 커넥션 점유)를 실측 기반으로 비교·선택한 경험을 확보했습니다.",
+      ] },
+      { type: "text", heading: "이벤트 아키텍처와 데이터 정합성", body: [
+        "Transactional Outbox 패턴으로 '트랜잭션 커밋 + 이벤트 발행'의 원자성을 보장하고, Kafka 장애 시에도 이벤트 무손실 재발행이 가능한 구조를 설계했습니다. @TransactionalEventListener vs Outbox vs CDC 각각의 장단점을 이해하고 프로젝트 규모에 맞는 선택을 할 수 있게 되었습니다.",
+      ] },
+      { type: "text", heading: "장애 시나리오 중심 설계", body: [
+        "PG 타임아웃 → PENDING → 스케줄러 재조회 → 보상 트랜잭션, Kafka 다운 → Outbox 보존 → 복구 후 재발행 등 모든 외부 호출에서 '실패를 전제한 설계'를 적용했습니다. 성공 케이스보다 실패·중복·지연 시나리오를 먼저 설계하는 사고방식을 체득했습니다.",
+      ] },
+      { type: "text", heading: "실시간 + 배치 하이브리드 구조", body: [
+        "Redis Sorted Set(실시간 랭킹) + Spring Batch(일간 정확 집계)를 조합하여 실시간성과 정확성의 트레이드오프를 설계 수준에서 해결한 경험을 확보했습니다.",
+      ] },
+
+      // ── 08 ── Learning Journey
+      { type: "section-heading", title: "08 — 10주 학습 여정" },
+      { type: "text", body: [
+        "10주 동안 매주 하나의 핵심 주제를 깊이 파고들며, 요구사항 분석 → 설계 문서 작성 → 구현 → PR 제출 → 멘토 코드 리뷰 → 기술 블로그 정리를 반복한 성장 기록입니다.",
+      ] },
+
+      { type: "text", heading: "Week 1 — TDD / 회원 / 인증", body: [
+        "구현 범위 — 회원가입, 헤더 기반 인증, 내 정보 조회, 비밀번호 변경 API를 E2E 테스트 기준으로 구현했습니다. `UserV1Controller`는 HTTP 요청/응답과 헤더 검증을 담당하고, `UserService`는 회원가입·인증·비밀번호 변경의 트랜잭션 경계를 담당하도록 분리했습니다.",
+        "도메인 규칙 — `LoginIdValidator`, `EmailValidator`, `BirthDateValidator`, `PasswordPolicyValidator`, `NameMasker`를 분리하여 입력 형식, 비밀번호 길이/문자 조합/생년월일 포함 여부, 이름 마스킹을 각각 테스트 가능한 단위로 만들었습니다.",
+        "검증 — 회원가입 성공/중복 로그인ID, 인증 실패, 비밀번호 정책 위반, 현재 비밀번호 불일치, 이름 마스킹 응답까지 E2E와 단위 테스트로 검증했습니다. 단순 서비스 단위 테스트보다 실제 API 흐름을 먼저 고정해 인증·예외·상태 변경 누락을 줄였습니다.",
+        "[Pull Request #37](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/37)",
+        "[기술 블로그 — TDD](https://joodev-sandy.vercel.app/blog/tdd)",
+      ] },
+      { type: "code", title: "Week 1 인증/회원가입 흐름", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant API as UserV1Controller\n    participant Service as UserService\n    participant Policy as PasswordPolicyValidator\n    participant DB as UserRepository\n\n    Client->>API: POST /api/v1/users/register\n    API->>Service: register(request)\n    Service->>Policy: validate(password)\n    Service->>DB: existsByLoginId(loginId)\n    alt duplicate\n        DB-->>Service: true\n        Service-->>API: CONFLICT\n    else valid\n        Service->>DB: save(encoded user)\n        Service-->>API: UserInfo\n    end\n    API-->>Client: ApiResponse" },
+
+      { type: "text", heading: "Week 2 — CRUD / API 설계", body: [
+        "구현 범위 — 요구사항 명세, 정책 정의서, 시퀀스 다이어그램, 클래스 다이어그램, ERD를 작성하며 API를 구현하기 전에 도메인 간 책임과 데이터 흐름을 먼저 고정했습니다. 회원 도메인에서는 Controller/Service/Repository/Validator 구조를 기준으로 CRUD와 인증 흐름을 문서화했습니다.",
+        "설계 판단 — 요청/응답 DTO와 엔티티를 분리해 API 계약 변경이 도메인 모델에 직접 전파되지 않게 했고, Repository는 Domain에 인터페이스를 두고 Infrastructure에 JPA 구현체를 두는 방향으로 DIP 적용 기준을 잡았습니다.",
+        "검증 — PR 단위로 완료 정의를 명시했습니다. API 정상 동작뿐 아니라 예외 응답 포맷, 인증 실패, 헤더 누락, 검증 실패가 공통 `ErrorType`과 `ApiControllerAdvice` 규칙을 따르는지 확인했습니다.",
+        "[Pull Request #76](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/76)",
+        "[기술 블로그 — CRUD](https://joodev-sandy.vercel.app/blog/crud)",
+      ] },
+      { type: "point-cards", items: [
+        { title: "API 계약", body: "Controller는 DTO 변환과 HTTP 상태 코드만 담당하고, 비즈니스 판단은 Service/Domain으로 이동" },
+        { title: "문서화", body: "요구사항 정의서, 시퀀스 다이어그램, 클래스 다이어그램, ERD를 PR에 함께 기록" },
+        { title: "예외 규칙", body: "검증 실패, 인증 실패, 헤더 누락을 공통 ErrorType과 ControllerAdvice로 정리" },
+      ] },
+
+      { type: "text", heading: "Week 3 — 상품 / 브랜드 / 주문", body: [
+        "구현 범위 — 4계층 패키지 구조(`interfaces / application / domain / infrastructure`)를 실제 코드에 적용하고, Brand, Product, Like, Order 도메인 모델을 구성했습니다. Brand-Product, Order-OrderItem 관계와 값 객체(상품명, 가격, 재고 수량 등)를 통해 도메인 규칙을 엔티티 내부로 이동했습니다.",
+        "아키텍처 — Repository는 Domain에 인터페이스를 정의하고 Infrastructure에 JPA 구현체를 두었습니다. Application Layer의 Facade는 여러 도메인 서비스를 조합하는 유스케이스를 담당하고, Domain Service는 단일 도메인 규칙을 담당하도록 나눴습니다.",
+        "주문 설계 — 주문 요청의 상품 ID를 집계해 동일 상품 중복 요청을 합산한 뒤 재고 차감이 한 번만 일어나도록 설계했습니다. 멘토 리뷰에서 `product.decreaseStock`이 같은 productId에 여러 번 호출될 수 있는 위험을 지적받아, 요청 정규화와 재고 차감 위치를 분리하는 방향으로 개선했습니다.",
+        "[Pull Request #129](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/129)",
+        "[기술 블로그 — 상품·브랜드·주문](https://joodev-sandy.vercel.app/blog/4)",
+      ] },
+      { type: "code", title: "Week 3 4-Layer 패키지 책임", language: "text", code: "interfaces\n  - ProductV1Controller, OrderV1Controller, DTO\napplication\n  - ProductFacade, OrderFacade: use case orchestration + transaction boundary\ndomain\n  - Brand, Product, Order, OrderItem, Like\n  - ProductService, OrderService, Repository interfaces\ninfrastructure\n  - JpaRepository, RepositoryImpl, JPA converters" },
+
+      { type: "text", heading: "Week 4 — 좋아요 / 쿠폰", body: [
+        "구현 범위 — 주문 트랜잭션, 좋아요/쿠폰 동시성 제어, 재고 차감 정합성을 다뤘습니다. 좋아요는 `LikeFacade`에서 상품 row lock을 획득한 뒤 likeCount 증감과 Like 저장/삭제를 같은 트랜잭션으로 묶어, 상품 목록의 `likes_desc` 정렬 기준이 실제 좋아요 상태와 어긋나지 않도록 했습니다.",
+        "쿠폰 처리 — 사용자-쿠폰 중복 사용은 애플리케이션 조회 후 판단만으로는 동시에 두 요청이 통과할 수 있어, 원자적 중복 체크가 가능한 Redis Set(SADD) 또는 DB Unique 제약을 방어선으로 고려했습니다. 핵심은 '조회 후 삽입'이 아니라 '삽입 시점에 중복을 막는 구조'였습니다.",
+        "검증 — 동시 요청에서 좋아요 수가 음수/중복 증가하지 않는지, 쿠폰이 한 사용자에게 두 번 적용되지 않는지, 주문 실패 시 재고와 쿠폰 상태가 남지 않는지 테스트했습니다.",
+        "[Pull Request #164](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/164)",
+        "[기술 블로그 — 좋아요·쿠폰](https://joodev-sandy.vercel.app/blog/like)",
+      ] },
+      { type: "code", title: "Week 4 좋아요 정합성 흐름", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant Facade as LikeFacade\n    participant ProductRepo\n    participant LikeRepo\n    participant DB\n\n    Client->>Facade: POST /likes(productId)\n    Facade->>ProductRepo: getProductWithLock(productId)\n    ProductRepo->>DB: SELECT ... FOR UPDATE\n    Facade->>LikeRepo: existsByUserIdAndProductId(userId, productId)\n    alt not liked\n        Facade->>Facade: product.increaseLikeCount()\n        Facade->>LikeRepo: save(like)\n    else already liked\n        Facade-->>Client: idempotent success\n    end" },
+
+      { type: "text", heading: "Week 5 — Redis Cache", body: [
+        "구현 범위 — 상품 목록 조회 성능 개선, 좋아요 수 정렬 구조 개선, Redis Cache 적용을 진행했습니다. PR 본문 기준으로 `ProductFacade`, `ProductV1Controller`, `ProductV1Dto`, `ProductInfo`를 추가하고, `GET /api/v1/products`, `GET /api/v1/products/{productId}`에서 페이징·브랜드 필터·정렬(`latest`, `likes_desc`)을 지원했습니다.",
+        "성능 판단 — 기존 방식은 `brandId` 필터와 `likes_desc` 정렬을 동시에 사용할 때 likes 테이블 count aggregation 비용이 커지는 구조였습니다. `Product.likeCount`를 비정규화 컬럼으로 두고, `brandId`, `likeCount` 인덱스를 추가해 읽기 경로의 정렬 비용을 낮췄습니다.",
+        "캐시 설계 — Redis `CacheManager`를 구성하고 TTL 5분, JSON 직렬화를 적용했습니다. 상품 단건 조회는 `@Cacheable`로 캐시하고, 좋아요/언라이크처럼 likeCount가 바뀌는 쓰기 경로에서는 `@CacheEvict`로 상품 캐시를 제거해 캐시 일관성을 유지했습니다.",
+        "검증 — Product E2E 테스트에서 캐시 hit/miss, 좋아요 후 캐시 제거, 정렬 파라미터 검증, 필터링·페이징을 함께 확인했습니다.",
+        "[Pull Request #216](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/216)",
+        "[기술 블로그 — Redis Cache](https://joodev-sandy.vercel.app/blog/post-mmswqd6z)",
+      ] },
+      { type: "code", title: "Week 5 상품 단건 조회 캐시 흐름", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant Controller as ProductV1Controller\n    participant Facade as ProductFacade\n    participant Redis as Redis Cache\n    participant Service as ProductService\n    participant DB\n\n    Client->>Controller: GET /api/v1/products/{id}\n    Controller->>Facade: getProduct(productId)\n    Facade->>Redis: cache lookup\n    alt cache hit\n        Redis-->>Facade: ProductInfo\n    else cache miss\n        Facade->>Service: getProductById(productId)\n        Service->>DB: SELECT product\n        DB-->>Service: Product\n        Facade->>Redis: cache store (TTL 5m)\n    end\n    Facade-->>Controller: ProductInfo" },
+
+      { type: "text", heading: "Week 6 — 결제 / PG 연동", body: [
+        "구현 범위 — 외부 PG 연동에서 발생할 수 있는 지연, 장애, 응답 유실을 시스템 내부 상태로 흡수하는 Failure-Ready 결제 구조를 구현했습니다. `PaymentFacade`, `PaymentTransactionService`, `PaymentService`, PG Client, Callback API, Recovery Scheduler로 책임을 분리했습니다.",
+        "상태 모델 — 결제 요청 후 결과를 즉시 확정할 수 없으면 `PENDING`으로 저장하고, PG callback 또는 scheduler 재조회가 최종 상태를 확정합니다. 이미 `PAID` 또는 `FAILED`가 된 결제에 callback이 다시 들어오면 상태를 바꾸지 않는 멱등 흐름으로 처리했습니다.",
+        "복구 설계 — `PaymentRecoveryScheduler`가 60초 간격으로 오래된 PENDING 결제를 조회하고, `pgTransactionId`가 있으면 PG 상태를 재조회합니다. 실패 응답 또는 abandoned payment는 `failPaymentWithCompensation`을 호출해 결제 실패 저장, 주문 취소, 재고/쿠폰 원복을 한 흐름으로 묶었습니다.",
+        "검증 — PG timeout, callback success/failure, 중복 callback, scheduler 재조회, abandoned payment, 보상 트랜잭션이 실패 없이 다음 payment 처리를 계속하는지 확인했습니다.",
+        "[Pull Request #237](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/237)",
+        "[기술 블로그 — 결제·PG 연동](https://joodev-sandy.vercel.app/blog/post-mmsvj2bz)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/payment-recovery-flow.svg", caption: "Week 6 결제 복구 구조 — PENDING을 중심으로 Callback과 Scheduler가 같은 상태 전이 규칙을 공유" },
+
+      { type: "text", heading: "Week 7 — Kafka / Transactional Outbox", body: [
+        "구현 범위 — 기존 동기 기반 주문-쿠폰-집계 구조를 이벤트 기반 아키텍처로 전환했습니다. 먼저 `ApplicationEvent`로 내부 경계를 분리하고, 그 다음 Outbox 저장소, Relay, Kafka Producer/Consumer, EventHandled 멱등 저장소를 단계적으로 붙였습니다.",
+        "핵심 판단 — Kafka를 바로 발행하지 않고, 비즈니스 트랜잭션 안에서는 'Kafka로 보낸다'가 아니라 '보낼 이벤트를 Outbox에 저장한다'를 책임으로 삼았습니다. 주문 데이터 저장 성공 후 Kafka 발행 실패로 이벤트가 사라지는 위험을 제거하기 위한 선택입니다.",
+        "Consumer 안정성 — Kafka는 at-least-once 전달을 전제로 보고 `EventHandled` 저장소로 중복 소비를 방어했습니다. Producer는 `acks=all`, `enable.idempotence=true`, Consumer는 manual ack를 적용해 처리 완료 시점과 offset commit 시점을 맞췄습니다.",
+        "확장 적용 — 선착순 쿠폰 발급도 API 직접 처리 대신 요청 저장 → Outbox → Kafka → CouponConsumer 처리 → polling 조회 구조로 바꿔, 동시성 제어 지점을 Consumer 한 곳으로 모았습니다.",
+        "[Pull Request #293](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/293)",
+        "[기술 블로그 — Kafka](https://joodev-sandy.vercel.app/blog/kafka)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/outbox-kafka-flow.svg", caption: "Week 7 Outbox/Kafka 구조 — 트랜잭션 경계, 메시지 정합성, 멱등 소비를 분리" },
+
+      { type: "text", heading: "Week 8 — Redis Queue / Lua", body: [
+        "구현 범위 — 블랙프라이데이처럼 주문 API로 트래픽이 폭증하는 상황을 막기 위해 Redis Sorted Set 기반 주문 대기열을 구현했습니다. `ZADD NX`로 중복 진입을 막고, timestamp score로 FIFO를 보장하며, `ZRANK`로 O(log N) 순번 조회를 제공했습니다.",
+        "API 흐름 — 사용자는 `POST /queue/enter`로 대기열에 들어가고, `GET /queue/position`을 polling해 `WAITING` 또는 `READY + token` 상태를 받습니다. 토큰이 있어야 `POST /orders`에 진입할 수 있으며, 취소 API는 토큰 검증 대상에서 제외했습니다.",
+        "처리량 제어 — `OrderQueueScheduler`가 `fixedDelay = 1000`으로 BATCH_SIZE만큼만 dequeue하여 입장 토큰을 발급합니다. 유입 속도와 DB 처리 속도를 분리해 HikariCP 전체 고갈과 연쇄 장애를 막는 구조입니다.",
+        "Lua 개선 — Java loop로 `ZPOPMIN` 후 `SET token`을 실행하면 서버 크래시 시 사용자가 대기열에서도 사라지고 토큰도 없는 유실 상태가 생깁니다. Lua Script로 `ZPOPMIN N + SET token EX`를 Redis 내부에서 원자적으로 처리해 이 결함을 제거했습니다.",
+        "검증 — 동시 100명에서 2,000명까지 진입 테스트, BATCH_SIZE 초과 처리량 테스트, TTL 만료 후 403 테스트, 주문 실패 시 token 유지(validate/consume 분리) 테스트를 수행했습니다.",
+        "[Pull Request #335](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/335)",
+        "[기술 블로그 — Redis Queue·Lua](https://joodev-sandy.vercel.app/blog/lua)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/queue-token-flow.svg", caption: "Week 8 대기열 구조 — Queue(buffer), Scheduler(valve), Token(gate)로 DB 진입 속도 제어" },
+
+      { type: "text", heading: "Week 9 — Kafka Ranking / Redis Sorted Set", body: [
+        "구현 범위 — Week 7에서 구축한 유저 행동 이벤트 파이프라인을 Redis ZSET 기반 실시간 상품 랭킹으로 연결했습니다. 조회/좋아요/주문 이벤트를 Kafka Consumer가 수신하고, `RankingScorePolicy`가 점수를 계산해 `RankingRedisRepository`가 ZSET에 반영합니다.",
+        "ZINCRBY 선택 — `ZADD`로 덮어쓰기 방식은 `ZSCORE → 계산 → ZADD` 사이에 Lost Update가 발생할 수 있어, 점수 증가를 단일 명령으로 처리하는 `ZINCRBY`를 선택했습니다.",
+        "점수 정책 — 단순 count가 아니라 행동의 의미를 반영했습니다. VIEW는 약한 관심 신호, LIKE는 선호 표현, ORDER는 구매 전환으로 보고 각각 다른 가중치를 부여해 조회 수가 높은 상품만 랭킹을 지배하지 않도록 설계했습니다.",
+        "일별 키와 Carry-Over — `rank:all:yyyyMMdd` 형태의 일별 key로 오늘/어제 랭킹을 분리하고 TTL을 적용했습니다. 자정 직후 랭킹이 비어 보이는 Cold Start를 줄이기 위해 전날 점수 일부를 `ZUNIONSTORE`로 오늘 랭킹에 10% 가중 이월했습니다.",
+        "API — `GET /api/v1/rankings`로 Top-N, `GET /api/v1/rankings/products/{productId}`로 개별 상품 rank + score를 제공하고, RankingFacade에서 Redis rank 결과와 Product 상세 정보를 조합했습니다.",
+        "[Pull Request #373](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/373)",
+        "[기술 블로그 — Kafka Ranking·Redis ZSet](https://joodev-sandy.vercel.app/blog/kafka-redis-zset)",
+      ] },
+      { type: "code", title: "Week 9 랭킹 이벤트 처리", language: "text", code: "Kafka UserActionEvent\n  -> RankingKafkaConsumer\n  -> RankingScorePolicy\n       VIEW  = weak interest signal\n       LIKE  = explicit preference signal\n       ORDER = purchase conversion signal\n  -> Redis ZSET ZINCRBY rank:all:yyyyMMdd productId score\n  -> Ranking API ZREVRANGE / ZREVRANK / ZSCORE" },
+
+      { type: "text", heading: "Week 10 — Spring Batch / Metrics / Ranking Aggregation", body: [
+        "구현 범위 — Redis 기반 실시간 랭킹을 일간 스냅샷, 주간/월간 집계, 조회 전용 테이블(MV), period 기반 API 조회까지 이어지는 랭킹 데이터 파이프라인으로 확장했습니다.",
+        "Daily Metrics Snapshot — Redis 또는 이벤트 기반으로 누적된 상품 지표를 `product_metrics` 일별 스냅샷으로 저장합니다. 같은 날짜 재실행 시 기존 metric_date 데이터를 삭제 후 다시 저장하도록 설계해 배치 재실행 멱등성을 확보했습니다.",
+        "Rank Aggregation Job — Spring Batch의 Reader → Processor → Writer 구조로 일간 메트릭을 읽고, 주간/월간 기준 점수를 계산해 `mv_product_rank_weekly`, `mv_product_rank_monthly` 같은 조회 전용 테이블에 TOP-N 형태로 저장했습니다.",
+        "운영 이슈 대응 — PR 리뷰에서 chunk 단위 writer가 rank offset을 매번 0으로 시작하면 chunk 간 ranking이 중복될 수 있다는 지적이 있었고, 누적 counter를 유지해야 함을 확인했습니다. 또한 bulk DELETE 후 영속성 컨텍스트가 오염될 수 있어 `@Modifying(clearAutomatically = true, flushAutomatically = true)` 같은 동기화 옵션이 필요하다는 점을 학습했습니다.",
+        "API — Ranking API는 period가 TODAY면 Redis 실시간 랭킹을, WEEK/MONTH면 배치가 만든 조회 전용 테이블을 조회하도록 분리했습니다. 실시간성과 정확 집계를 같은 API 계약 안에서 제공하는 구조입니다.",
+        "[Pull Request #420](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/420)",
+        "[기술 블로그 — Spring Batch·Metrics](https://joodev-sandy.vercel.app/blog/post-mo8jxik7)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/ranking-batch-flow.svg", caption: "Week 10 랭킹 배치 구조 — 실시간 Redis 랭킹과 일/주/월 조회 모델을 분리해 API에서 period별로 선택" },
     ],
   },
   awsDeepRacer: {

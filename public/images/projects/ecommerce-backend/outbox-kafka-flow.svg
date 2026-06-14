@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+  <title id="title">Transactional Outbox and Kafka flow</title>
+  <desc id="desc">Order transaction stores an outbox row, relay publishes to Kafka, consumers use handled-event storage for idempotency.</desc>
+  <defs>
+    <style>.bg{fill:#fbfaf7}.box{fill:#fff;stroke:#d8d3c8;stroke-width:1.5}.db{fill:#eef2fb;stroke:#7a91c8}.event{fill:#e8f3ef;stroke:#79a68f}.warn{fill:#fff0e6;stroke:#d69867}.text{font-family:Inter,Arial,sans-serif;fill:#222;font-size:15px}.small{font-size:12px;fill:#555}.title{font-size:24px;font-weight:700}.label{font-size:13px;font-weight:700}.arrow{stroke:#6f6a60;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#6f6a60"/></marker>
+  </defs>
+  <rect class="bg" width="980" height="560"/>
+  <text class="text title" x="40" y="48">Transactional Outbox Flow</text>
+  <text class="text small" x="42" y="74">Prevent "DB committed but Kafka event lost" by making event persistence part of the same transaction.</text>
+  <rect class="box" x="60" y="130" width="155" height="72" rx="12"/>
+  <text class="text" x="93" y="160">OrderFacade</text>
+  <text class="small text" x="83" y="183">@Transactional</text>
+  <rect class="db" x="275" y="110" width="175" height="112" rx="12"/>
+  <text class="text" x="320" y="145">Database</text>
+  <text class="small text" x="302" y="170">orders saved</text>
+  <text class="small text" x="302" y="192">outbox INIT row</text>
+  <rect class="event" x="520" y="130" width="155" height="72" rx="12"/>
+  <text class="text" x="555" y="160">OutboxRelay</text>
+  <text class="small text" x="550" y="183">polling + publish</text>
+  <rect class="warn" x="735" y="130" width="155" height="72" rx="12"/>
+  <text class="text" x="785" y="160">Kafka</text>
+  <text class="small text" x="764" y="183">topic partition</text>
+  <path class="arrow" d="M215 166 H270"/>
+  <path class="arrow" d="M450 166 H515"/>
+  <path class="arrow" d="M675 166 H730"/>
+  <rect class="event" x="215" y="300" width="155" height="80" rx="12"/>
+  <text class="text" x="245" y="330">Consumer A</text>
+  <text class="small text" x="244" y="354">ranking update</text>
+  <rect class="event" x="415" y="300" width="155" height="80" rx="12"/>
+  <text class="text" x="445" y="330">Consumer B</text>
+  <text class="small text" x="452" y="354">notification</text>
+  <rect class="db" x="615" y="300" width="155" height="80" rx="12"/>
+  <text class="text" x="651" y="330">EventHandled</text>
+  <text class="small text" x="645" y="354">idempotent check</text>
+  <path class="arrow" d="M812 202 C812 255 292 247 292 295"/>
+  <path class="arrow" d="M812 202 C812 256 492 248 492 295"/>
+  <path class="arrow" d="M370 340 H410"/>
+  <path class="arrow" d="M570 340 H610"/>
+  <rect class="box" x="120" y="435" width="740" height="54" rx="12"/>
+  <text class="text label" x="145" y="467">Reliability rule: commit order + outbox together, publish later, consume with duplicate guard and manual ack.</text>
+</svg>

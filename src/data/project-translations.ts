@@ -214,45 +214,266 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
   "E-commerce Backend Engineering": {
     titleEn: "E-commerce Backend Engineering",
     summaryEn:
-      "An e-commerce backend project implementing order, payment, and event flows.",
+      "An e-commerce backend project implementing concurrency control, event-driven architecture, and data consistency.",
     descriptionEn: [
-      "Decomposed requirements into feature units, iterating weekly through implementation, testing, and retrospectives to verify API behavior and edge cases",
-      "Incorporated mentor feedback from PR and code reviews to improve code quality focusing on pass/fail criteria, exception handling, and testability",
-      "Created sequence diagrams, ERDs, and class designs to define responsibility boundaries for order, payment, inventory, and event publishing flows",
-      "Introduced Kafka-based event architecture to separate post-payment processing asynchronously and reduce inter-service coupling",
-      "Applied Outbox pattern and Idempotency Key to prevent data consistency issues at the design stage for duplicate requests and event reprocessing in payment/order flows",
-      "Used AI Agents like Claude and Codex to speed up design review, test case derivation, and refactoring candidate discovery",
+      "Designed a Clean Architecture 4-Layer structure (Interfaces → Application → Domain → Infrastructure) separating domain logic from infrastructure, with clear responsibility boundaries between services",
+      "Achieved 0 oversells in 100 concurrent request tests using Redis Lua scripts for atomic stock check-and-decrement, implemented O(log N) real-time ranking with Sorted Set (ZINCRBY + ZREVRANGE)",
+      "Guaranteed atomicity of transaction commit + event publishing via Kafka event architecture + Transactional Outbox pattern, enabling lossless event re-publishing even during Kafka outages",
+      "Implemented Recovery Flow for PG payment timeout/network errors: PENDING status → scheduler-based PG re-query → compensating transaction (stock rollback + order CANCELLED) for automatic recovery",
+      "Blocked duplicate requests with Idempotency Key, prevented duplicate coupon usage atomically with Redis Set (SADD), controlled partial rollback by separating @Transactional boundaries with propagation REQUIRES_NEW",
+      "Implemented daily sales metric aggregation pipeline with Spring Batch (Chunk-oriented Processing), with per-stage failure isolation across ItemReader/Processor/Writer",
     ],
     teamSizeEn: "Bootcamp Project",
-    achievementEn: "Redis queue, Kafka events, real-time ranking, Spring Batch",
+    achievementEn: "0 oversells in 100 concurrent requests, Outbox-based lossless events, O(log N) real-time ranking",
     roleEn: "Backend Architecture Design & Implementation",
     periodEn: "2025.01 - 2025.03",
     contentBlocksEn: [
       { type: "section-heading", title: "01 — Why I Started This Project" },
-      { type: "text", heading: "Backend Transactions and Data Consistency", body: [
-        "A bootcamp project where I designed order, payment, and event flows in the e-commerce domain while learning backend transactions and data consistency. I decomposed requirements into feature units and iterated weekly through implementation, testing, and retrospectives to verify API behavior and edge cases.",
+      { type: "text", heading: "Hands-on Concurrency Control and Data Consistency", body: [
+        "The most frequent problem in e-commerce domains is 'data corruption under concurrent requests.' Issues like inventory overselling, duplicate coupon usage, and payment-order status inconsistency cannot be solved with simple CRUD — they require comprehensive understanding of transaction boundary design, distributed locks, and event architecture.",
+        "This project deep-dived into one core topic each week for 10 weeks (TDD → CRUD → domain design → concurrency control → caching → payment integration → event architecture → first-come-first-served processing → real-time ranking → batch processing), repeating the cycle of requirements analysis → design → implementation → PR → mentor code review → technical blog documentation.",
       ] },
+
       { type: "section-heading", title: "02 — Design Goals & Technical Architecture" },
-      { type: "text", heading: "Domain Design and Event Architecture", body: [
-        "Created sequence diagrams, ERDs, and class designs to define responsibility boundaries for order, payment, inventory, and event publishing flows. Introduced Kafka-based event architecture to separate post-payment processing asynchronously and reduce inter-service coupling.",
+      { type: "text", heading: "Clean Architecture 4-Layer Structure", body: [
+        "Separated into Interfaces (Controller/DTO) → Application (UseCase/Facade) → Domain (Entity/Service) → Infrastructure (Repository/External API) four layers, ensuring domain logic has no dependency on frameworks or infrastructure.",
+        "The Application Layer's Facade handles use cases that compose multiple domain services, with @Transactional boundaries set at the Facade method level for clear transaction scope control.",
       ] },
-      { type: "code", title: "Kafka Event Publishing Structure", language: "java", code: "@Transactional\npublic OrderResult createOrder(OrderCommand cmd) {\n    Order order = orderService.create(cmd);\n    paymentService.process(order);\n    // Event published after payment → async post-processing\n    eventPublisher.publish(\n        new OrderCompletedEvent(order.getId())\n    );\n    return OrderResult.from(order);\n}" },
+      { type: "image", url: "/images/projects/ecommerce-backend/architecture-overview.svg", caption: "Architecture overview — 4-layer backend structure with Redis, Kafka, PG, and Batch isolated as infrastructure concerns" },
+      { type: "code", title: "@Transactional Boundary with Facade Pattern", language: "java", code: "@Component\n@RequiredArgsConstructor\npublic class OrderFacade {\n    private final OrderService orderService;\n    private final StockService stockService;\n    private final PaymentService paymentService;\n    private final OutboxEventRepository outboxRepository;\n\n    @Transactional  // Transaction boundary at Facade level\n    public OrderResult placeOrder(OrderCommand cmd) {\n        // 1. Stock decrement (Redis Lua → DB sync)\n        stockService.decreaseStock(cmd.getProductId(), cmd.getQuantity());\n        // 2. Create order\n        Order order = orderService.create(cmd);\n        // 3. Process payment\n        PaymentResult payment = paymentService.process(order);\n        // 4. Save Outbox event (within same transaction)\n        outboxRepository.save(\n            OutboxEvent.of(\"order.completed\", order.getId())\n        );\n        return OrderResult.from(order, payment);\n    }\n}" },
+      { type: "text", heading: "Event-Driven Async Architecture", body: [
+        "Separated post-payment processing (ranking updates, notifications, point accumulation) into Kafka events, eliminating coupling between order service and downstream services. Independent processing per Consumer Group ensures one Consumer's failure doesn't propagate to others.",
+        "Core design principle: synchronous flows (order → stock decrement → payment) guarantee atomicity with @Transactional; asynchronous flows (ranking, notifications) are separated via Kafka to block failure propagation.",
+      ] },
+
       { type: "section-heading", title: "03 — Key Feature Implementation" },
-      { type: "text", heading: "Redis Queue and Real-time Ranking", body: [
-        "Implemented first-come-first-served event processing with Redis-based queues, and designed a real-time ranking system using Sorted Sets. Built a batch processing structure for daily snapshots using Spring Batch.",
+      { type: "text", heading: "Redis Lua Script-based Concurrency Control", body: [
+        "The critical requirement for stock decrement is that 'check and decrement must be atomic.' A Java-level if (stock > 0) stock-- creates a check-then-act race condition. Redis Lua scripts execute single-threaded, so check and decrement become one atomic operation.",
+        "DB pessimistic locks (SELECT ... FOR UPDATE) hold connections, risking connection pool exhaustion under high concurrency. Redisson distributed locks have lock acquire/release network round-trip overhead — overkill for simple decrements. Lua scripts were the lightest yet most accurate choice.",
       ] },
-      { type: "text", heading: "Data Consistency Guarantee", body: [
-        "Applied Outbox pattern and Idempotency Key to prevent data consistency issues at the design stage for duplicate requests and event reprocessing in payment/order flows.",
+      { type: "code", title: "Redis Lua Script — Atomic Stock Decrement", language: "lua", code: "-- KEYS[1]: stock:{productId}\n-- ARGV[1]: decrement quantity\nlocal stock = tonumber(redis.call('GET', KEYS[1]))\nif stock == nil then\n    return -1  -- stock key not found\nend\nif stock < tonumber(ARGV[1]) then\n    return 0   -- insufficient stock\nend\nredis.call('DECRBY', KEYS[1], ARGV[1])\nreturn 1       -- decrement success" },
+      { type: "text", heading: "Transactional Outbox Pattern", body: [
+        "Using @TransactionalEventListener publishes events after transaction commit, but if the application dies between commit and Kafka publishing, events are lost. The Outbox pattern stores events within the same DB transaction as business data, making a 'committed but no event' state structurally impossible.",
+        "A separate scheduler polls the Outbox table for PENDING events and publishes to Kafka, changing status to PUBLISHED on success. Events are preserved in the DB even during Kafka outages and can be re-published after recovery.",
       ] },
-      { type: "code", title: "Outbox Pattern Implementation", language: "java", code: "// Save event to Outbox table → separate polling for publishing\n@Transactional\npublic void processPayment(Payment payment) {\n    paymentRepository.save(payment);\n    outboxRepository.save(\n        OutboxEvent.of(\"payment.completed\", payment.getId())\n    );\n    // Kafka publishing handled by separate scheduler polling Outbox\n}" },
-      { type: "section-heading", title: "04 — Problem Solving / Troubleshooting" },
-      { type: "text", heading: "Code Review and AI Agent Utilization", body: [
-        "Incorporated mentor feedback from PR and code reviews to improve code quality focusing on pass/fail criteria, exception handling, and testability. Used AI Agents like Claude and Codex to speed up design review, test case derivation, and refactoring candidate discovery.",
+      { type: "code", title: "Outbox Event Scheduler", language: "java", code: "@Scheduled(fixedDelay = 1000)  // Poll every 1 second\n@Transactional\npublic void publishPendingEvents() {\n    List<OutboxEvent> events = outboxRepository\n        .findByStatusOrderByCreatedAtAsc(EventStatus.PENDING);\n    \n    for (OutboxEvent event : events) {\n        try {\n            kafkaTemplate.send(event.getTopic(), event.getPayload());\n            event.markAsPublished();\n        } catch (Exception e) {\n            event.incrementRetryCount();\n            if (event.getRetryCount() >= MAX_RETRY) {\n                event.markAsFailed();\n            }\n        }\n    }\n}" },
+      { type: "text", heading: "First-Come-First-Served Queue (Redis Queue)", body: [
+        "Burst traffic at event open is absorbed into a Redis List (LPUSH) queue, with a Consumer processing via RPOP sequentially. At queue entry, a Lua script atomically checks stock and adds to queue, blocking requests beyond available stock from even entering the queue.",
+        "Why List over Redis Stream: Stream offers Consumer Groups, ACK, and reprocessing features, but for simple first-come-first-served queues it's overkill — List's LPUSH/RPOP is more intuitive with less performance overhead.",
       ] },
-      { type: "section-heading", title: "05 — Key Achievements" },
-      { type: "text", heading: "Backend Design Competency", body: [
-        "Learned core e-commerce backend patterns through hands-on implementation of Redis-based queues, Kafka event flows, real-time ranking, and Spring Batch daily snapshots. Gained experience ensuring data consistency at the design stage through Outbox pattern and Idempotency Key application.",
+      { type: "text", heading: "Real-time Ranking (Redis Sorted Set + Spring Batch)", body: [
+        "ZINCRBY increments product scores on each sales event, with ZREVRANGE querying Top-N in O(log N + M). DB aggregate queries (GROUP BY + ORDER BY) approach full table scans as data grows, so real-time queries are delegated to Redis while accurate daily aggregation is separated into Spring Batch.",
+        "Spring Batch uses Chunk-oriented Processing (ItemReader → ItemProcessor → ItemWriter) for daily sales metric aggregation. Chunk size set to 500 to limit memory usage while maintaining throughput, with skip/retry policies ensuring partial failures don't halt the entire batch.",
       ] },
+
+      // ── 04 ── Architecture
+      { type: "section-heading", title: "04 — System Architecture" },
+      { type: "text", heading: "Order Flow — First-Come-First-Served Processing", body: [
+        "Client → API Gateway → Redis Lua (stock check) → Redis Queue (LPUSH) → Consumer (RPOP) → Order Service (@Transactional) → MySQL + Outbox Table",
+        "Requests don't hit the DB directly — Redis Lua checks stock first. If available, the request is queued via Redis Queue, and the Consumer pulls and creates orders sequentially. This structure absorbs burst traffic without DB connection pool exhaustion.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/queue-token-flow.svg", caption: "Queue architecture — Redis Sorted Set tracks position, Scheduler + Lua atomically issues entry tokens" },
+      { type: "text", heading: "Event Flow — Outbox → Kafka → Consumer", body: [
+        "Order Service (Outbox saved within @Transactional) → Outbox Scheduler (1s polling) → Kafka Topic (order.completed) → Consumer Group A (ranking) / Consumer Group B (notifications)",
+        "Separated Consumer Groups ensure ranking Consumer failures don't propagate to notification Consumers. Each Consumer manages independent offsets, enabling individual reprocessing.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/outbox-kafka-flow.svg", caption: "Outbox event flow — save event in the DB transaction, relay to Kafka, consume idempotently with EventHandled" },
+      { type: "text", heading: "Recovery Flow — Automatic Payment Failure Recovery", body: [
+        "Payment (status=PENDING) → Scheduler (30s interval) → PG API re-query → COMPLETED on success / compensating transaction on failure (stock rollback + order CANCELLED)",
+        "Compensating transactions use @Transactional(propagation = REQUIRES_NEW) to isolate from the original transaction, ensuring compensation logic failures don't affect the original transaction.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/payment-recovery-flow.svg", caption: "Payment recovery flow — PENDING absorbs PG timeout, Callback/Scheduler resolves the final state" },
+      { type: "text", heading: "Batch Flow — Daily Metric Aggregation", body: [
+        "Spring Batch Job (daily 02:00) → JpaPagingItemReader (sales data) → ItemProcessor (aggregation) → JpaItemWriter (ranking_snapshot table) → Ranking API cache refresh",
+        "Configured with chunk size 500 and skip limit 10 so partial data errors don't halt the batch.",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/ranking-batch-flow.svg", caption: "Ranking pipeline — Kafka events update real-time Redis ZSET, while Spring Batch builds daily/weekly/monthly read models" },
+      { type: "callout", variant: "info", title: "Design Principles", body: [
+        "All flows prioritize 'no data loss even during failures' over 'normal operation.'",
+        "Synchronous processing (order/payment/stock) guarantees atomicity with @Transactional; asynchronous processing (ranking/notifications) is separated via Kafka to block failure propagation.",
+        "All external calls (PG, Kafka) are designed assuming failure, achieving eventual consistency through retry, compensation, and idempotency.",
+      ] },
+
+      // ── 05 ── Problem Solving
+      { type: "section-heading", title: "05 — Problem Solving Record" },
+
+      { type: "text", heading: "1. Preventing Inventory Oversell", body: [
+        "Problem — Check-then-act race condition causes stock to drop below zero under concurrent orders. JMeter tests with 100 concurrent requests showed 30+ successful orders for a product with only 10 in stock.",
+        "Consideration — (1) DB pessimistic lock (SELECT ... FOR UPDATE): guarantees consistency but holds connections, risking HikariCP pool exhaustion. (2) Redisson distributed lock: network round-trip overhead for lock acquire/release, overkill for simple decrements. (3) Redis Lua script: atomicity guaranteed via single-threaded execution, single network round-trip.",
+        "Decision — Redis Lua script atomically checks and decrements stock. GET → compare → DECRBY executes without interruption, structurally eliminating race conditions.",
+        "Result — Achieved 0 oversells in 100 concurrent request tests. Stock controlled at Redis level, securing connection pool stability without DB load.",
+      ] },
+
+      { type: "text", heading: "2. Preventing Duplicate Coupon Usage", body: [
+        "Problem — When the same user simultaneously sends multiple order requests with the same coupon, application-level checks (findByUserIdAndCouponId) read 'unused' for both requests, causing duplicate usage.",
+        "Consideration — (1) DB Unique constraint (user_id + coupon_id): guarantees consistency but requires DB transaction to verify. (2) Redis Set (SADD): atomic duplicate check without DB access. (3) Application-level synchronized: only valid on single instance, not applicable in distributed environments.",
+        "Decision — Execute SADD coupon:{couponId}:users {userId} on Redis Set. Return value 1 means first use (success), 0 means already used (reject). As an atomic operation, exactly 1 succeeds even under concurrent requests.",
+        "Result — Duplicate attempts immediately rejected at Redis level, eliminating unnecessary DB transactions and reducing coupon check response time to sub-millisecond.",
+      ] },
+
+      { type: "text", heading: "3. Payment Failure Recovery (Compensating Transaction)", body: [
+        "Problem — PG response timeout (>3s) or network error leaves payment result unknown. Stock is already decremented at this point, requiring rollback on confirmed payment failure.",
+        "Consideration — (1) Immediate retry: meaningless during PG outages. (2) Scheduler-based re-query: stable as it can verify after PG recovery. (3) Manual user verification: worst UX.",
+        "Decision — Save payment status as PENDING → scheduler re-queries PG API every 30 seconds → on failure confirmation, execute compensating transaction. Compensating transaction uses @Transactional(propagation = REQUIRES_NEW) for independent commit.",
+        "Result — System automatically resolves uncertain payment states. Even if compensating transaction fails, it doesn't affect the original transaction and retries on next polling cycle.",
+      ] },
+
+      { type: "text", heading: "4. Preventing Event Loss (Outbox Pattern)", body: [
+        "Problem — Using @TransactionalEventListener to publish to Kafka after transaction commit means commit success → Kafka publish failure (network error, broker down) results in lost events. Order completes but ranking/notification updates are missed.",
+        "Consideration — (1) @TransactionalEventListener: transaction commit and event publishing aren't atomic. (2) Outbox pattern: stores events in DB for atomicity, low infrastructure cost. (3) CDC (Debezium): auto-publishes via DB binlog detection but high infrastructure complexity.",
+        "Decision — Applied Outbox pattern. Business logic and Outbox event save execute within the same @Transactional, making a 'committed but no event' state impossible. Separate scheduler polls and publishes to Kafka, with FAILED status and alerting after 3 retry failures.",
+        "Result — Events preserved in DB during Kafka outages, enabling re-publishing after recovery. Implementable without additional infrastructure compared to CDC, suitable for project scale.",
+      ] },
+
+      { type: "text", heading: "5. First-Come-First-Served Traffic Handling", body: [
+        "Problem — Hundreds of concurrent requests at event open each hold a DB connection, exhausting the HikariCP pool and causing the entire service to become unresponsive.",
+        "Consideration — (1) DB queue table: ultimately concentrates load on DB, no fundamental solution. (2) Redis List: in-memory processing distributes DB load, LPUSH/RPOP guarantees ordering. (3) Redis Stream: rich features (Consumer Groups, ACK) but overkill for simple first-come-first-served.",
+        "Decision — Queue requests via Redis List (LPUSH/RPOP) with Consumer processing sequentially. Lua script atomically handles stock check and queue entry, blocking requests beyond available stock from entering the queue entirely.",
+        "Result — DB connection usage limited to a single Consumer, structurally preventing pool exhaustion. Processing order guaranteed with first-come-first-served logic and zero overselling.",
+      ] },
+
+      { type: "text", heading: "6. Real-time Ranking Design", body: [
+        "Problem — Querying sales-based real-time ranking via DB (SELECT COUNT(*) ... GROUP BY product_id ORDER BY count DESC) causes linearly increasing response times as data grows.",
+        "Consideration — (1) DB aggregate query: even with indexes, GROUP BY + ORDER BY creates temp tables causing degradation. (2) Redis Sorted Set: O(log N) insert, O(log N + M) range query — consistent performance regardless of data scale. (3) Cache + batch refresh: insufficient real-time capability.",
+        "Decision — On each sales event from Kafka Consumer, increment score with ZINCRBY ranking:daily {productId} 1, query Top-10 instantly with ZREVRANGE ranking:daily 0 9. Accurate daily aggregation handled separately by Spring Batch in a hybrid structure.",
+        "Result — Real-time ranking query response maintained at O(log N) level, with Spring Batch complementing daily accuracy. Real-time responsiveness and accuracy tradeoff resolved at the design stage.",
+      ] },
+
+      // ── 06 ── Code Review & Testing
+      { type: "section-heading", title: "06 — Code Review & Testing Strategy" },
+      { type: "text", heading: "Mentor Code Review Integration", body: [
+        "Submitted PRs weekly and received mentor code reviews. Key feedback: (1) Separate domain logic from service layer — refactored OrderService's price calculation, discount application, and stock check into Order entity and StockService. (2) Specific exception handling — defined domain exceptions like InsufficientStockException and DuplicateCouponException instead of RuntimeException. (3) Testability — abstracted external dependencies (Redis, Kafka) behind interfaces for Mock injection in unit tests.",
+      ] },
+      { type: "text", heading: "Testing Strategy", body: [
+        "Unit tests: Domain logic (price calculation, discount application, state transitions) verified with pure JUnit without external dependencies. Consistent given-when-then pattern applied.",
+        "Integration tests: @SpringBootTest + Testcontainers with actual Redis/MySQL for concurrency scenario verification. ExecutorService with 100 threads for concurrent oversell and duplicate usage tests.",
+        "API tests: MockMvc for Controller layer request/response structure, HTTP status codes, and error response format verification.",
+      ] },
+      { type: "code", title: "Concurrency Test — Oversell Verification", language: "java", code: "@Test\nvoid concurrent_100_orders_should_not_oversell() throws Exception {\n    // given\n    stockService.setStock(productId, 10);  // 10 in stock\n    int threadCount = 100;\n    ExecutorService executor = Executors.newFixedThreadPool(32);\n    CountDownLatch latch = new CountDownLatch(threadCount);\n\n    // when\n    for (int i = 0; i < threadCount; i++) {\n        executor.submit(() -> {\n            try {\n                orderFacade.placeOrder(new OrderCommand(productId, 1));\n            } catch (InsufficientStockException ignored) {\n            } finally {\n                latch.countDown();\n            }\n        });\n    }\n    latch.await();\n\n    // then\n    long successCount = orderRepository.countByProductId(productId);\n    assertThat(successCount).isEqualTo(10);\n    assertThat(stockService.getStock(productId)).isZero();\n}" },
+
+      // ── 07 ── Key Achievements
+      { type: "section-heading", title: "07 — Key Achievements" },
+      { type: "text", heading: "Concurrency Control Design Competency", body: [
+        "Achieved 0 oversells in 100 concurrent requests using Redis Lua scripts, with hands-on comparison and selection among DB pessimistic lock / Redisson distributed lock / Lua script tradeoffs (consistency, performance, connection holding) based on actual measurements.",
+      ] },
+      { type: "text", heading: "Event Architecture and Data Consistency", body: [
+        "Designed Transactional Outbox pattern guaranteeing atomicity of 'transaction commit + event publishing,' enabling lossless event re-publishing even during Kafka outages. Gained understanding of @TransactionalEventListener vs Outbox vs CDC pros/cons for project-appropriate selection.",
+      ] },
+      { type: "text", heading: "Failure-Scenario-Driven Design", body: [
+        "Applied 'design assuming failure' across all external calls: PG timeout → PENDING → scheduler re-query → compensating transaction, Kafka down → Outbox preservation → re-publish after recovery. Internalized the mindset of designing failure/duplication/latency scenarios before success cases.",
+      ] },
+      { type: "text", heading: "Real-time + Batch Hybrid Architecture", body: [
+        "Combined Redis Sorted Set (real-time ranking) + Spring Batch (accurate daily aggregation) to resolve the real-time vs accuracy tradeoff at the design level.",
+      ] },
+
+      // ── 08 ── Learning Journey
+      { type: "section-heading", title: "08 — 10-Week Learning Journey" },
+      { type: "text", body: [
+        "Deep-dived into one core topic each week for 10 weeks, repeating the cycle of requirements analysis → design documentation → implementation → PR submission → mentor code review → technical blog documentation.",
+      ] },
+
+      { type: "text", heading: "Week 1 — TDD / Auth / Membership", body: [
+        "Scope — Implemented signup, header-based authentication, current-user lookup, and password-change APIs using E2E tests as the acceptance criteria. `UserV1Controller` handles HTTP contracts and headers, while `UserService` owns signup/auth/password-change transaction boundaries.",
+        "Domain rules — Extracted `LoginIdValidator`, `EmailValidator`, `BirthDateValidator`, `PasswordPolicyValidator`, and `NameMasker` so each policy could be tested independently.",
+        "Verification — Covered signup success, duplicate loginId, auth failure, password policy violation, current password mismatch, and masked-name response through unit and E2E tests.",
+        "[Pull Request #37](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/37)",
+        "[Technical Blog — TDD](https://joodev-sandy.vercel.app/blog/tdd)",
+      ] },
+      { type: "code", title: "Week 1 Auth and Signup Flow", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant API as UserV1Controller\n    participant Service as UserService\n    participant Policy as PasswordPolicyValidator\n    participant DB as UserRepository\n\n    Client->>API: POST /api/v1/users/register\n    API->>Service: register(request)\n    Service->>Policy: validate(password)\n    Service->>DB: existsByLoginId(loginId)\n    alt duplicate\n        DB-->>Service: true\n        Service-->>API: CONFLICT\n    else valid\n        Service->>DB: save(encoded user)\n        Service-->>API: UserInfo\n    end\n    API-->>Client: ApiResponse" },
+
+      { type: "text", heading: "Week 2 — CRUD / API Design", body: [
+        "Scope — Documented requirements, policy decisions, sequence diagrams, class diagrams, and ERD before expanding implementation. The goal was to define API behavior and domain responsibilities before adding more code.",
+        "Design decisions — Separated request/response DTOs from entities, placed Repository interfaces in Domain and JPA implementations in Infrastructure, and used a common ErrorType + ApiControllerAdvice rule for validation/auth/header errors.",
+        "Verification — Each PR included completion criteria covering success cases, failure responses, authentication failures, missing headers, and validation errors.",
+        "[Pull Request #76](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/76)",
+        "[Technical Blog — CRUD](https://joodev-sandy.vercel.app/blog/crud)",
+      ] },
+      { type: "point-cards", items: [
+        { title: "API Contract", body: "Controller owns DTO conversion and HTTP status codes; domain decisions stay in Service/Domain." },
+        { title: "Documentation", body: "Requirements, sequence diagrams, class diagrams, and ERD were included in PR context." },
+        { title: "Error Rules", body: "Validation, auth, and missing-header failures follow the shared ErrorType and ControllerAdvice." },
+      ] },
+
+      { type: "text", heading: "Week 3 — Product / Brand / Order", body: [
+        "Scope — Applied the 4-layer package structure (`interfaces / application / domain / infrastructure`) and modeled Brand, Product, Like, and Order domains. Product name, price, and stock quantity rules were pushed closer to entity/value-object code.",
+        "Architecture — Repository interfaces live in Domain while JPA implementations live in Infrastructure. Application Facades compose use cases and own transaction boundaries; Domain Services keep single-domain rules focused.",
+        "Order design — Normalized duplicate product IDs in order requests before stock decrement so the same product would not be decremented multiple times in one request. Mentor review surfaced this risk, and the design moved toward request aggregation before stock changes.",
+        "[Pull Request #129](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/129)",
+        "[Technical Blog — Product·Brand·Order](https://joodev-sandy.vercel.app/blog/4)",
+      ] },
+      { type: "code", title: "Week 3 4-Layer Responsibility Map", language: "text", code: "interfaces\n  - ProductV1Controller, OrderV1Controller, DTO\napplication\n  - ProductFacade, OrderFacade: use case orchestration + transaction boundary\ndomain\n  - Brand, Product, Order, OrderItem, Like\n  - ProductService, OrderService, Repository interfaces\ninfrastructure\n  - JpaRepository, RepositoryImpl, JPA converters" },
+
+      { type: "text", heading: "Week 4 — Likes / Coupons", body: [
+        "Scope — Worked on order transactions, like/coupon concurrency control, and stock consistency. `LikeFacade` locks the product row, then updates likeCount and Like state in one transaction so `likes_desc` sorting stays consistent with the actual like state.",
+        "Coupon design — Duplicate coupon usage cannot rely only on application-level read-then-write checks. The important design point was preventing duplicates at insertion time through Redis Set or DB unique constraints.",
+        "Verification — Tested like count not going negative or double-incrementing under concurrent requests, coupon double-use prevention, and cleanup of stock/coupon state on order failure.",
+        "[Pull Request #164](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/164)",
+        "[Technical Blog — Likes·Coupons](https://joodev-sandy.vercel.app/blog/like)",
+      ] },
+      { type: "code", title: "Week 4 Like Consistency Flow", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant Facade as LikeFacade\n    participant ProductRepo\n    participant LikeRepo\n    participant DB\n\n    Client->>Facade: POST /likes(productId)\n    Facade->>ProductRepo: getProductWithLock(productId)\n    ProductRepo->>DB: SELECT ... FOR UPDATE\n    Facade->>LikeRepo: existsByUserIdAndProductId(userId, productId)\n    alt not liked\n        Facade->>Facade: product.increaseLikeCount()\n        Facade->>LikeRepo: save(like)\n    else already liked\n        Facade-->>Client: idempotent success\n    end" },
+
+      { type: "text", heading: "Week 5 — Redis Cache", body: [
+        "Scope — Improved product-list query performance, like-count sorting, and Redis Cache integration. Added ProductFacade, Product API DTOs/controllers, paging, brand filter, and sort modes (`latest`, `likes_desc`).",
+        "Performance decision — Counting likes via aggregation becomes expensive when brand filtering and like sorting are combined. Denormalized `Product.likeCount` and added indexes on `brandId` and `likeCount` to reduce read-path sorting cost.",
+        "Cache design — Configured Redis CacheManager with 5-minute TTL and JSON serialization. Product details use `@Cacheable`, while like/unlike write paths evict the affected product cache via `@CacheEvict`.",
+        "Verification — Product E2E tests covered cache hit/miss, cache invalidation after like changes, sort parameter validation, filtering, and pagination.",
+        "[Pull Request #216](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/216)",
+        "[Technical Blog — Redis Cache](https://joodev-sandy.vercel.app/blog/post-mmswqd6z)",
+      ] },
+      { type: "code", title: "Week 5 Product Cache Flow", language: "mermaid", code: "sequenceDiagram\n    participant Client\n    participant Controller as ProductV1Controller\n    participant Facade as ProductFacade\n    participant Redis as Redis Cache\n    participant Service as ProductService\n    participant DB\n\n    Client->>Controller: GET /api/v1/products/{id}\n    Controller->>Facade: getProduct(productId)\n    Facade->>Redis: cache lookup\n    alt cache hit\n        Redis-->>Facade: ProductInfo\n    else cache miss\n        Facade->>Service: getProductById(productId)\n        Service->>DB: SELECT product\n        DB-->>Service: Product\n        Facade->>Redis: cache store (TTL 5m)\n    end\n    Facade-->>Controller: ProductInfo" },
+
+      { type: "text", heading: "Week 6 — Payment / PG Integration", body: [
+        "Scope — Built a Failure-Ready payment structure that absorbs PG latency, outages, and missing responses as internal state transitions. Responsibilities were split across PaymentFacade, PaymentTransactionService, PaymentService, PG Client, Callback API, and Recovery Scheduler.",
+        "State model — When the system cannot immediately confirm the PG result, it stores payment as PENDING. Callback or scheduler re-query later resolves the final state. Duplicate callbacks for non-PENDING payments are treated idempotently.",
+        "Recovery design — PaymentRecoveryScheduler periodically queries old PENDING payments. If `pgTransactionId` exists, it re-queries PG; if not and the payment is abandoned, it runs compensation: fail payment, cancel order, restore stock/coupon state.",
+        "Verification — Covered PG timeout, callback success/failure, duplicate callback, scheduler re-query, abandoned payments, and continuation after per-payment recovery errors.",
+        "[Pull Request #237](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/237)",
+        "[Technical Blog — Payment·PG Integration](https://joodev-sandy.vercel.app/blog/post-mmsvj2bz)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/payment-recovery-flow.svg", caption: "Week 6 payment recovery — Callback and Scheduler share the same PENDING-centered transition rules" },
+
+      { type: "text", heading: "Week 7 — Kafka / Transactional Outbox", body: [
+        "Scope — Converted synchronous order-coupon-aggregation flow into event-driven architecture. Implementation progressed from ApplicationEvent boundaries to Outbox storage, Relay, Kafka Producer/Consumer, and EventHandled idempotency storage.",
+        "Core decision — The business transaction does not directly publish Kafka. It stores an Outbox event in the same DB transaction, preventing the dangerous case where order commit succeeds but Kafka publish fails.",
+        "Consumer reliability — Assumed Kafka at-least-once delivery and guarded duplicate consumption with EventHandled. Added producer `acks=all`, `enable.idempotence=true`, and consumer manual ack so offset commits happen after successful processing.",
+        "Extension — First-come-first-served coupon issue was moved to request storage → Outbox → Kafka → CouponConsumer → polling result, concentrating concurrency control in one consumer flow.",
+        "[Pull Request #293](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/293)",
+        "[Technical Blog — Kafka](https://joodev-sandy.vercel.app/blog/kafka)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/outbox-kafka-flow.svg", caption: "Week 7 Outbox/Kafka — transaction boundary, message consistency, and idempotent consumption are separated" },
+
+      { type: "text", heading: "Week 8 — Redis Queue / Lua", body: [
+        "Scope — Implemented a Redis Sorted Set order queue to protect the order API during burst traffic. `ZADD NX` prevents duplicate entry, timestamp scores preserve FIFO, and `ZRANK` provides O(log N) position lookup.",
+        "API flow — Users enter with `POST /queue/enter`, poll `GET /queue/position`, and receive either WAITING or READY + token. `POST /orders` requires the entry token, while cancel endpoints are excluded from token validation.",
+        "Throughput control — OrderQueueScheduler runs every second with fixedDelay and dequeues only BATCH_SIZE users. This separates traffic intake from DB order execution and prevents HikariCP exhaustion.",
+        "Lua improvement — A Java loop with `ZPOPMIN` then `SET token` can lose a user if the server crashes between commands. Lua executes `ZPOPMIN N + SET token EX` atomically inside Redis, removing that structural failure mode.",
+        "Verification — Tested 100 to 2,000 concurrent entries, BATCH_SIZE throughput limits, token TTL expiry returning 403, and validate/consume split where order failure keeps the token for retry.",
+        "[Pull Request #335](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/335)",
+        "[Technical Blog — Redis Queue·Lua](https://joodev-sandy.vercel.app/blog/lua)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/queue-token-flow.svg", caption: "Week 8 queue — Queue(buffer), Scheduler(valve), and Token(gate) control DB entry rate" },
+
+      { type: "text", heading: "Week 9 — Kafka Ranking / Redis Sorted Set", body: [
+        "Scope — Connected the Week 7 user-action event pipeline to Redis ZSET real-time product ranking. Kafka Consumer receives view/like/order events, RankingScorePolicy computes scores, and RankingRedisRepository updates ZSET.",
+        "Why ZINCRBY — ZADD overwrite requires `ZSCORE → calculate → ZADD`, which can lose updates under concurrent events. ZINCRBY performs score increment as a single Redis command.",
+        "Score policy — Ranking is not raw count. VIEW is weak interest, LIKE is explicit preference, and ORDER is purchase conversion, each with different weights so high view count alone does not dominate ranking.",
+        "Daily key and carry-over — Used `rank:all:yyyyMMdd` keys with TTL for daily freshness. To reduce midnight cold start, copied part of yesterday's score into today via weighted `ZUNIONSTORE`.",
+        "API — `GET /api/v1/rankings` returns Top-N, and `GET /api/v1/rankings/products/{productId}` returns rank + score by composing Redis ranking data with product details.",
+        "[Pull Request #373](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/373)",
+        "[Technical Blog — Kafka Ranking·Redis ZSet](https://joodev-sandy.vercel.app/blog/kafka-redis-zset)",
+      ] },
+      { type: "code", title: "Week 9 Ranking Event Pipeline", language: "text", code: "Kafka UserActionEvent\n  -> RankingKafkaConsumer\n  -> RankingScorePolicy\n       VIEW  = weak interest signal\n       LIKE  = explicit preference signal\n       ORDER = purchase conversion signal\n  -> Redis ZSET ZINCRBY rank:all:yyyyMMdd productId score\n  -> Ranking API ZREVRANGE / ZREVRANK / ZSCORE" },
+
+      { type: "text", heading: "Week 10 — Spring Batch / Metrics / Ranking Aggregation", body: [
+        "Scope — Extended the Redis real-time ranking system into a full ranking data pipeline: daily snapshots, weekly/monthly aggregation, materialized read tables, and period-based API lookup.",
+        "Daily metrics snapshot — Stores product metrics by date. Same-date re-execution deletes existing metric_date rows and saves fresh rows, making the job rerunnable.",
+        "Rank aggregation job — Spring Batch Reader → Processor → Writer reads daily metrics, calculates weekly/monthly scores, and stores TOP-N rows into read-model tables such as `mv_product_rank_weekly` and `mv_product_rank_monthly`.",
+        "Operational learning — PR review surfaced chunk writer rank-offset duplication risk when each chunk starts from rank 0, requiring a cumulative counter. It also highlighted persistence-context issues after bulk DELETE, where `@Modifying(clearAutomatically = true, flushAutomatically = true)` may be needed for rerun safety.",
+        "API — TODAY rankings can come from Redis, while WEEK/MONTH rankings come from batch-built read models under the same period-based API contract.",
+        "[Pull Request #420](https://github.com/Loopers-dev-lab/loop-pack-be-l2-vol3-java/pull/420)",
+        "[Technical Blog — Spring Batch·Metrics](https://joodev-sandy.vercel.app/blog/post-mo8jxik7)",
+      ] },
+      { type: "image", url: "/images/projects/ecommerce-backend/ranking-batch-flow.svg", caption: "Week 10 ranking batch — real-time Redis ranking and daily/weekly/monthly read models are selected by API period" },
     ],
   },
 

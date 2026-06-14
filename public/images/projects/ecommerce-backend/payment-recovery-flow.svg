@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="560" viewBox="0 0 980 560" role="img" aria-labelledby="title desc">
+  <title id="title">Payment recovery flow</title>
+  <desc id="desc">Payment timeout stores PENDING, callback or scheduler resolves state, compensation cancels order and restores stock.</desc>
+  <defs>
+    <style>.bg{fill:#fbfaf7}.box{fill:#fff;stroke:#d8d3c8;stroke-width:1.5}.warn{fill:#fff0e6;stroke:#d69867}.ok{fill:#e8f3ef;stroke:#79a68f}.data{fill:#eef2fb;stroke:#7a91c8}.text{font-family:Inter,Arial,sans-serif;fill:#222;font-size:15px}.small{font-size:12px;fill:#555}.title{font-size:24px;font-weight:700}.arrow{stroke:#6f6a60;stroke-width:1.7;fill:none;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#6f6a60"/></marker>
+  </defs>
+  <rect class="bg" width="980" height="560"/>
+  <text class="text title" x="40" y="48">Payment Failure-Ready Flow</text>
+  <text class="text small" x="42" y="74">External PG failures are absorbed as state transitions instead of breaking the order system.</text>
+  <rect class="box" x="70" y="130" width="150" height="70" rx="12"/>
+  <text class="text" x="104" y="160">Order</text>
+  <text class="small text" x="94" y="182">stock reserved</text>
+  <rect class="warn" x="285" y="130" width="155" height="70" rx="12"/>
+  <text class="text" x="324" y="160">PG Call</text>
+  <text class="small text" x="312" y="182">timeout / unknown</text>
+  <rect class="data" x="505" y="130" width="155" height="70" rx="12"/>
+  <text class="text" x="535" y="160">Payment</text>
+  <text class="small text" x="540" y="182">status=PENDING</text>
+  <path class="arrow" d="M220 165 H280"/>
+  <path class="arrow" d="M440 165 H500"/>
+
+  <rect class="ok" x="165" y="305" width="185" height="84" rx="12"/>
+  <text class="text" x="204" y="336">PG Callback</text>
+  <text class="small text" x="197" y="360">idempotent state check</text>
+  <rect class="ok" x="430" y="305" width="185" height="84" rx="12"/>
+  <text class="text" x="465" y="336">Recovery Scheduler</text>
+  <text class="small text" x="461" y="360">query pending payments</text>
+  <rect class="warn" x="695" y="305" width="185" height="84" rx="12"/>
+  <text class="text" x="724" y="336">Compensation</text>
+  <text class="small text" x="735" y="360">cancel order + restore stock</text>
+  <path class="arrow" d="M582 200 C578 260 258 246 258 300"/>
+  <path class="arrow" d="M582 200 C582 252 522 250 522 300"/>
+  <path class="arrow" d="M350 347 H425"/>
+  <path class="arrow" d="M615 347 H690"/>
+  <rect class="box" x="170" y="455" width="640" height="48" rx="12"/>
+  <text class="text" x="205" y="485">Rule: only PENDING can transition. Non-PENDING callback is treated as duplicate and ignored.</text>
+</svg>
