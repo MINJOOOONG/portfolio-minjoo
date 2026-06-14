@@ -1203,8 +1203,10 @@
 }
 
 .pj-modal__close {
-  width: 30px;
-  height: 30px;
+  position: relative;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1215,7 +1217,7 @@
   color: var(--foreground);
   opacity: 0.45;
   transition: opacity 0.15s ease, background 0.15s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .pj-modal__close:hover {

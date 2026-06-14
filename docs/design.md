@@ -10,7 +10,7 @@
 - Three.js 3D 와이어프레임/파티클로 깊이감 부여 (연한 회색, 라이트 모드)
 
 ---
-
+![img.png](img.png)
 ## Color Palette
 
 ### Core Greys

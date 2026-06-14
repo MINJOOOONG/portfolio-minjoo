@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Github, ExternalLink, BookOpen } from "lucide-react";
+import { Github, ExternalLink, BookOpen, LinkIcon } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
+import { projectSlug } from "@/lib/portfolio-project-content";
 import { MediaPreview, ProjectMediaGallery, ProjectAttachmentList } from "./media-preview";
 import { ContentBlockRenderer } from "./content-block-renderer";
 import {
@@ -35,6 +36,7 @@ export function ProjectModal({
   hasNext: boolean;
 }) {
   const { lang } = useLanguage();
+  const [copied, setCopied] = useState(false);
   const num = String(index + 1).padStart(2, "0");
   const blocks = buildCaseStudy(project, lang);
   const repeatedCardImageUrl = project.media?.type === "image" ? project.media.url : undefined;
@@ -50,6 +52,14 @@ export function ProjectModal({
   const modalTeamSize = t(lang, project.teamSize, project.teamSizeEn);
 
   const techStackList = normalizeTechStack(project.techStack);
+  const projectPath = `/projects/${projectSlug(project.title)}`;
+
+  const copyProjectLink = async () => {
+    const origin = window.location.origin;
+    await navigator.clipboard.writeText(`${origin}${projectPath}`);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1500);
+  };
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -186,16 +196,63 @@ export function ProjectModal({
             </span>
           </div>
 
-          {/* 3. 링크 그룹 (2줄: GitHub · Live) */}
-          {(project.githubUrl || project.liveUrl || project.blogUrl) && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 24,
-                marginTop: 10,
-              }}
-            >
+          {/* 3. 링크 그룹 (2줄: Project · GitHub · Live) */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 18,
+              marginTop: 10,
+            }}
+          >
+              <a
+                href={projectPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  lineHeight: 1,
+                  color: "var(--foreground)",
+                  textDecoration: "none",
+                  borderBottom: "1px solid transparent",
+                  transition: "border-color 0.15s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--foreground)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+              >
+                <ExternalLink size={15} style={{ display: "block", flexShrink: 0, opacity: 0.5 }} />
+                {locale["projects.detail"][lang]} ↗
+              </a>
+              <button
+                type="button"
+                onClick={copyProjectLink}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  lineHeight: 1,
+                  color: "var(--foreground)",
+                  textDecoration: "none",
+                  border: 0,
+                  borderBottom: "1px solid transparent",
+                  background: "transparent",
+                  padding: 0,
+                  cursor: "pointer",
+                  transition: "border-color 0.15s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--foreground)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; }}
+              >
+                <LinkIcon size={15} style={{ display: "block", flexShrink: 0, opacity: 0.5 }} />
+                {copied ? locale["projects.copied"][lang] : locale["projects.copyLink"][lang]}
+              </button>
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
@@ -268,8 +325,7 @@ export function ProjectModal({
                   Blog ↗
                 </a>
               )}
-            </div>
-          )}
+          </div>
 
           {/* 4. 소개 문단 */}
           {modalSummary && (

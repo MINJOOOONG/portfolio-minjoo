@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, memo, useCallback } from "react";
+import { useState, useEffect, memo, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
@@ -20,10 +20,19 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     index: number;
   } | null>(null);
   const [displayItems] = useState(items);
-  const viewItems = displayItems.filter((item) => !isArticleProject(item));
+  const viewItems = useMemo(
+    () => displayItems.filter((item) => !isArticleProject(item)),
+    [displayItems]
+  );
 
-  const projectItems = viewItems.filter((item) => item.category !== "activity");
-  const activityItems = viewItems.filter((item) => item.category === "activity");
+  const projectItems = useMemo(
+    () => viewItems.filter((item) => item.category !== "activity"),
+    [viewItems]
+  );
+  const activityItems = useMemo(
+    () => viewItems.filter((item) => item.category === "activity"),
+    [viewItems]
+  );
 
   /* ── URL 해시로 프로젝트 모달 자동 오픈 ── */
   useEffect(() => {
@@ -72,6 +81,13 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     },
     [activityItems, projectItems, router]
   );
+
+  const handleCloseModal = useCallback(() => {
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+    setSelectedModal(null);
+  }, []);
 
   if (viewItems.length === 0) return null;
 
@@ -157,7 +173,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
             key={selectedProject.title}
             project={selectedProject}
             index={selectedModal.index}
-            onClose={() => setSelectedModal(null)}
+            onClose={handleCloseModal}
             onPrev={() =>
               setSelectedModal((prev) =>
                 prev && prev.index > 0

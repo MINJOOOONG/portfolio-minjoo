@@ -7,6 +7,23 @@ import { PdfViewer } from "./media-preview";
 import { DEFAULT_PDF_RATIO } from "./utils";
 import type { ContentBlock } from "./types";
 
+/** Parse markdown-style links [text](url) within a plain string and return React nodes */
+function parseInlineLinks(text: string): React.ReactNode {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => {
+    const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (m) {
+      return (
+        <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-foreground/90 hover:text-foreground transition-colors">
+          {m[1]}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 function CodeToggle({ title, code }: { title: string; code: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -93,14 +110,14 @@ export function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                         {block.body.length > 1 && (
                           <span className="text-foreground/15 shrink-0 mt-0.5">▸</span>
                         )}
-                        <span>{line}</span>
+                        <span>{parseInlineLinks(line)}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="pj-content-paragraphs">
                     {block.body.map((line, j) => (
-                      <p key={j}>{line}</p>
+                      <p key={j}>{parseInlineLinks(line)}</p>
                     ))}
                   </div>
                 )}
@@ -271,7 +288,7 @@ export function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 )}
                 <ul className="pj-callout__body">
                   {block.body.map((line, j) => (
-                    <li key={j}>{line}</li>
+                    <li key={j}>{parseInlineLinks(line)}</li>
                   ))}
                 </ul>
               </motion.div>
@@ -308,7 +325,7 @@ export function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 {block.items.map((item, j) => (
                   <div key={j} className="pj-point-cards__card">
                     <span className="pj-point-cards__title">{item.title}</span>
-                    <span className="pj-point-cards__body">{item.body}</span>
+                    <span className="pj-point-cards__body">{parseInlineLinks(item.body)}</span>
                   </div>
                 ))}
               </motion.div>
@@ -338,7 +355,7 @@ export function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 <h4 className="pj-feature-block__title">{block.title}</h4>
                 <div className="pj-feature-block__body">
                   {block.body.map((p, j) => (
-                    <p key={j}>{p}</p>
+                    <p key={j}>{parseInlineLinks(p)}</p>
                   ))}
                 </div>
                 {block.code && (
