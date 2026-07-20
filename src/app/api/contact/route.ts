@@ -9,6 +9,12 @@ const requestCounts = new Map<string, { count: number; resetAt: number }>();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  // Inline cleanup of expired entries (no setInterval needed in serverless)
+  for (const [key, entry] of requestCounts) {
+    if (now >= entry.resetAt) requestCounts.delete(key);
+  }
+
   const entry = requestCounts.get(ip);
 
   if (!entry || now >= entry.resetAt) {
@@ -19,14 +25,6 @@ function isRateLimited(ip: string): boolean {
   entry.count += 1;
   return entry.count > RATE_LIMIT_MAX;
 }
-
-// Periodically clean up expired entries to prevent memory leaks
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of requestCounts) {
-    if (now >= entry.resetAt) requestCounts.delete(ip);
-  }
-}, RATE_LIMIT_WINDOW_MS * 2);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
