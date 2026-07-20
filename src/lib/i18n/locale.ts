@@ -51,6 +51,8 @@ const locale = {
 
   // ── portfolio-ask-bar.tsx ──
   "ask.openSearch": { ko: "AI 검색 열기", en: "Open AI Search" },
+  "ask.placeholder": { ko: "포트폴리오에 대해 질문하세요…", en: "Ask about my work…" },
+  "ask.button": { ko: "AI 질문", en: "Ask AI" },
   "ask.error": { ko: "오류가 발생했습니다.", en: "An error occurred." },
   "ask.connectionError": {
     ko: "AI 어시스턴트에 연결할 수 없습니다.",

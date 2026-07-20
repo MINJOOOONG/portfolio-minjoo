@@ -66,7 +66,7 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
     } finally {
       setLoading(false);
     }
-  }, [query, loading]);
+  }, [query, loading, lang]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSubmit();
@@ -83,7 +83,7 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
           aria-label={locale["ask.openSearch"][lang]}
         >
           <Search className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Ask AI</span>
+          <span className="hidden sm:inline">{locale["ask.button"][lang]}</span>
         </button>
       )}
 
@@ -104,7 +104,7 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about my work…"
+              placeholder={locale["ask.placeholder"][lang]}
               className="flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground/60"
             />
             {loading ? (
