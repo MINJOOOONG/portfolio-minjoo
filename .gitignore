@@ -25,6 +25,9 @@
 *.pem
 /images/
 
+# IDE
+.idea/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
