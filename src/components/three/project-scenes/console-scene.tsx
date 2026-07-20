@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useWireframeMaterial, useLineMaterial, useReducedMotion, floatY } from "./shared";
@@ -12,16 +12,18 @@ export default function ConsoleScene() {
   const lineMat = useLineMaterial();
   const reduced = useReducedMotion();
 
-  // UI element lines inside monitor
-  const uiLines = useMemo(() => {
+  // UI element lines inside monitor — useRef to avoid impure Math.random in useMemo
+  const uiLinesRef = useRef<Float32Array | null>(null);
+  if (!uiLinesRef.current) {
     const pts: number[] = [];
     for (let i = 0; i < 4; i++) {
       const y = 0.25 - i * 0.15;
       const w = 0.3 + Math.random() * 0.4;
       pts.push(-0.45, y, 0.26, -0.45 + w, y, 0.26);
     }
-    return new Float32Array(pts);
-  }, []);
+    uiLinesRef.current = new Float32Array(pts);
+  }
+  const uiLines = uiLinesRef.current;
 
   useFrame(({ clock }) => {
     if (!groupRef.current || reduced) return;
