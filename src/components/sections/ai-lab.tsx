@@ -579,6 +579,41 @@ function ToolCard({ tool, lang }: { tool: AITool; lang: Lang }) {
           <ToolList title={locale["aiLab.strengths"][lang]} items={lang === "en" ? tool.strengthsEn : tool.strengths} marker="+" />
           <ToolList title={locale["aiLab.limitations"][lang]} items={lang === "en" ? tool.limitationsEn : tool.limitations} marker="-" />
           <ToolDetail title={locale["aiLab.myReview"][lang]} body={lang === "en" ? tool.reviewEn : tool.review} strong />
+          {tool.modelNotes && tool.modelNotes.length > 0 && (
+            <div>
+              <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
+                {lang === "en" ? "Model Lineup" : "모델 라인업"}
+              </h5>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <tbody>
+                    {tool.modelNotes.map((m) => (
+                      <tr key={m.name} className="border-b border-[var(--notion-hairline)] last:border-b-0">
+                        <td className="py-1.5 pr-3 font-medium text-[var(--notion-ink)] whitespace-nowrap">{m.name}</td>
+                        <td className="py-1.5 pr-3 text-[var(--notion-stone)] whitespace-nowrap">{lang === "en" ? m.tierEn : m.tier}</td>
+                        <td className="py-1.5 text-[var(--notion-slate)]">{lang === "en" ? m.descEn : m.desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {tool.modelUpdates && tool.modelUpdates.length > 0 && (
+            <div>
+              <h5 className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--notion-stone)] mb-2">
+                {lang === "en" ? "Recent Updates" : "최근 업데이트"}
+              </h5>
+              <ul className="space-y-1.5">
+                {tool.modelUpdates.map((u, i) => (
+                  <li key={i} className="text-xs leading-relaxed text-[var(--notion-slate)] flex gap-3">
+                    <span className="text-[var(--notion-stone)] shrink-0 font-medium">{u.date}</span>
+                    <span>{lang === "en" ? u.textEn : u.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </article>
