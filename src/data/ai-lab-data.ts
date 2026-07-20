@@ -190,6 +190,10 @@ export const overviewNotes: OverviewNote[] = [
     heading: "익숙한 방식만 반복하면 위험하다",
     body: "빠르게 변하는 환경에서 익숙한 패턴에 머무르는 건 오히려 위험하다. 새로운 자극을 찾고, 자기 방식으로 해석하고, 남의 결론을 재활용하지 않고 직접 생각하는 사람이 강해진다. 이 랩은 바로 그 연습장이다 — 배운 것을 처리해서 내 언어와 프레임워크로 바꾸는 공간.",
   },
+  {
+    heading: "AI 모델이 국가 안보의 대상이 되었다",
+    body: "2026년 미국 정부가 Claude Fable 5에 수출 규제를 적용하고, EU AI Act가 본격 시행되면서 AI 모델은 더 이상 기술 제품이 아니라 국가 안보와 규제의 대상이 되었다. 프론티어 모델의 성능이 올라갈수록 누가 접근할 수 있는지, 어떤 기준으로 통제할지가 핵심 이슈가 된다. 기술을 잘 쓰는 것만큼 기술의 접근성과 규제 흐름을 이해하는 게 중요해졌다.",
+  },
 ];
 
 export const overviewIntroEn = [
@@ -561,6 +565,12 @@ export const glossaryTerms: GlossaryTerm[] = [
   { term: "Perplexity", definition: "언어 모델이 텍스트를 얼마나 잘 예측하는지 측정하는 지표. 낮을수록 좋은 성능을 의미합니다.", definitionEn: "A metric measuring how well a language model predicts text. Lower values indicate better performance.", category: "Evaluation" },
   { term: "BLEU / ROUGE", definition: "생성된 텍스트와 참조 텍스트 간의 유사도를 측정하는 자동 평가 지표입니다.", definitionEn: "Automated evaluation metrics that measure similarity between generated text and reference text.", category: "Evaluation" },
   { term: "Latency", definition: "AI 모델이 요청을 받고 응답을 생성하기까지 걸리는 시간입니다.", definitionEn: "The time it takes for an AI model to receive a request and generate a response.", category: "Evaluation" },
+
+  // ── 2026 추가 용어 ──
+  { term: "Frontier Model", definition: "현시점에서 가장 높은 성능을 보이는 최전선 AI 모델. Claude Fable 5, GPT-5.6 등이 해당됩니다.", definitionEn: "The most capable AI models at any given time, representing the cutting edge of performance. Examples include Claude Fable 5 and GPT-5.6.", category: "Architecture" },
+  { term: "Export Control (AI)", definition: "국가 안보를 이유로 특정 AI 모델의 해외 접근을 제한하는 정부 규제입니다.", definitionEn: "Government regulations restricting foreign access to specific AI models on national security grounds.", category: "Safety" },
+  { term: "Agentic Workflow", definition: "AI Agent가 계획 수립, 도구 사용, 실행, 검증을 자율적으로 반복하는 작업 흐름입니다.", definitionEn: "A workflow where AI agents autonomously iterate through planning, tool use, execution, and verification.", category: "Technique" },
+  { term: "Responsible Scaling", definition: "AI 모델의 성능이 높아질수록 안전성 평가와 배포 기준을 단계적으로 강화하는 정책입니다.", definitionEn: "A policy of progressively strengthening safety evaluations and deployment standards as AI model capabilities increase.", category: "Safety" },
 ];
 
 /* ── 05. Media Notes (LOCKED — DO NOT MODIFY) ── */
@@ -619,6 +629,20 @@ export const AI_TOOL_FILTERS: AIToolFilter[] = [
   "Automation",
 ];
 
+export interface ModelNote {
+  name: string;
+  tier: string;
+  tierEn: string;
+  desc: string;
+  descEn: string;
+}
+
+export interface ModelUpdate {
+  date: string;
+  text: string;
+  textEn: string;
+}
+
 export interface AITool {
   name: string;
   category: string;
@@ -635,6 +659,8 @@ export interface AITool {
   reviewEn: string;
   tags: string[];
   groups: Exclude<AIToolFilter, "All">[];
+  modelNotes?: ModelNote[];
+  modelUpdates?: ModelUpdate[];
 }
 
 export const aiTools: AITool[] = [
@@ -654,6 +680,17 @@ export const aiTools: AITool[] = [
     reviewEn: 'Claude Code felt more like a pair programming tool that co-designs the development flow than a simple code generator. However, getting good results required clearly stating "what not to change" as well.',
     tags: ["Claude Code", "코딩 에이전트", "리팩터링", "포트폴리오"],
     groups: ["Coding", "Automation"],
+    modelNotes: [
+      { name: "Opus", tier: "최상위", tierEn: "Top-tier", desc: "복잡한 추론, 아키텍처 설계. 느리지만 가장 정확", descEn: "Complex reasoning & architecture design. Slow but most accurate" },
+      { name: "Sonnet", tier: "균형형", tierEn: "Balanced", desc: "일반 코딩/글쓰기 기본 모델. 속도와 품질 균형", descEn: "Default model for coding/writing. Balances speed and quality" },
+      { name: "Haiku", tier: "경량형", tierEn: "Lightweight", desc: "분류, 변환 등 단순 작업. 빠르고 저렴", descEn: "Simple tasks like classification & conversion. Fast and cheap" },
+      { name: "Fable 5", tier: "프론티어", tierEn: "Frontier", desc: "Mythos급 성능의 일반 공개 모델. 2026.7 재배포", descEn: "Mythos-level publicly available model. Re-released July 2026" },
+    ],
+    modelUpdates: [
+      { date: "2026.07", text: "Fable 5 수출 규제 해제 후 재배포, Claude Code에서 사용 가능", textEn: "Fable 5 re-released after export restrictions lifted, available in Claude Code" },
+      { date: "2026.06", text: "Sonnet 5 출시 — 100만 토큰 컨텍스트, 기본 모델로 교체", textEn: "Sonnet 5 launched — 1M token context, replaced as default model" },
+      { date: "2026.06", text: "Fable 5·Mythos 5 출시 후 미국 수출 규제로 일시 중단", textEn: "Fable 5 & Mythos 5 launched then paused due to US export restrictions" },
+    ],
   },
   {
     name: "ChatGPT",
@@ -1259,6 +1296,22 @@ export const aiHistoryTimeline: AIHistoryEvent[] = [
     titleEn: "Agentic Coding and AI Regulation Execution",
     description: "Claude Code, Opus 4, OpenAI o3, MCP 표준화 흐름과 함께 에이전트형 코딩이 확산되고 AI 규제가 단계적으로 시행되기 시작했습니다.",
     descriptionEn: "Claude Code, Opus 4, OpenAI o3, and MCP standardization pushed agentic coding forward while AI regulation began phased enforcement.",
+    category: "regulation",
+  },
+  {
+    year: "2026",
+    title: "프론티어 모델 경쟁과 정부 개입",
+    titleEn: "Frontier Model Race and Government Intervention",
+    description: "Claude Fable 5·Mythos 5, GPT-5.6, Gemini 3.5 Pro 등 프론티어 모델이 연이어 출시되고, 미국 정부가 Fable 5에 수출 규제를 적용하며 AI 모델에 대한 국가 안보 개입이 현실화되었습니다.",
+    descriptionEn: "Frontier models including Claude Fable 5/Mythos 5, GPT-5.6, and Gemini 3.5 Pro launched in rapid succession, while the US government applied export controls to Fable 5, making national security intervention in AI models a reality.",
+    category: "milestone",
+  },
+  {
+    year: "2026",
+    title: "EU AI Act 고위험 시스템 규제 시행",
+    titleEn: "EU AI Act High-Risk System Enforcement Begins",
+    description: "EU AI Act의 고위험 AI 시스템 및 범용 AI 모델에 대한 의무 조항이 2026년 8월부터 본격 시행되며, 위반 시 최대 3,500만 유로 또는 글로벌 매출 7% 과징금이 부과됩니다.",
+    descriptionEn: "The EU AI Act's obligations for high-risk AI systems and general-purpose AI models take full effect from August 2026, with penalties up to €35 million or 7% of global annual turnover.",
     category: "regulation",
   },
 ];
