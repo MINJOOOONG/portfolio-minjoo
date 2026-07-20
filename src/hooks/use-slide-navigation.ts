@@ -129,54 +129,6 @@ export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
     goTo(currentIndex - 1);
   }, [currentIndex, goTo]);
 
-  const goToSectionCard = useCallback(
-    (sectionId: string, cardSelector: string, direction: 1 | -1) => {
-      if (cooldownRef.current) return;
-
-      const section = document.getElementById(sectionId);
-      if (!section) return;
-
-      const cards = Array.from(
-        section.querySelectorAll<HTMLElement>(cardSelector)
-      );
-      if (cards.length < 2) {
-        if (direction > 0) goNext();
-        else goPrev();
-        return;
-      }
-
-      const viewportAnchor = window.scrollY + window.innerHeight * 0.35;
-      const currentCardIndex = cards.reduce((bestIndex, card, index) => {
-        const bestTop =
-          cards[bestIndex].getBoundingClientRect().top + window.scrollY;
-        const cardTop = card.getBoundingClientRect().top + window.scrollY;
-        const bestDistance = Math.abs(bestTop - viewportAnchor);
-        const distance = Math.abs(cardTop - viewportAnchor);
-        return distance < bestDistance ? index : bestIndex;
-      }, 0);
-      const targetCard = cards[currentCardIndex + direction];
-
-      if (!targetCard) {
-        if (direction > 0) goNext();
-        else goPrev();
-        return;
-      }
-
-      isScrolling.current = true;
-      cooldownRef.current = true;
-      scrollCardIntoView(targetCard);
-      setTimeout(() => {
-        isScrolling.current = false;
-      }, 800);
-      setTimeout(() => {
-        cooldownRef.current = false;
-      }, 950);
-    },
-    [goNext, goPrev]
-  );
-
-  /* ── Click handler removed: navigation only via buttons ── */
-
   /* ── Keyboard handler ── */
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

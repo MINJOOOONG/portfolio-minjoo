@@ -5,8 +5,6 @@ import dynamic from "next/dynamic";
 import { SceneNavbar } from "./scene-navbar";
 import { ActiveSectionProvider } from "@/hooks/use-active-section";
 import { SlideIndicator } from "./slide-indicator";
-import type { ResumeData } from "@/lib/pdf/types";
-
 const ThreePortfolioBg = dynamic(
   () =>
     import("@/components/shared/three-portfolio-bg").then(
@@ -27,10 +25,9 @@ const SECTION_IDS = [
 
 interface SceneLayoutProps {
   sections: ReactNode[];
-  resumeData?: ResumeData;
 }
 
-export function SceneLayout({ sections, resumeData }: SceneLayoutProps) {
+export function SceneLayout({ sections }: SceneLayoutProps) {
   return (
     <ActiveSectionProvider sectionIds={SECTION_IDS}>
       <div className="min-h-screen bg-white">

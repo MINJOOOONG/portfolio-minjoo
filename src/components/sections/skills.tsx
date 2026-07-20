@@ -150,7 +150,7 @@ function SkillTile({ item }: { item: SkillItem }) {
 }
 
 /* ── Main component ── */
-export const Skills = memo(function Skills({ data: _data }: SkillsProps) {
+export const Skills = memo(function Skills({}: SkillsProps) {
   const [activeCategory, setActiveCategory] = useState<SkillCategory | null>(null);
 
   const visibleSkills = useMemo(
