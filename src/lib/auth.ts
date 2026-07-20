@@ -15,12 +15,10 @@ export function getAdminPassword(): string {
 
 export function verifyPassword(input: string): boolean {
   const adminPassword = getAdminPassword();
-  // Constant-time comparison to prevent timing attacks
-  if (input.length !== adminPassword.length) return false;
-  return crypto.timingSafeEqual(
-    Buffer.from(input),
-    Buffer.from(adminPassword)
-  );
+  // Hash both to fixed-length digests so timingSafeEqual never leaks length info
+  const inputHash = crypto.createHash("sha256").update(input).digest();
+  const storedHash = crypto.createHash("sha256").update(adminPassword).digest();
+  return crypto.timingSafeEqual(inputHash, storedHash);
 }
 
 export async function createSession(): Promise<string> {
