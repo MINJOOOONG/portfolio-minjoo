@@ -1,0 +1,59 @@
+name: RAG Quality
+
+# 검색 품질과 API 동작에 대한 회귀 검사.
+# 외부 API를 호출하지 않으므로 GROQ_API_KEY 없이 실행됩니다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'rag-assistant/**'
+      - '.github/workflows/rag-quality.yml'
+  pull_request:
+    paths:
+      - 'rag-assistant/**'
+      - '.github/workflows/rag-quality.yml'
+
+jobs:
+  test-and-evaluate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rag-assistant
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            rag-assistant/requirements.txt
+            rag-assistant/requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run unit and integration tests
+        run: pytest
+
+      # 기준 미달이면 스크립트가 종료 코드 1을 반환해 워크플로가 실패합니다.
+      - name: Run retrieval evaluation
+        run: python -m evaluation.run_retrieval_eval
+
+      # 평가 결과 파일이 코드 변경과 어긋난 채 커밋되는 것을 막습니다.
+      - name: Check committed evaluation results are up to date
+        run: |
+          if ! git diff --exit-code -- evaluation/results/; then
+            echo "::error::평가 결과가 최신이 아닙니다. 로컬에서 'python -m evaluation.run_retrieval_eval' 를 실행하고 결과를 커밋하세요."
+            exit 1
+          fi
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: retrieval-evaluation
+          path: rag-assistant/evaluation/results/
+          if-no-files-found: warn

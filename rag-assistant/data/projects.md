@@ -4,7 +4,7 @@
 
 ## 1. 포트폴리오 웹사이트 (Portfolio Website)
 
-- 기술: Next.js 16, React 19, TypeScript, Tailwind CSS v4, Three.js, Prisma, Neon PostgreSQL, Python, FastAPI, FAISS, Groq API
+- 기술: Next.js 16, React 19, TypeScript, Tailwind CSS v4, Three.js, Prisma, Neon PostgreSQL, Python, FastAPI, Groq API
 - 설명: AI Agent를 활용해 기획, 디자인 설계, 프론트엔드, 백엔드, RAG 기반 AI 검색 기능까지 직접 구현한 인터랙티브 포트폴리오 웹사이트
 - 주요 기능: PPT 스타일 섹션 내비게이션, 커스텀 커서, Three.js 3D 배경, RAG AI 검색과 섹션 이동 연동
 - 상세 문서: portfolio-site.md
@@ -74,5 +74,6 @@
 
 ## 12. RAG Portfolio AI Assistant
 
-- 기술: Python, FastAPI, FAISS, Groq API, sentence-transformers
+- 기술: Python, FastAPI, httpx, Groq API, pytest
 - 설명: 포트폴리오 데이터를 기반으로 질문에 답변하는 RAG AI 어시스턴트. 순수 Python TF-IDF 기반 검색과 Groq LLM을 조합해 비용 0원으로 운영
+- 신뢰성 장치: 검색 점수 임계값 미만이면 LLM을 호출하지 않는 no-evidence 라우팅, 평가 데이터셋 기반 회귀 테스트, GitHub Actions 자동 실행

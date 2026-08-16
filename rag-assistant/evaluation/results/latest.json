@@ -1,0 +1,574 @@
+{
+  "cases": [
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-001",
+      "retrieved_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "ai-lab.md",
+        "skills.md",
+        "resume.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6034
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-002",
+      "retrieved_sources": [
+        "resume.md",
+        "experience.md",
+        "about.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6016
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-003",
+      "retrieved_sources": [
+        "qa-minjoo-helper.md",
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 1.0
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-004",
+      "retrieved_sources": [
+        "loopers-backend.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6463
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-005",
+      "retrieved_sources": [
+        "resume.md",
+        "projects.md",
+        "about.md"
+      ],
+      "status": "pass",
+      "top_score": 0.5
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-006",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.735
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-007",
+      "retrieved_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "ai-lab.md"
+      ],
+      "status": "pass",
+      "top_score": 0.9144
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-008",
+      "retrieved_sources": [
+        "experience.md"
+      ],
+      "status": "pass",
+      "top_score": 0.5122
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-009",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.8515
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-010",
+      "retrieved_sources": [
+        "resume.md",
+        "about.md",
+        "experience.md",
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6981
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-011",
+      "retrieved_sources": [
+        "experience.md",
+        "resume.md",
+        "about.md",
+        "loopers-backend.md"
+      ],
+      "status": "pass",
+      "top_score": 0.9167
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-012",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.9312
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-013",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6757
+    },
+    {
+      "category": "answerable",
+      "expectation": "evidence",
+      "id": "ko-answerable-014",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.9779
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-001",
+      "retrieved_sources": [],
+      "status": "fail",
+      "top_score": 0.0
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-002",
+      "retrieved_sources": [
+        "loopers-backend.md"
+      ],
+      "status": "pass",
+      "top_score": 0.624
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-003",
+      "retrieved_sources": [
+        "qa-minjoo-helper.md",
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.7853
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-004",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.5168
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-005",
+      "retrieved_sources": [
+        "experience.md",
+        "about.md",
+        "resume.md"
+      ],
+      "status": "pass",
+      "top_score": 0.6272
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-006",
+      "retrieved_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "ai-lab.md"
+      ],
+      "status": "pass",
+      "top_score": 0.493
+    },
+    {
+      "category": "korean_paraphrase",
+      "expectation": "evidence",
+      "id": "ko-paraphrase-007",
+      "retrieved_sources": [],
+      "status": "fail",
+      "top_score": 0.0
+    },
+    {
+      "category": "english",
+      "expectation": "evidence",
+      "id": "en-answerable-001",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.473
+    },
+    {
+      "category": "english",
+      "expectation": "evidence",
+      "id": "en-answerable-002",
+      "retrieved_sources": [
+        "resume.md",
+        "about.md",
+        "qa-minjoo-helper.md",
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.9034
+    },
+    {
+      "category": "english",
+      "expectation": "evidence",
+      "id": "en-answerable-003",
+      "retrieved_sources": [
+        "loopers-backend.md"
+      ],
+      "status": "pass",
+      "top_score": 0.4173
+    },
+    {
+      "category": "english",
+      "expectation": "evidence",
+      "id": "en-answerable-004",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "pass",
+      "top_score": 0.4151
+    },
+    {
+      "category": "english",
+      "expectation": "empty",
+      "id": "en-unanswerable-001",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-001",
+      "retrieved_sources": [
+        "about.md"
+      ],
+      "status": "fail",
+      "top_score": 0.405
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-002",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-003",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-004",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-005",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-006",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-007",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "unanswerable",
+      "expectation": "empty",
+      "id": "ko-unanswerable-008",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "false_premise",
+      "expectation": "empty",
+      "id": "ko-falsepremise-001",
+      "retrieved_sources": [
+        "resume.md"
+      ],
+      "status": "fail",
+      "top_score": 0.4249
+    },
+    {
+      "category": "false_premise",
+      "expectation": "empty",
+      "id": "ko-falsepremise-002",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "false_premise",
+      "expectation": "empty",
+      "id": "ko-falsepremise-003",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "false_premise",
+      "expectation": "empty",
+      "id": "en-falsepremise-001",
+      "retrieved_sources": [],
+      "status": "pass",
+      "top_score": 0.0
+    },
+    {
+      "category": "cross_project_confusion",
+      "expectation": "unconstrained",
+      "id": "ko-crossproject-001",
+      "retrieved_sources": [
+        "qa-minjoo-helper.md",
+        "loopers-backend.md",
+        "projects.md",
+        "resume.md"
+      ],
+      "status": "not_applicable",
+      "top_score": 0.6912
+    },
+    {
+      "category": "cross_project_confusion",
+      "expectation": "unconstrained",
+      "id": "ko-crossproject-002",
+      "retrieved_sources": [
+        "portfolio-site.md",
+        "projects.md"
+      ],
+      "status": "not_applicable",
+      "top_score": 0.488
+    },
+    {
+      "category": "cross_project_confusion",
+      "expectation": "unconstrained",
+      "id": "ko-crossproject-003",
+      "retrieved_sources": [
+        "portfolio-site.md",
+        "projects.md"
+      ],
+      "status": "not_applicable",
+      "top_score": 0.5075
+    },
+    {
+      "category": "cross_project_confusion",
+      "expectation": "unconstrained",
+      "id": "ko-crossproject-004",
+      "retrieved_sources": [
+        "projects.md"
+      ],
+      "status": "not_applicable",
+      "top_score": 0.8659
+    },
+    {
+      "category": "partial_evidence",
+      "expectation": "evidence",
+      "id": "ko-partial-001",
+      "retrieved_sources": [],
+      "status": "fail",
+      "top_score": 0.0
+    },
+    {
+      "category": "partial_evidence",
+      "expectation": "evidence",
+      "id": "ko-partial-002",
+      "retrieved_sources": [],
+      "status": "fail",
+      "top_score": 0.0
+    },
+    {
+      "category": "partial_evidence",
+      "expectation": "evidence",
+      "id": "ko-partial-003",
+      "retrieved_sources": [],
+      "status": "fail",
+      "top_score": 0.0
+    }
+  ],
+  "config": {
+    "chunk_overlap": 150,
+    "chunk_size": 800,
+    "chunks": 88,
+    "documents": 9,
+    "model": "llama-3.1-8b-instant",
+    "score_threshold": 0.4,
+    "top_k": 6
+  },
+  "dataset": {
+    "category_counts": {
+      "answerable": 14,
+      "cross_project_confusion": 4,
+      "english": 5,
+      "false_premise": 4,
+      "korean_paraphrase": 7,
+      "partial_evidence": 3,
+      "unanswerable": 8
+    },
+    "checksum": "e7a48026d0b5",
+    "path": "rag-assistant/evaluation/cases.json"
+  },
+  "failures": [
+    {
+      "category": "korean_paraphrase",
+      "id": "ko-paraphrase-001",
+      "reason": "검색 결과가 비어 있음 (expected: experience.md, resume.md, about.md)"
+    },
+    {
+      "category": "korean_paraphrase",
+      "id": "ko-paraphrase-007",
+      "reason": "검색 결과가 비어 있음 (expected: experience.md)"
+    },
+    {
+      "category": "unanswerable",
+      "id": "ko-unanswerable-001",
+      "reason": "근거 없음이어야 하는데 ['about.md'] 를 반환"
+    },
+    {
+      "category": "false_premise",
+      "id": "ko-falsepremise-001",
+      "reason": "근거 없음이어야 하는데 ['resume.md'] 를 반환"
+    },
+    {
+      "category": "partial_evidence",
+      "id": "ko-partial-001",
+      "reason": "검색 결과가 비어 있음 (expected: loopers-backend.md, projects.md)"
+    },
+    {
+      "category": "partial_evidence",
+      "id": "ko-partial-002",
+      "reason": "검색 결과가 비어 있음 (expected: experience.md, about.md, skills.md)"
+    },
+    {
+      "category": "partial_evidence",
+      "id": "ko-partial-003",
+      "reason": "검색 결과가 비어 있음 (expected: portfolio-site.md, projects.md)"
+    }
+  ],
+  "metrics": {
+    "asserted_cases": 41,
+    "by_category": {
+      "answerable": {
+        "not_asserted": 0,
+        "pass_rate": 1.0,
+        "passed": 14,
+        "total": 14
+      },
+      "cross_project_confusion": {
+        "not_asserted": 4,
+        "pass_rate": null,
+        "passed": 0,
+        "total": 4
+      },
+      "english": {
+        "not_asserted": 0,
+        "pass_rate": 1.0,
+        "passed": 5,
+        "total": 5
+      },
+      "false_premise": {
+        "not_asserted": 0,
+        "pass_rate": 0.75,
+        "passed": 3,
+        "total": 4
+      },
+      "korean_paraphrase": {
+        "not_asserted": 0,
+        "pass_rate": 0.7143,
+        "passed": 5,
+        "total": 7
+      },
+      "partial_evidence": {
+        "not_asserted": 0,
+        "pass_rate": 0.0,
+        "passed": 0,
+        "total": 3
+      },
+      "unanswerable": {
+        "not_asserted": 0,
+        "pass_rate": 0.875,
+        "passed": 7,
+        "total": 8
+      }
+    },
+    "cross_project_retrieval_non_empty": 4,
+    "false_premise_routing_accuracy": 0.75,
+    "no_evidence_routing_accuracy": 0.8462,
+    "no_evidence_routing_cases": 13,
+    "non_empty_retrieval_rate": 0.8214,
+    "not_asserted_cases": 4,
+    "passed_cases": 34,
+    "source_hit_cases": 28,
+    "source_hit_rate": 0.8214,
+    "total_cases": 45
+  },
+  "passed": true,
+  "prompt_version": "grounded-v1",
+  "thresholds": {
+    "min_no_evidence_accuracy": 0.8,
+    "min_source_hit_rate": 0.8
+  }
+}

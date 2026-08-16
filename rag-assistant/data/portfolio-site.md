@@ -10,7 +10,7 @@
 - **스타일링**: Tailwind CSS v4 + shadcn/ui
 - **3D/애니메이션**: Three.js + @react-three/fiber + @react-three/drei + Framer Motion + GSAP + Lenis
 - **데이터베이스**: Prisma + Neon PostgreSQL (서버리스)
-- **AI/RAG**: Python FastAPI + sentence-transformers (로컬 임베딩) + FAISS (벡터 검색) + Groq API (Llama 3.1 LLM)
+- **AI/RAG**: Python FastAPI + 순수 Python TF-IDF 키워드 검색 + Groq API (Llama 3.1 LLM)
 - **배포**: Vercel (프론트엔드) + Render (RAG 서버)
 
 ## 아키텍처
@@ -25,12 +25,17 @@
 
 포트폴리오 안에 AI Assistant가 내장되어 있습니다. 사용자가 질문을 입력하면:
 
-1. 마크다운 문서를 500자 단위로 청크 분할
-2. TF-IDF 기반 유사도 검색으로 관련 문서를 찾음
-3. Groq LLM(Llama 3.1-8b-instant)이 문맥 기반 답변 생성
-4. 관련 섹션으로 자동 이동하는 AI Navigation 연결
+1. 마크다운 문서를 800자 청크, 150자 overlap으로 분할
+2. 순수 Python TF-IDF 키워드 검색으로 관련 청크를 찾음
+3. 검색 점수가 임계값 미만이면 LLM을 호출하지 않고 "근거를 찾지 못했다"고 응답
+4. 근거가 있으면 Groq LLM(Llama 3.1-8b-instant)이 검색된 context만으로 답변 생성
+5. 관련 섹션으로 자동 이동하는 AI Navigation 연결
 
 RAG 서버는 순수 Python 기반으로 경량화되어 있으며, 외부 유료 서비스 없이 비용 0원으로 운영됩니다. 기존에는 sentence-transformers + FAISS를 사용했으나, Render 무료 티어의 메모리 제한(512MB)으로 인해 순수 Python TF-IDF 기반으로 변경했습니다.
+
+### 검색 품질 평가
+
+검색 동작을 회귀 테스트하기 위해 평가 데이터셋을 만들었습니다. answerable, unanswerable, 한국어 paraphrase, false premise, cross-project confusion, 영어 질문 카테고리로 구성되어 있고, Groq API key 없이 실행되는 retrieval 평가기가 source hit rate와 no-evidence routing 정확도를 측정합니다. 이 평가는 GitHub Actions에서 pytest와 함께 실행됩니다.
 
 ## 핵심 기능
 
@@ -56,6 +61,6 @@ RAG 서버는 순수 Python 기반으로 경량화되어 있으며, 외부 유�
 - AI Agent(Claude Code) 협업 개발 — 기획, 설계, 구현, 디버깅에 AI를 활용하고 QA 관점에서 검증
 - Next.js 풀스택 개발 — RSC, App Router, Prisma CMS, Admin 페이지
 - Three.js 3D 웹 구현 — React Three Fiber, 섹션 연동 애니메이션
-- Python RAG 파이프라인 — TF-IDF 검색, Groq LLM, FastAPI
+- Python RAG 파이프라인 — TF-IDF 검색, no-evidence 라우팅, 비동기 Groq LLM 호출, FastAPI
 - 디자인 시스템 문서화 — design.md 기반 일관된 UI/UX 유지
 - 비용 0원 AI 인프라 — 로컬 검색 + Groq 무료 티어 조합

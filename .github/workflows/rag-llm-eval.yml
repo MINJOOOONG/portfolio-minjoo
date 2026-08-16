@@ -1,0 +1,58 @@
+name: RAG LLM Evaluation (manual)
+
+# 실제 Groq API를 호출하는 end-to-end 평가.
+# 기본 CI 파이프라인과 분리되어 있고, 수동 실행 + secret 이 있을 때만 동작합니다.
+on:
+  workflow_dispatch:
+    inputs:
+      category:
+        description: '특정 카테고리만 실행 (비우면 전체)'
+        required: false
+        default: ''
+      limit:
+        description: '앞에서 N개만 실행 (0 = 전체)'
+        required: false
+        default: '0'
+
+jobs:
+  llm-eval:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rag-assistant
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            rag-assistant/requirements.txt
+            rag-assistant/requirements-dev.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      # secret 이 없으면 스크립트가 skip 을 출력하고 종료 코드 0 으로 끝납니다.
+      - name: Run LLM end-to-end evaluation
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "GROQ_API_KEY secret 이 설정되지 않아 건너뜁니다."
+            exit 0
+          fi
+          python -m evaluation.run_llm_eval \
+            ${{ inputs.category && format('--category {0}', inputs.category) || '' }} \
+            --limit ${{ inputs.limit || 0 }}
+
+      - name: Upload LLM evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: llm-evaluation
+          path: rag-assistant/evaluation/results/llm_eval_last_run.json
+          if-no-files-found: ignore

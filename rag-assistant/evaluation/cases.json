@@ -1,0 +1,575 @@
+{
+  "description": "Portfolio RAG evaluation set. Every answerable case is grounded in rag-assistant/data/*.md. Unanswerable and false-premise cases intentionally reference facts that do not appear in any document.",
+  "cases": [
+    {
+      "id": "ko-answerable-001",
+      "category": "answerable",
+      "question": "서민주는 포트폴리오 RAG에서 어떤 검색 방식을 구현했나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "TF-IDF",
+        "Python"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-002",
+      "category": "answerable",
+      "question": "서민주는 토스에서 어떤 직무로 근무했나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "resume.md",
+        "about.md"
+      ],
+      "expected_keywords": [
+        "QA"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-003",
+      "category": "answerable",
+      "question": "QA Minjoo Helper는 어떤 문제를 해결한 프로젝트인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "qa-minjoo-helper.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "TC",
+        "Tossion"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-004",
+      "category": "answerable",
+      "question": "Loopers 백엔드 프로젝트에서 사용한 메시지 큐는 무엇인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "loopers-backend.md"
+      ],
+      "expected_keywords": [
+        "Kafka"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-005",
+      "category": "answerable",
+      "question": "서민주의 졸업논문 주제는 무엇인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md",
+        "experience.md"
+      ],
+      "expected_keywords": [
+        "FSM",
+        "Behavior Tree"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-006",
+      "category": "answerable",
+      "question": "AWS DeepRacer 경진 대회에서 서민주는 몇 등을 했나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "1등",
+        "강화학습"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-007",
+      "category": "answerable",
+      "question": "포트폴리오 웹사이트는 어떤 데이터베이스를 사용하나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "skills.md"
+      ],
+      "expected_keywords": [
+        "PostgreSQL",
+        "Prisma"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-008",
+      "category": "answerable",
+      "question": "Riwonsoft 인턴 기간에 작성한 이슈 리포트는 몇 건인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md"
+      ],
+      "expected_keywords": [
+        "50건"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-009",
+      "category": "answerable",
+      "question": "UNIST 해상 물류 창업 오디션에서 받은 창업 지원금은 얼마인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "1,000만"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-010",
+      "category": "answerable",
+      "question": "서민주가 카페 창업을 한 뒤 어떤 진로를 선택했나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md"
+      ],
+      "expected_keywords": [
+        "편입",
+        "소프트웨어"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-011",
+      "category": "answerable",
+      "question": "이커머스 백엔드 부트캠프를 수강한 이유는 무엇인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "about.md",
+        "resume.md",
+        "loopers-backend.md"
+      ],
+      "expected_keywords": [
+        "QA",
+        "개발"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-012",
+      "category": "answerable",
+      "question": "JooDev Blog 프로젝트에서 사용한 에디터는 무엇인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "TipTap"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-013",
+      "category": "answerable",
+      "question": "폴가이즈 기반 레고 파티클 게임은 어떤 엔진으로 만들었나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "Unreal Engine 5"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-answerable-014",
+      "category": "answerable",
+      "question": "K-HTML 대학대항전 해커톤에서 사용한 AI 서비스는 무엇인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "Azure OpenAI"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-001",
+      "category": "korean_paraphrase",
+      "question": "민주가 토스에서 맡았던 일이 뭐였어?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "resume.md",
+        "about.md"
+      ],
+      "expected_keywords": [
+        "QA"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-002",
+      "category": "korean_paraphrase",
+      "question": "Loopers 프로젝트에서는 Kafka를 왜 썼는지 설명해줘",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "loopers-backend.md"
+      ],
+      "expected_keywords": [
+        "Kafka",
+        "비동기"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-003",
+      "category": "korean_paraphrase",
+      "question": "QA Minjoo Helper라는 도구를 만든 배경이 궁금해요",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "qa-minjoo-helper.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "TC"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-004",
+      "category": "korean_paraphrase",
+      "question": "졸업논문에서 비교한 두 가지 게임 AI 구조가 뭐였지?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "projects.md",
+        "experience.md"
+      ],
+      "expected_keywords": [
+        "FSM",
+        "Behavior Tree"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-005",
+      "category": "korean_paraphrase",
+      "question": "부트캠프는 어떤 걸 들었었나요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "about.md",
+        "resume.md",
+        "loopers-backend.md"
+      ],
+      "expected_keywords": [
+        "이커머스",
+        "백엔드"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-006",
+      "category": "korean_paraphrase",
+      "question": "포트폴리오 사이트를 만들 때 3D는 뭘로 처리했어?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "skills.md"
+      ],
+      "expected_keywords": [
+        "Three.js"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "ko-paraphrase-007",
+      "category": "korean_paraphrase",
+      "question": "리원소프트 인턴 때 했던 검증 업무를 알려주세요",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md"
+      ],
+      "expected_keywords": [
+        "이슈"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "en-answerable-001",
+      "category": "english",
+      "question": "Which LLM provider does the portfolio RAG assistant call?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "Groq"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "en-answerable-002",
+      "category": "english",
+      "question": "Where did Minjoo Suh work as a QA Engineer?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "resume.md",
+        "about.md"
+      ],
+      "expected_keywords": [
+        "QA"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "en-answerable-003",
+      "category": "english",
+      "question": "What message queue is used in the Loopers backend project?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "loopers-backend.md"
+      ],
+      "expected_keywords": [
+        "Kafka"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "en-answerable-004",
+      "category": "english",
+      "question": "Which frontend framework powers the portfolio website?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md",
+        "skills.md"
+      ],
+      "expected_keywords": [
+        "Next.js"
+      ],
+      "should_refuse": false
+    },
+    {
+      "id": "en-unanswerable-001",
+      "category": "english",
+      "question": "Does Minjoo have production Kubernetes operation experience?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-001",
+      "category": "unanswerable",
+      "question": "서민주의 블록체인 프로젝트 경험을 알려줘",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-002",
+      "category": "unanswerable",
+      "question": "서민주의 토익 점수는 몇 점인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-003",
+      "category": "unanswerable",
+      "question": "서민주가 좋아하는 음식은 무엇인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-004",
+      "category": "unanswerable",
+      "question": "서민주의 희망 연봉은 얼마인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-005",
+      "category": "unanswerable",
+      "question": "서민주가 다닌 고등학교는 어디인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-006",
+      "category": "unanswerable",
+      "question": "서민주는 Rust로 어떤 오픈소스를 만들었나요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-007",
+      "category": "unanswerable",
+      "question": "서민주는 Flutter 앱을 몇 개 출시했나요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-unanswerable-008",
+      "category": "unanswerable",
+      "question": "서민주의 반려동물 이름은 무엇인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-falsepremise-001",
+      "category": "false_premise",
+      "question": "서민주가 네이버에서 백엔드 개발자로 근무한 기간은 얼마인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-falsepremise-002",
+      "category": "false_premise",
+      "question": "서민주가 IEEE에 게재한 논문의 제목은 무엇인가요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-falsepremise-003",
+      "category": "false_premise",
+      "question": "서민주가 카카오에서 진행한 결제 시스템 마이그레이션 규모는 어느 정도였나요?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "en-falsepremise-001",
+      "category": "false_premise",
+      "question": "How many years did Minjoo work at Google as a site reliability engineer?",
+      "retrieval_expectation": "empty",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true
+    },
+    {
+      "id": "ko-crossproject-001",
+      "category": "cross_project_confusion",
+      "question": "QA Minjoo Helper에서 Kafka를 어떻게 활용했나요?",
+      "retrieval_expectation": "unconstrained",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true,
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+    },
+    {
+      "id": "ko-crossproject-002",
+      "category": "cross_project_confusion",
+      "question": "Loopers 백엔드 프로젝트에서 Three.js 3D 씬을 어떻게 구성했나요?",
+      "retrieval_expectation": "unconstrained",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true,
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+    },
+    {
+      "id": "ko-crossproject-003",
+      "category": "cross_project_confusion",
+      "question": "졸업논문에서 Groq LLM을 어떤 방식으로 사용했나요?",
+      "retrieval_expectation": "unconstrained",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true,
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+    },
+    {
+      "id": "ko-crossproject-004",
+      "category": "cross_project_confusion",
+      "question": "AWS DeepRacer 대회에서 Supabase를 어떻게 연동했나요?",
+      "retrieval_expectation": "unconstrained",
+      "expected_sources": [],
+      "expected_keywords": [],
+      "should_refuse": true,
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+    },
+    {
+      "id": "ko-partial-001",
+      "category": "partial_evidence",
+      "question": "서민주가 Kafka로 처리한 초당 메시지 처리량은 얼마인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "loopers-backend.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "Kafka"
+      ],
+      "should_refuse": false,
+      "note": "Kafka 사용 사실은 문서에 있지만 처리량 수치는 없음. 검색은 성공해야 하고, LLM은 수치가 없다고 밝혀야 함."
+    },
+    {
+      "id": "ko-partial-002",
+      "category": "partial_evidence",
+      "question": "토스에서 수행한 Regression Test의 주당 케이스 수는 몇 건인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "experience.md",
+        "about.md",
+        "skills.md"
+      ],
+      "expected_keywords": [
+        "Regression"
+      ],
+      "should_refuse": false,
+      "note": "Regression Test 수행 사실은 문서에 있지만 케이스 수는 없음."
+    },
+    {
+      "id": "ko-partial-003",
+      "category": "partial_evidence",
+      "question": "포트폴리오 RAG 서버의 평균 응답 지연 시간은 몇 밀리초인가요?",
+      "retrieval_expectation": "evidence",
+      "expected_sources": [
+        "portfolio-site.md",
+        "projects.md"
+      ],
+      "expected_keywords": [
+        "RAG"
+      ],
+      "should_refuse": false,
+      "note": "RAG 서버 구성은 문서에 있지만 지연 시간 수치는 없음."
+    }
+  ],
+  "schema": {
+    "retrieval_expectation": {
+      "evidence": "검색이 expected_sources 중 하나 이상을 반환해야 함",
+      "empty": "검색이 빈 결과를 반환해야 함 (no-evidence 라우팅)",
+      "unconstrained": "검색 동작을 단정하지 않음. 프롬프트 단계에서 검증하는 케이스"
+    },
+    "should_refuse": "시스템의 최종 답변이 근거 부족을 밝혀야 하는지 (LLM 평가 기준)"
+  }
+}

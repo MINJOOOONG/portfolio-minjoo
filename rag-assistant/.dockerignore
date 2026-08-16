@@ -1,6 +1,10 @@
-vectorstore/
 .env
+.venv/
+venv/
 __pycache__/
 *.pyc
-.venv/
+.pytest_cache/
 .git/
+tests/
+evaluation/results/
+vectorstore/

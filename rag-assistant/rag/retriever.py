@@ -1,5 +1,8 @@
 """검색기: 질문과 관련된 문서 chunk를 키워드 인덱스에서 검색합니다."""
 
+from __future__ import annotations
+
+from rag.config import get_settings
 from rag.embedder import KeywordIndex
 
 MAX_CONTEXT_CHARS = 6_000
@@ -9,10 +12,28 @@ MAX_CHUNK_CHARS = 1_000
 def retrieve_documents(
     index: KeywordIndex,
     query: str,
-    top_k: int = 8,
+    top_k: int | None = None,
+    score_threshold: float | None = None,
 ) -> list[dict]:
-    """질문 키워드를 기반으로 관련 문서를 검색합니다."""
-    return index.search(query, top_k=top_k)
+    """질문 키워드를 기반으로 관련 문서를 검색합니다.
+
+    관련 근거가 threshold 미만이면 빈 리스트를 반환합니다.
+    코퍼스 앞부분을 임의로 채워 넣는 fallback 은 없습니다.
+
+    Returns:
+        `{"page_content", "source", "score", ...}` 리스트 (score 내림차순)
+    """
+    settings = get_settings()
+    resolved_top_k = settings.top_k if top_k is None else top_k
+    resolved_threshold = (
+        settings.score_threshold if score_threshold is None else score_threshold
+    )
+
+    return index.search(
+        query,
+        top_k=resolved_top_k,
+        score_threshold=resolved_threshold,
+    )
 
 
 def format_context(documents: list[dict]) -> str:
@@ -25,9 +46,7 @@ def format_context(documents: list[dict]) -> str:
         if len(content) > MAX_CHUNK_CHARS:
             content = content[:MAX_CHUNK_CHARS].rstrip() + "\n..."
 
-        context_parts.append(
-            f"[문서 {i}] (출처: {source})\n{content}"
-        )
+        context_parts.append(f"[문서 {i}] (출처: {source})\n{content}")
 
     context = "\n\n---\n\n".join(context_parts)
     if len(context) > MAX_CONTEXT_CHARS:
@@ -48,3 +67,17 @@ def get_source_list(documents: list[dict]) -> list[str]:
             seen.add(source)
 
     return sources
+
+
+def summarize_scores(documents: list[dict]) -> dict:
+    """구조화 로그용 점수 요약 (질문 원문은 포함하지 않습니다)."""
+    scores = [doc["score"] for doc in documents if "score" in doc]
+    if not scores:
+        return {"count": 0, "max": None, "min": None, "mean": None}
+
+    return {
+        "count": len(scores),
+        "max": round(max(scores), 4),
+        "min": round(min(scores), 4),
+        "mean": round(sum(scores) / len(scores), 4),
+    }

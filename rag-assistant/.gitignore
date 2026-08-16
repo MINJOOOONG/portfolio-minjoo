@@ -1,5 +1,11 @@
-vectorstore/
 .env
+.venv/
+venv/
 __pycache__/
 *.pyc
-.venv/
+.pytest_cache/
+vectorstore/
+
+# 실행마다 값이 바뀌는 평가 산출물 (latest.json / latest.md 는 커밋)
+evaluation/results/last_run.json
+evaluation/results/llm_eval_last_run.json
