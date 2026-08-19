@@ -18,7 +18,7 @@ DEFAULT_TOP_K = 6
 # 0.40 미만에서는 근거 없는 질문이 새어 나가고, 0.42 이상에서는 answerable
 # 질문의 검색 성공률이 급락합니다. 자세한 곡선은 README 를 참고하세요.
 DEFAULT_SCORE_THRESHOLD = 0.40
-DEFAULT_MODEL = "llama-3.1-8b-instant"
+DEFAULT_MODEL = "openai/gpt-oss-20b"
 
 # 프로젝트 루트(= rag-assistant/) 기준 데이터 디렉터리
 _PACKAGE_ROOT = Path(__file__).resolve().parent.parent
