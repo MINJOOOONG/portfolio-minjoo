@@ -766,6 +766,148 @@
 .markdown-content th, .markdown-content td { border: 1px solid var(--border); padding: 0.5em 0.75em; text-align: left; }
 .markdown-content th { background: var(--muted); font-weight: 600; }
 
+.rag-answer {
+  color: var(--foreground);
+  font-size: 11.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.rag-answer > *:first-child {
+  margin-top: 0;
+}
+
+.rag-answer > *:last-child {
+  margin-bottom: 0;
+}
+
+.rag-answer h1,
+.rag-answer h2,
+.rag-answer h3 {
+  border: 0;
+  color: var(--notion-ink);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0.1rem 0 0.5rem;
+  padding: 0;
+}
+
+.rag-answer h1 {
+  font-size: 0.86rem;
+}
+
+.rag-answer h2 {
+  font-size: 0.82rem;
+}
+
+.rag-answer h3 {
+  font-size: 0.78rem;
+}
+
+.rag-answer p {
+  margin: 0.38rem 0;
+}
+
+.rag-answer ul,
+.rag-answer ol {
+  margin: 0.42rem 0;
+  padding-left: 1rem;
+}
+
+.rag-answer li {
+  margin: 0.24rem 0;
+  padding-left: 0;
+}
+
+.rag-answer li > ul,
+.rag-answer li > ol {
+  margin: 0.28rem 0 0.48rem;
+  padding-left: 1.05rem;
+}
+
+.rag-answer li::marker {
+  color: var(--notion-muted);
+}
+
+.rag-answer strong {
+  color: var(--notion-ink);
+  font-weight: 700;
+}
+
+.rag-answer code {
+  background: #F7F6F3;
+  border: 1px solid rgba(33, 29, 25, 0.08);
+  border-radius: 5px;
+  color: var(--notion-ink);
+  font-size: 0.92em;
+  padding: 0.08rem 0.28rem;
+}
+
+.rag-answer blockquote {
+  background: #F7F6F3;
+  border-left: 3px solid var(--notion-hairline);
+  border-radius: 0 8px 8px 0;
+  color: var(--notion-slate);
+  margin: 0.55rem 0;
+  padding: 0.5rem 0.65rem;
+}
+
+.rag-answer .markdown-table-wrap {
+  background: rgba(247, 246, 243, 0.48);
+  border: 1px solid rgba(33, 29, 25, 0.14);
+  border-radius: 8px;
+  margin: 0.55rem 0;
+  overflow-x: auto;
+}
+
+.rag-answer table {
+  border-collapse: collapse;
+  font-size: 11px;
+  line-height: 1.48;
+  margin: 0;
+  min-width: 560px;
+  width: 100%;
+}
+
+.rag-answer th,
+.rag-answer td {
+  border: 0;
+  border-bottom: 1px solid rgba(33, 29, 25, 0.12);
+  padding: 0.42rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.rag-answer th {
+  background: #F7F6F3;
+  color: var(--notion-ink);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rag-answer tr:last-child td {
+  border-bottom: 0;
+}
+
+.rag-answer th:first-child,
+.rag-answer td:first-child {
+  color: var(--notion-muted);
+  text-align: center;
+  width: 44px;
+}
+
+@media (max-width: 640px) {
+  .rag-answer {
+    font-size: 11px;
+    line-height: 1.58;
+  }
+
+  .rag-answer table {
+    min-width: 520px;
+  }
+}
+
 .about-copy .markdown-content {
   display: flex;
   flex-direction: column;

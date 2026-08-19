@@ -5,6 +5,7 @@ import { Search, X, Loader2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
+import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 
 interface AskResponse {
   answer: string;
@@ -126,17 +127,15 @@ export const PortfolioAskBar = memo(function PortfolioAskBar() {
         <div
           className={cn(
             "absolute top-full left-0 mt-2 z-50",
-            "w-[320px] sm:w-[400px] max-h-[360px] overflow-y-auto",
+            "w-[min(680px,calc(100vw-32px))] max-h-[calc(100svh-72px)] overflow-y-auto",
             "rounded-lg border border-[var(--notion-hairline)] bg-white/95 backdrop-blur-xl",
             "shadow-lg p-4",
           )}
         >
-          <p className="text-xs leading-relaxed text-foreground whitespace-pre-wrap">
-            {result.answer}
-          </p>
+          <MarkdownRenderer content={result.answer} className="rag-answer" />
 
           {result.sources.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-[var(--notion-hairline)]">
+            <div className="mt-4 pt-3 border-t border-[var(--notion-hairline)]">
               <div className="flex items-center gap-1 mb-1.5">
                 <FileText className="h-3 w-3 text-muted-foreground" />
                 <span className="text-[10px] font-medium text-muted-foreground tracking-wide uppercase">

@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
+import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 
 interface AskResponse {
   answer: string;
@@ -156,7 +157,11 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
                   : "mr-auto max-w-[92%] bg-white text-foreground"
               )}
             >
-              <p className="whitespace-pre-wrap">{message.content}</p>
+              {message.role === "assistant" ? (
+                <MarkdownRenderer content={message.content} className="rag-answer" />
+              ) : (
+                <p className="whitespace-pre-wrap">{message.content}</p>
+              )}
               {message.sources && message.sources.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--notion-hairline)] pt-3">
                   {message.sources.map((source) => (
