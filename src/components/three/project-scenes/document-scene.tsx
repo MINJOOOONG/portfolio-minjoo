@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useWireframeMaterial, useLineMaterial, useReducedMotion, floatY } from "./shared";
+import { seededRandom } from "@/lib/seeded-random";
 
 export default function DocumentScene() {
   const groupRef = useRef<THREE.Group>(null);
@@ -11,18 +12,16 @@ export default function DocumentScene() {
   const lineMat = useLineMaterial();
   const reduced = useReducedMotion();
 
-  // useRef to avoid impure Math.random in useMemo
-  const codeLinesRef = useRef<Float32Array | null>(null);
-  if (!codeLinesRef.current) {
+  const codeLines = useMemo(() => {
+    const rand = seededRandom(77);
     const pts: number[] = [];
     for (let i = 0; i < 5; i++) {
       const y = 0.3 - i * 0.15;
-      const width = 0.4 + Math.random() * 0.5;
+      const width = 0.4 + rand() * 0.5;
       pts.push(-0.5, y, 0.01, -0.5 + width, y, 0.01);
     }
-    codeLinesRef.current = new Float32Array(pts);
-  }
-  const codeLines = codeLinesRef.current;
+    return new Float32Array(pts);
+  }, []);
 
   useFrame(({ clock }) => {
     if (!groupRef.current || reduced) return;

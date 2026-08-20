@@ -3,6 +3,7 @@
 import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { seededRandom } from "@/lib/seeded-random";
 import { useActiveSection } from "@/hooks/use-active-section";
 
 /* ── Section parameter targets ── */
@@ -39,18 +40,13 @@ function SectionBridge() {
   return null;
 }
 
-function useCurrentParams() {
-  const current = useRef<SectionParams>({ ...DEFAULT_PARAMS });
-  return current;
-}
-
 /* ── Scroll-reactive floating wireframe shapes ── */
 function FloatingShapes() {
   const groupRef = useRef<THREE.Group>(null);
   const shapeMatsRef = useRef<THREE.MeshBasicMaterial[]>([]);
   const mouse = useRef({ x: 0, y: 0 });
   const scrollY = useRef(0);
-  const params = useCurrentParams();
+  const params = useRef<SectionParams>({ ...DEFAULT_PARAMS });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,18 +127,19 @@ function BackgroundParticles() {
   const matRef = useRef<THREE.PointsMaterial>(null);
   const count = 120;
   const mouse = useRef({ x: 0, y: 0 });
-  const params = useCurrentParams();
+  const params = useRef<SectionParams>({ ...DEFAULT_PARAMS });
 
   const { positions, velocities } = useMemo(() => {
+    const rand = seededRandom(120);
     const pos = new Float32Array(count * 3);
     const vel = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 16;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 8;
-      vel[i * 3] = (Math.random() - 0.5) * 0.002;
-      vel[i * 3 + 1] = (Math.random() - 0.5) * 0.002;
-      vel[i * 3 + 2] = (Math.random() - 0.5) * 0.001;
+      pos[i * 3] = (rand() - 0.5) * 16;
+      pos[i * 3 + 1] = (rand() - 0.5) * 10;
+      pos[i * 3 + 2] = (rand() - 0.5) * 8;
+      vel[i * 3] = (rand() - 0.5) * 0.002;
+      vel[i * 3 + 1] = (rand() - 0.5) * 0.002;
+      vel[i * 3 + 2] = (rand() - 0.5) * 0.001;
     }
     return { positions: pos, velocities: vel };
   }, []);
@@ -217,7 +214,7 @@ function ConnectionLines() {
   const matRef = useRef<THREE.LineBasicMaterial>(null);
   const count = 60;
   const scrollY = useRef(0);
-  const params = useCurrentParams();
+  const params = useRef<SectionParams>({ ...DEFAULT_PARAMS });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -228,14 +225,15 @@ function ConnectionLines() {
   }, []);
 
   const basePositions = useMemo(() => {
+    const rand = seededRandom(60);
     const pos: number[] = [];
     const points: [number, number, number][] = [];
 
     for (let i = 0; i < count; i++) {
       points.push([
-        (Math.random() - 0.5) * 14,
-        (Math.random() - 0.5) * 10,
-        (Math.random() - 0.5) * 6 - 2,
+        (rand() - 0.5) * 14,
+        (rand() - 0.5) * 10,
+        (rand() - 0.5) * 6 - 2,
       ]);
     }
 

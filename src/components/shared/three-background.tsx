@@ -3,15 +3,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-
-/* ── Seeded random for deterministic jitter ── */
-function seededRandom(seed: number) {
-  let s = seed;
-  return () => {
-    s = (s * 16807) % 2147483647;
-    return (s - 1) / 2147483646;
-  };
-}
+import { seededRandom } from "@/lib/seeded-random";
 
 /* ── Build sketch-style globe grid with subtle hand-drawn jitter ── */
 function buildSketchGrid(radius: number, latCount: number, lonCount: number, segments: number, jitter: number) {
@@ -180,27 +172,25 @@ function DustLayer({ cfg, zooming }: { cfg: DustConfig; zooming: boolean }) {
   const mouse = useRef({ x: 0, y: 0 });
   const zoomProg = useRef(0);
 
-  // useRef to avoid impure Math.random in useMemo — config is stable so one-time init is safe
-  const particlesRef = useRef<{ pos: Float32Array; vel: Float32Array; sc: Float32Array; rot: Float32Array } | null>(null);
-  if (!particlesRef.current) {
+  const { pos, vel, sc, rot } = useMemo(() => {
+    const rand = seededRandom(count * 31 + spreadX * 17);
     const p = new Float32Array(count * 3);
     const v = new Float32Array(count * 3);
     const s = new Float32Array(count);
     const r = new Float32Array(count * 2); // angle, angVel
     for (let i = 0; i < count; i++) {
-      p[i * 3] = (Math.random() - 0.5) * spreadX;
-      p[i * 3 + 1] = (Math.random() - 0.5) * spreadY;
-      p[i * 3 + 2] = zMin + Math.random() * (zMax - zMin);
-      v[i * 3] = (Math.random() - 0.5) * 0.002 * speed;
-      v[i * 3 + 1] = (Math.random() - 0.5) * 0.0015 * speed;
-      v[i * 3 + 2] = (Math.random() - 0.5) * 0.0005 * speed;
-      s[i] = sMin + Math.random() * (sMax - sMin);
-      r[i * 2] = Math.random() * Math.PI * 2;
-      r[i * 2 + 1] = (Math.random() - 0.5) * 0.006 * speed;
+      p[i * 3] = (rand() - 0.5) * spreadX;
+      p[i * 3 + 1] = (rand() - 0.5) * spreadY;
+      p[i * 3 + 2] = zMin + rand() * (zMax - zMin);
+      v[i * 3] = (rand() - 0.5) * 0.002 * speed;
+      v[i * 3 + 1] = (rand() - 0.5) * 0.0015 * speed;
+      v[i * 3 + 2] = (rand() - 0.5) * 0.0005 * speed;
+      s[i] = sMin + rand() * (sMax - sMin);
+      r[i * 2] = rand() * Math.PI * 2;
+      r[i * 2 + 1] = (rand() - 0.5) * 0.006 * speed;
     }
-    particlesRef.current = { pos: p, vel: v, sc: s, rot: r };
-  }
-  const { pos, vel, sc, rot } = particlesRef.current;
+    return { pos: p, vel: v, sc: s, rot: r };
+  }, [count, spreadX, spreadY, zMin, zMax, sMin, sMax, speed]);
 
   const geo = useMemo(() => new THREE.PlaneGeometry(1, 1), []);
   const tmp = useMemo(() => new THREE.Object3D(), []);
