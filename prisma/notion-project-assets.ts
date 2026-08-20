@@ -1058,4 +1058,63 @@ export const notionProjectAssets = {
       ] },
     ],
   },
+
+  istqbStudy: {
+    contentBlocks: [
+      // ── 섹션 1: 프로젝트 배경 ──
+      { type: "section-heading", title: "01 — 프로젝트 배경" },
+      { type: "text", body: [
+        "ISTQB CTFL v4.0 한국어 시험을 준비하면서, 문제 풀이와 오답 관리, 챕터별 요약, 원본 PDF 확인이 여러 자료에 흩어져 있어 반복 학습 흐름이 끊기는 문제가 있었습니다.",
+        "공개 샘플 시험 A/B/C/D 세트와 실라버스 요약을 한 곳에서 다루는 웹 학습 앱을 만들어, 실제 시험처럼 풀고 틀린 문제를 다시 확인하는 구조를 직접 구현했습니다.",
+      ] },
+      { type: "text", body: [
+        "▸ 목표 — ISTQB CTFL 문제 풀이, 모의고사, 오답 노트, 요약 학습을 하나의 앱으로 통합",
+        "▸ 기준 — 40문제 모의고사와 65% 합격 기준을 반영해 실제 시험 대비 흐름 구성",
+        "▸ 확장 — 웹 앱 외에도 Swift 기반 iOS 앱 구조를 함께 관리할 수 있도록 repo 구성",
+      ] },
+
+      // ── 섹션 2: 주요 기능 ──
+      { type: "section-heading", title: "02 — 주요 기능" },
+      { type: "text", heading: "문제 풀이와 모의고사", body: [
+        "빠른 10문제, 챕터별 문제, 전체 문제 셔플, Sample Exam A/B/C/D 선택 모드를 제공했습니다. 모의고사는 실제 시험과 유사하게 40문제를 풀고 65% 합격 기준으로 결과를 확인할 수 있도록 구성했습니다.",
+        "일반 퀴즈 모드에서는 문제마다 정답과 해설을 바로 확인하고, 시험 모드에서는 문제 간 이동과 최종 제출 후 리뷰 흐름을 분리했습니다.",
+      ] },
+      { type: "text", heading: "오답 노트와 이어풀기", body: [
+        "틀린 문제는 LocalStorage에 자동 기록하고, 오답 횟수와 재풀이 결과를 함께 추적했습니다. 전체/미해결/챕터별 필터와 최근 틀린 순, 자주 틀린 순, 챕터 순 정렬을 제공해 약점 영역을 빠르게 찾을 수 있게 했습니다.",
+        "챕터별 퀴즈 진행 상태를 저장해 페이지를 벗어나도 이어서 풀 수 있도록 만들었습니다.",
+      ] },
+      { type: "text", heading: "요약 학습과 PDF 뷰어", body: [
+        "ISTQB CTFL v4.0 실라버스 기반 챕터별 요약을 제공하고, 각 요약에 학습 목표, 키워드, 시험 포인트, 중요도를 함께 담았습니다.",
+        "react-pdf와 pdfjs-dist를 사용해 실라버스 PDF와 샘플 시험 PDF를 앱 안에서 바로 열람할 수 있게 했고, 문제 상세에서 원본 보기 흐름을 연결했습니다.",
+      ] },
+
+      // ── 섹션 3: 데이터 구조 ──
+      { type: "section-heading", title: "03 — 데이터 구조" },
+      { type: "text", heading: "Question / WrongNote / Summary 모델링", body: [
+        "문제 데이터에는 examSet, questionNumber, chapter, learningObjective, K-level, 선택지, 정답, 해설, 선지별 해설, 태그, 핵심 개념, 실라버스 참조를 포함했습니다.",
+        "오답 기록은 선택한 답, 정답, 오답 횟수, 날짜, 챕터, 재풀이 결과를 따로 저장해 반복 학습에 필요한 정보를 유지했습니다.",
+        "요약 데이터는 챕터와 섹션, 학습 목표, 키워드, 요약 내용, 시험 포인트, 중요도를 분리해 목록과 상세 페이지에서 재사용할 수 있도록 구성했습니다.",
+      ] },
+      { type: "code", title: "Question 데이터 구조", language: "typescript", code: "type Question = {\n  id: string;\n  examSet: string;\n  questionNumber: number;\n  chapter: number;\n  learningObjective: string;\n  kLevel: \"K1\" | \"K2\" | \"K3\" | \"K4\";\n  questionText: string;\n  options: string[];\n  correctAnswers: string[];\n  explanation: string;\n  optionExplanations?: string[];\n  syllabusReference?: string;\n};" },
+
+      // ── 섹션 4: 구현 포인트 ──
+      { type: "section-heading", title: "04 — 구현 포인트" },
+      { type: "tech-grid", items: [
+        { name: "React Router", reason: "practice, quiz, wrong, summary, syllabus, source 페이지를 SPA 라우팅으로 분리" },
+        { name: "LocalStorage", reason: "오답 기록, 풀이 이력, 챕터별 이어풀기 상태를 서버 없이 브라우저에 저장" },
+        { name: "react-pdf", reason: "실라버스와 샘플 시험 PDF를 앱 안에서 바로 확인하는 뷰어 구현" },
+        { name: "Vercel + PWA", reason: "SPA rewrite와 manifest 설정으로 모바일에서도 학습 앱처럼 접근 가능" },
+      ] },
+      { type: "text", heading: "배포와 접근성", body: [
+        "Vercel에 웹 앱을 배포하고 SPA 라우팅을 위한 rewrite 설정을 적용했습니다. manifest와 앱 아이콘을 추가해 모바일 홈 화면에 설치 가능한 PWA 형태로 사용할 수 있게 했습니다.",
+      ] },
+
+      // ── 섹션 5: 학습 효과 ──
+      { type: "section-heading", title: "05 — 학습 효과" },
+      { type: "text", body: [
+        "단순히 시험 내용을 암기하는 대신, 테스트 기초, SDLC와 테스팅, 정적 테스팅, 테스트 기법, 테스트 관리, 도구 지원을 앱 데이터와 풀이 흐름으로 구조화했습니다.",
+        "QA 실무에서 테스트 케이스를 설명할 때 필요한 공통 용어와 기준을 정리하고, 오답 데이터를 기반으로 약점 영역을 반복 확인하는 학습 루프를 만들었습니다.",
+      ] },
+    ],
+  },
 } as const;

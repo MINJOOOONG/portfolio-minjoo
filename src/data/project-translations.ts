@@ -846,4 +846,68 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       ] },
     ],
   },
+
+  "ISTQB CTFL Quick Study": {
+    titleEn: "ISTQB CTFL Quick Study",
+    summaryEn:
+      "A Korean ISTQB CTFL v4.0 exam-prep web app with practice questions, mock exams, wrong-answer notes, chapter summaries, and PDF viewers.",
+    descriptionEn: [
+      "Built quick 10-question practice, chapter-based practice, full shuffled practice, and 40-question mock exams from ISTQB sample exam A/B/C/D sets",
+      "Implemented exam results with the 65% passing threshold, score, accuracy, and detailed review for incorrect answers",
+      "Designed LocalStorage-based wrong-answer notes and chapter progress persistence so users can repeatedly study weak areas",
+      "Integrated react-pdf viewers for the CTFL syllabus PDF and source sample exam PDFs inside the app",
+      "Deployed on Vercel with PWA settings so the web app can be used from a mobile home screen",
+    ],
+    teamSizeEn: "Solo",
+    roleEn: "Planning, frontend development, question data modeling, PDF viewer integration",
+    achievementEn: "Deployed an ISTQB CTFL study app with mock exams and wrong-answer review flows",
+    periodEn: "2026.06 - Present",
+    contentBlocksEn: [
+      { type: "section-heading", title: "01 — Project Background" },
+      { type: "text", body: [
+        "While preparing for the Korean ISTQB CTFL v4.0 exam, practice questions, wrong-answer tracking, chapter summaries, and original PDF references were scattered across separate materials.",
+        "I built a web study app that combines sample exam A/B/C/D sets and syllabus summaries in one place, so users can solve questions like an exam and review incorrect answers repeatedly.",
+      ] },
+      { type: "text", body: [
+        "▸ Goal — Integrate CTFL practice, mock exams, wrong-answer notes, and summaries into one app",
+        "▸ Exam Flow — Reflect 40-question mock exams and the 65% passing threshold",
+        "▸ Expansion — Keep a repo structure that includes both the web app and a Swift iOS app experiment",
+      ] },
+      { type: "section-heading", title: "02 — Key Features" },
+      { type: "text", heading: "Practice and Mock Exams", body: [
+        "Provided quick 10-question practice, chapter-based practice, full shuffled practice, and Sample Exam A/B/C/D selection. Mock exams use 40 questions and show results against the 65% passing threshold.",
+        "Normal quiz mode gives immediate answers and explanations after each question, while exam mode separates navigation, final submission, and post-exam review.",
+      ] },
+      { type: "text", heading: "Wrong Notes and Continue Later", body: [
+        "Incorrect answers are saved automatically in LocalStorage, tracking wrong counts and reattempt results. Filters and sorting help users identify weak chapters quickly.",
+        "Chapter quiz progress is stored so users can leave the page and continue later.",
+      ] },
+      { type: "text", heading: "Summaries and PDF Viewers", body: [
+        "Added CTFL v4.0 chapter summaries with learning objectives, keywords, exam points, and importance levels.",
+        "Used react-pdf and pdfjs-dist to view syllabus and sample exam PDFs directly in the app, with source links from question details.",
+      ] },
+      { type: "section-heading", title: "03 — Data Structure" },
+      { type: "text", heading: "Question / WrongNote / Summary Models", body: [
+        "Question data includes exam set, question number, chapter, learning objective, K-level, options, correct answers, explanation, option-level explanations, tags, key concepts, and syllabus references.",
+        "Wrong-answer records store selected answers, correct answers, wrong counts, dates, chapters, and reattempt results.",
+        "Summary data separates chapter, section, learning objective, keywords, summary content, exam points, and importance so list and detail pages can reuse the same source.",
+      ] },
+      { type: "code", title: "Question Data Shape", language: "typescript", code: "type Question = {\n  id: string;\n  examSet: string;\n  questionNumber: number;\n  chapter: number;\n  learningObjective: string;\n  kLevel: \"K1\" | \"K2\" | \"K3\" | \"K4\";\n  questionText: string;\n  options: string[];\n  correctAnswers: string[];\n  explanation: string;\n  optionExplanations?: string[];\n  syllabusReference?: string;\n};" },
+      { type: "section-heading", title: "04 — Implementation Points" },
+      { type: "tech-grid", items: [
+        { name: "React Router", reason: "Separated practice, quiz, wrong-answer notes, summary, syllabus, and source pages with SPA routing" },
+        { name: "LocalStorage", reason: "Stored wrong-answer records, answer history, and chapter progress without a backend" },
+        { name: "react-pdf", reason: "Rendered syllabus and sample exam PDFs directly inside the app" },
+        { name: "Vercel + PWA", reason: "Used SPA rewrites and manifest settings for mobile-friendly access" },
+      ] },
+      { type: "text", heading: "Deployment and Access", body: [
+        "Deployed the web app on Vercel and configured SPA rewrite behavior. Added manifest and app icons so it can be launched from a mobile home screen like a study app.",
+      ] },
+      { type: "section-heading", title: "05 — Learning Impact" },
+      { type: "text", body: [
+        "Instead of only memorizing exam content, I structured testing fundamentals, testing in SDLC, static testing, test techniques, test management, and tool support through app data and solving flows.",
+        "The app organizes common terminology and testing standards needed in QA practice, while wrong-answer data creates a repeatable loop for reviewing weak areas.",
+      ] },
+    ],
+  },
 };

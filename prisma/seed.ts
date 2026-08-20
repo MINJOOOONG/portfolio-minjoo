@@ -260,6 +260,25 @@ async function main() {
       role: "기획, UI 설계, 프론트엔드 구현, 데이터 구조 설계",
       ...notionProjectAssets.qaMinjooHelper,
     },
+    {
+      title: "ISTQB CTFL Quick Study",
+      teamSize: "개인",
+      period: "2026.06 - 진행중",
+      summary: "ISTQB CTFL v4.0 한국어 시험 대비를 위해 문제 풀이, 모의고사, 오답 관리, 챕터별 요약을 제공하는 웹 학습 앱입니다.",
+      description: [
+        "ISTQB 공식 샘플 시험 A/B/C/D 세트를 기반으로 빠른 10문제, 챕터별 문제, 전체 문제, 40문제 모의고사 풀이 흐름 구현",
+        "시험 모드에서 65% 합격 기준, 점수, 정답률, 틀린 문제 상세 리뷰를 제공해 실제 시험 대비 흐름 구성",
+        "LocalStorage 기반 오답 노트와 챕터별 이어풀기 기능으로 학습 상태를 브라우저에 저장하고 반복 학습 가능하게 설계",
+        "실라버스 PDF와 원본 샘플 시험 PDF를 앱 안에서 열람할 수 있도록 react-pdf 기반 뷰어 제공",
+        "Vercel 배포와 PWA 설정으로 모바일 홈 화면에서도 학습 앱처럼 사용할 수 있는 접근성 확보",
+      ],
+      techStack: ["React 19", "TypeScript", "Vite", "React Router", "react-pdf", "LocalStorage", "PWA", "Vercel", "Swift", "Python"],
+      achievement: "ISTQB CTFL 시험 대비 웹 앱 배포 및 오답 관리/모의고사 학습 흐름 구현",
+      role: "기획, 프론트엔드 구현, 문제 데이터 구조화, PDF 뷰어 연동",
+      githubUrl: "https://github.com/MINJOOOONG/istqb",
+      liveUrl: "https://istqb-web.vercel.app",
+      ...notionProjectAssets.istqbStudy,
+    },
   ];
 
   const skillsData = {
