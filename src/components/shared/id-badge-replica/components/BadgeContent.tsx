@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const BadgeContent = () => {
   return (
     <div className="w-full h-full p-5 flex relative">
@@ -87,11 +89,14 @@ export const BadgeContent = () => {
       {/* Right photo area */}
       <div className="w-36 flex flex-col items-end">
         <span className="text-xs font-medium text-neutral-800 mb-2">DROP : 23</span>
-        <div className="w-36 h-44 bg-neutral-200 rounded-sm overflow-hidden">
-          <img
+        <div className="relative w-36 h-44 bg-neutral-200 rounded-sm overflow-hidden">
+          <Image
             src="https://csspicker.dev/api/image/?q=professional+portrait&image_type=photo"
             alt="Profile"
-            className="w-full h-full object-cover"
+            fill
+            sizes="144px"
+            className="object-cover"
+            unoptimized
           />
         </div>
       </div>

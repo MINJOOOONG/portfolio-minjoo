@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 const PROFILE_SRC = "/profile.jpeg";
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -337,16 +339,18 @@ function PaperCard() {
           </span>
           {/* 프로필 사진 */}
           <div
-            className="flex-1 overflow-hidden rounded-[2px]"
+            className="relative flex-1 overflow-hidden rounded-[2px]"
             style={{
               boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06)",
             }}
           >
-            <img
+            <Image
               src={PROFILE_SRC}
               alt="Profile"
+              fill
+              sizes="(max-width: 520px) 30vw, 120px"
               draggable={false}
-              className="pointer-events-none h-full w-full select-none object-cover"
+              className="pointer-events-none select-none object-cover"
             />
           </div>
         </div>
