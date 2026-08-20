@@ -25,12 +25,12 @@ export const aboutSections: AboutSection[] = [
     sentence: "저는 변화가 빠를수록 더 빨리 배우고 움직이는 사람입니다.",
     sentenceEn: "The faster things change, the faster I learn and adapt.",
     paragraphs: [
-      "익숙하지 않은 환경을 마주했을 때 오래 멈춰 있기보다, 먼저 뛰어들고 부딪히며 구조를 파악하는 편입니다. 학부생 시절부터 게임 개발 동아리, 해커톤, IT 컨퍼런스, 창업 프로젝트까지 다양한 환경에 직접 들어가며 낯선 문제를 빠르게 이해하고 적응하는 힘을 길러왔습니다.",
-      "토스 커머스 QA 업무를 하며 빠른 배포 주기, 잦은 기획 변경, 정책 변화 속에서 문제를 놓치지 않고 정리하는 법을 배웠습니다. 최근 AI처럼 일하는 방식 자체를 바꾸는 기술이 등장했을 때도, 저는 관망하기보다 먼저 써보고, 실험하고, 제 업무 방식 안으로 끌어오는 쪽을 선택했습니다.",
+      "익숙하지 않은 환경을 마주했을 때 오래 멈춰 있기보다, 먼저 뛰어들고 부딪히며 구조를 파악하는 편입니다. 학부 과정에서 Unity로 게임을 만들다가 Spring Boot로 백엔드를 배우고, 해커톤에서는 Azure OpenAI를 연동하고, 개인 프로젝트에서는 Next.js와 Three.js, Python FastAPI까지 — 필요할 때마다 새로운 기술을 직접 써보면서 익혀왔습니다.",
+      "새로운 기술이 등장했을 때 관망하기보다 먼저 실험하는 쪽을 선택합니다. AI 도구가 개발 방식을 바꾸기 시작했을 때도 바로 프로젝트에 적용해보고, ISTQB를 공부할 때도 교재만 읽지 않고 직접 학습 앱을 만들었습니다. 모르는 분야라도 작은 결과물을 하나 만들어보면 구조가 보이기 시작한다고 생각합니다.",
     ],
     paragraphsEn: [
-      "When faced with unfamiliar environments, I prefer to jump in and learn by doing rather than standing still. From game development clubs, hackathons, and IT conferences to startup projects during college, I've built the ability to quickly understand and adapt to new challenges across diverse settings.",
-      "Working on commerce QA at Toss, I learned to stay organized and catch issues amid rapid deployment cycles, frequent spec changes, and policy updates. When transformative technologies like AI emerged, I chose to experiment and integrate them into my workflow rather than wait on the sidelines.",
+      "When faced with unfamiliar environments, I prefer to jump in and figure things out rather than standing still. From building games in Unity during college to learning Spring Boot for backend, integrating Azure OpenAI at a hackathon, and picking up Next.js, Three.js, and Python FastAPI for personal projects — I've learned new technologies by using them whenever I needed them.",
+      "When new technology emerges, I choose to experiment first rather than wait. When AI tools started changing how developers work, I immediately applied them to my projects. When studying for ISTQB, instead of just reading textbooks, I built my own study app. I believe that building even a small project in an unfamiliar domain helps you see the bigger picture.",
     ],
   },
   {
@@ -40,46 +40,46 @@ export const aboutSections: AboutSection[] = [
     sentence: "저는 주어진 일을 그대로 처리하기보다, 먼저 '왜 필요한 일인지' 파고드는 사람입니다.",
     sentenceEn: "Rather than just executing tasks, I first dig into why they matter.",
     paragraphs: [
-      "업무를 단순히 수행하는 것만으로는 좋은 결과를 만들기 어렵다고 생각합니다. 이 일이 어떤 문제를 해결하기 위한 것인지, 어떤 맥락에서 필요한지 이해해야 더 정확하게 판단하고 움직일 수 있다고 믿습니다.",
-      "QA Engineer로 근무하며 이슈를 추적하고 정리하는 과정에서, 표면적인 오류를 찾는 것만으로는 부족하다는 것을 느꼈습니다. 더 깊이 있는 문제 이해를 위해 개발 지식이 필요하다고 판단했고, 스스로 비용을 들여 주말마다 이커머스 백엔드 부트캠프를 수강했습니다. 이를 통해 QA의 관점에만 머무르지 않고 개발자, 기획자, 사용자 관점까지 함께 고려하며 문제를 더 입체적으로 바라보게 되었습니다.",
+      "라이브러리를 가져다 쓰는 것과 그 라이브러리가 어떤 문제를 해결하는지 이해하는 것은 다르다고 생각합니다. 기술을 사용할 때 '동작하니까 괜찮다'에서 멈추지 않고, 왜 이 구조인지, 다른 선택지는 없는지, 트레이드오프는 무엇인지 먼저 따져보는 편입니다.",
+      "이커머스 백엔드 프로젝트에서 동시성 문제를 다룰 때도, Redis Lua 스크립트를 바로 적용하기 전에 왜 애플리케이션 레벨의 락만으로는 부족한지부터 정리했습니다. 졸업논문에서 FSM과 Behavior Tree를 비교할 때도 단순히 성능 수치만 나열하는 대신, 두 구조의 설계 철학 차이를 먼저 이해하고 실험을 설계했습니다. 표면의 동작보다 그 아래의 구조와 이유를 먼저 이해해야, 문제가 생겼을 때 더 정확한 판단을 할 수 있다고 믿습니다.",
     ],
     paragraphsEn: [
-      "I believe that simply executing tasks isn't enough to produce good results. Understanding what problem a task is solving and the context behind it enables more accurate judgment and action.",
-      "While tracking and organizing issues as a QA Engineer, I realized that finding surface-level bugs wasn't sufficient. I decided I needed deeper development knowledge, so I self-funded weekend attendance at an e-commerce backend bootcamp. This allowed me to view problems from multiple perspectives — not just QA, but also developer, planner, and user viewpoints.",
+      "I think there's a difference between using a library and understanding what problem it solves. When working with technology, I don't stop at 'it works, so it's fine' — I tend to first ask why this architecture was chosen, what alternatives exist, and what trade-offs are involved.",
+      "When dealing with concurrency issues in my e-commerce backend project, before applying Redis Lua scripts, I first documented why application-level locks alone weren't sufficient. When comparing FSM and Behavior Tree in my thesis, instead of just listing performance metrics, I first understood the design philosophy differences before designing the experiments. I believe understanding the structure and reasoning beneath the surface leads to better judgment when problems arise.",
     ],
   },
   {
     number: "03",
-    koreanTitle: "개선 지향",
-    englishTitle: "Improvement Driven",
-    sentence: "저는 불편함을 그냥 넘기지 않고, 직접 개선의 형태로 바꾸는 사람입니다.",
-    sentenceEn: "I don't let inefficiencies slide — I turn them into improvements.",
+    koreanTitle: "구조적 문제 해결",
+    englishTitle: "Structured Problem Solving",
+    sentence: "저는 복잡한 문제를 한 번에 해결하려 하기보다, 구조를 나누고 핵심부터 확인하는 사람입니다.",
+    sentenceEn: "Rather than tackling complex problems all at once, I break them down and verify from the core.",
     paragraphs: [
-      "반복적인 업무라고 해서 의미가 작다고 생각하지 않습니다. 오히려 반복되는 일일수록 더 나은 방식으로 바꿀 여지가 있다고 봅니다. 토스에서 계약직 QA Engineer로 일하며 주 업무는 매주 배포되는 기능에 누락이 없도록 Regression Test를 수행하는 것이었습니다. 맡은 역할은 제한적이었지만, 저는 그 안에서도 더 효율적으로 일할 수 있는 방법을 찾고 싶었습니다.",
-      "당시 TestRail 기반의 자체 테스트 관리 도구인 Tossion을 사용하고 있었고, TC를 수정하거나 추가하려면 매번 매니저님께 요청해야 하는 불편함이 있었습니다. 저는 이 과정을 줄이기 위해 Claude와 Codex를 활용해 Tossion과 유사한 자체 페이지를 만들었습니다. 업무 시작 후 수정·추가·삭제하고 싶은 TC를 기록하고, 업무 종료 시 변경 내역이 자동으로 정리되도록 구현했습니다.",
-      "단순히 AI로 무언가를 만들어본 경험이 아니라, 실제 업무에서 느낀 불편함을 구조화하고, 반복 요청을 줄이고, 공유 가능한 결과물로 바꾼 경험이었습니다.",
+      "이커머스 백엔드 프로젝트에서 주문·결제·재고·쿠폰이 얽힌 흐름을 설계할 때, 처음부터 전체를 한꺼번에 만들지 않았습니다. 먼저 주문 흐름만 분리해서 트랜잭션 경계를 잡고, 재고 차감의 동시성 문제를 Redis Lua 스크립트로 해결한 뒤, 쿠폰 중복 사용 방지를 별도로 검증하는 순서로 진행했습니다.",
+      "결제 실패 시 복구 흐름도 같은 방식으로 접근했습니다. PG 응답 타임아웃이 발생하면 PENDING 상태로 저장하고, 스케줄러가 재조회한 뒤, 실패 확인 시 재고 원복과 주문 취소를 보상 트랜잭션으로 처리하는 구조를 단계별로 구현했습니다. Kafka 이벤트 처리에서도 Transactional Outbox 패턴으로 트랜잭션과 이벤트 발행의 원자성을 분리하고, 컨슈머 측에서는 멱등성 저장소로 중복 소비를 방지했습니다.",
+      "동시 100건 요청 테스트는 Testcontainers로 실제 Redis/MySQL 환경을 띄우고 ExecutorService로 검증했습니다. 복잡한 문제일수록 한 번에 풀려고 하면 어디서 틀렸는지 알기 어렵습니다. 문제를 작게 나누고, 각 단계에서 확인하고, 다음으로 넘어가는 방식이 결과적으로 더 빠르고 정확했습니다.",
     ],
     paragraphsEn: [
-      "I don't consider repetitive work insignificant. In fact, I see recurring tasks as having the most room for improvement. As a contract QA Engineer at Toss, my main job was running weekly Regression Tests to ensure nothing was missed in deployments. Despite the limited scope of my role, I wanted to find more efficient ways to work.",
-      "At the time, we used Tossion, an internal TestRail-based test management tool. Editing or adding test cases required requesting changes through a manager each time. To reduce this friction, I built a Tossion-like page using Claude and Codex. It allowed me to log test case changes during work hours and automatically compile a summary of modifications at the end of each day.",
-      "This wasn't just about building something with AI — it was about structuring a real workplace frustration, reducing repetitive requests, and turning it into a shareable, reusable result.",
+      "When designing the order-payment-inventory-coupon flow in my e-commerce backend project, I didn't try to build everything at once. I first isolated the order flow to set transaction boundaries, then solved inventory concurrency with Redis Lua scripts, and separately verified coupon duplicate prevention — step by step.",
+      "I took the same approach for payment failure recovery. When PG response timeouts occur, the system saves a PENDING state, a scheduler re-queries later, and upon failure confirmation, stock restoration and order cancellation are handled through compensation transactions. For Kafka event processing, I separated transaction and event publishing atomicity using the Transactional Outbox pattern, and prevented duplicate consumption with an idempotency store on the consumer side.",
+      "Concurrent 100-request testing was done with Testcontainers spinning up real Redis/MySQL environments, verified through ExecutorService. The more complex the problem, the harder it is to find where things went wrong when you try to solve everything at once. Breaking problems into smaller pieces, verifying at each step, and then moving forward turned out to be faster and more accurate.",
     ],
   },
   {
     number: "04",
-    koreanTitle: "협업과 기록",
-    englishTitle: "Collaborative Growth",
-    sentence: "저는 혼자 잘하는 것보다, 함께 더 나은 결과를 만드는 방식을 좋아합니다.",
-    sentenceEn: "I prefer building better results together over excelling alone.",
+    koreanTitle: "끝까지 실행",
+    englishTitle: "End-to-End Execution",
+    sentence: "저는 아이디어를 생각하는 데서 멈추지 않고, 실제로 동작하는 결과물까지 만들어보는 사람입니다.",
+    sentenceEn: "I don't stop at ideas — I build them into working results.",
     paragraphs: [
-      "좋은 결과는 혼자 빠르게 끝내는 것보다, 서로의 관점을 맞추고 피드백을 주고받는 과정에서 더 단단해진다고 생각합니다. 그래서 저는 업무를 할 때 기록하고 공유하는 방식을 중요하게 생각합니다.",
-      "실제 업무에서도 매일 업무보고를 상세히 작성하며 금주 배포사항, 금일 배포사항, 발생한 이슈, 확인한 내용들을 정리해 공유했습니다. 또한 일을 하며 느낀 불편함이나 개선되면 좋겠다고 생각한 부분은 메모해두었다가 정리한 뒤, 함께 일하는 동료들에게 의견을 묻고 피드백을 요청했습니다.",
-      "저는 혼자 판단하고 끝내는 사람보다, 더 나은 방향을 함께 찾는 사람이 되고 싶습니다.",
+      "궁금한 기술이 있으면 직접 프로젝트로 만들어봅니다. 포트폴리오 웹사이트는 Next.js App Router, Three.js 3D 배경, Prisma CMS, Python FastAPI 기반 RAG 검색까지 기획부터 배포까지 혼자 구현했습니다. 개인 블로그 joodev도 TipTap 에디터, 태그/카테고리 시스템, Admin CMS를 직접 만들어 운영하고 있습니다.",
+      "이커머스 백엔드 프로젝트에서는 Clean Architecture 기반 4-Layer 구조를 설계하고, Redis 재고 관리, Kafka 이벤트 아키텍처, PG 결제 연동, Spring Batch 집계 파이프라인까지 직접 구현했습니다. 졸업논문에서는 Unity로 게임을 직접 제작하고, FSM과 BT를 동일 조건에서 구현·비교·검증해 논문으로 완성했습니다.",
+      "완벽하게 준비된 다음에 시작하는 것보다, 일단 만들어보면서 부족한 부분을 반복해서 고치는 방식이 저한테 더 잘 맞습니다. 실제로 동작시켜봐야 어디가 부족한지 보이고, 그때 배우는 게 가장 빨랐습니다.",
     ],
     paragraphsEn: [
-      "I believe that good results become stronger through aligning perspectives and exchanging feedback rather than finishing quickly on your own. That's why I prioritize documenting and sharing in my work.",
-      "In practice, I wrote detailed daily reports covering weekly deployment items, daily deployment items, issues raised, and verified findings. I also made a habit of noting down pain points and improvement ideas, organizing them, and then proactively seeking opinions and feedback from colleagues.",
-      "I aspire to be someone who finds better directions together with the team, rather than making decisions alone.",
+      "When I'm curious about a technology, I build a project with it. For my portfolio website, I implemented everything solo from planning to deployment — Next.js App Router, Three.js 3D backgrounds, Prisma CMS, and a Python FastAPI-based RAG search. I also built and operate my personal blog joodev with a custom TipTap editor, tag/category system, and Admin CMS.",
+      "In the e-commerce backend project, I designed a Clean Architecture 4-layer structure and implemented Redis inventory management, Kafka event architecture, PG payment integration, and Spring Batch aggregation pipelines. For my thesis, I built a game in Unity, implemented both FSM and Behavior Tree under identical conditions, ran comparative experiments, and completed the research paper.",
+      "Rather than waiting until everything is perfectly prepared, I find it works better for me to start building and iteratively fix what's lacking. You can only see what's missing once it's actually running, and that's when I learn the fastest.",
     ],
   },
   {
@@ -87,20 +87,18 @@ export const aboutSections: AboutSection[] = [
     koreanTitle: "AI 활용력",
     englishTitle: "AI-Loving Builder",
     sentence:
-      "저는 AI를 좋아합니다. 하지만 더 중요하게는, AI를 믿기 전에 구조화하고 검증하는 사람입니다.",
+      "저는 AI를 적극적으로 활용합니다. 다만 결과를 그대로 믿지는 않고, 문제 정의는 사람이 해야 한다고 생각합니다.",
     sentenceEn:
-      "I love AI. But more importantly, I structure and verify before trusting it.",
+      "I actively use AI, but I don't trust outputs blindly — defining the problem is the human's job.",
     paragraphs: [
-      "저에게 AI는 단순히 답을 대신 내주는 도구가 아닙니다. 막연한 아이디어를 빠르게 구조화하고, 반복되는 업무를 줄이며, 사람이 더 중요한 판단에 집중할 수 있도록 돕는 협업 파트너입니다.",
-      "저는 Claude, Codex, Cursor 같은 AI 도구를 단순히 사용하는 데서 멈추지 않고, 실제 업무와 개인 프로젝트의 흐름 안에 적용해왔습니다. 테스트 케이스 정리, QA 변경 사항 요약, 문서 구조화, 코드 리팩터링, 포트폴리오 개선, RAG 기반 검색 Assistant 설계처럼 반복적이지만 중요한 작업들을 AI와 함께 더 빠르고 명확하게 만들었습니다.",
-      "하지만 AI가 만든 결과를 그대로 신뢰하지는 않습니다. 제가 중요하게 생각하는 기준은 세 가지입니다. 첫째, AI에게 일을 맡기기 전에 문제를 먼저 구조화합니다. 막연하게 요청하기보다, 목적과 제약 조건, 기준, 기대 결과를 먼저 정의합니다. 둘째, AI의 결과는 반드시 검증합니다. 공식 문서, 실제 동작, 코드 흐름, 사용자 경험을 기준으로 다시 확인합니다. AI가 빠르게 만들어낸 결과일수록 더 꼼꼼하게 의도와 리스크를 점검해야 한다고 생각합니다. 셋째, AI를 결과물이 아니라 일하는 방식의 개선으로 봅니다. AI를 통해 더 많은 결과물을 찍어내는 것보다, 반복되는 과정을 줄이고 더 나은 판단을 할 수 있는 구조를 만드는 데 관심이 있습니다.",
-      "저는 AI를 유행처럼 소비하는 사람이 아니라, AI와 함께 더 빠르게 만들고, 더 정확하게 검증하고, 더 나은 업무 방식을 실험하는 사람이 되고 싶습니다.",
+      "AI는 빠르게 초안을 만들고, 반복 작업을 줄이고, 아이디어를 구체화하는 데 강력한 도구라고 생각합니다. 저는 Claude, Codex, Cursor 같은 도구를 개인 프로젝트 전반에서 활용하고 있습니다. 포트폴리오 구현, 코드 리팩터링, 문서 구조화, RAG 파이프라인 설계까지 — AI와 함께 작업하면 혼자일 때보다 더 빠르게 움직일 수 있었습니다.",
+      "하지만 AI가 만든 결과를 그대로 사용하지는 않습니다. AI에게 맡기기 전에 문제를 먼저 정의하고, 결과는 공식 문서와 실제 동작을 기준으로 검증합니다. AI가 빠르게 만들어낸 코드일수록 의도와 다르게 동작할 가능성이 있기 때문에, 결과를 받은 뒤에 확인하고 수정하는 과정을 빠뜨리지 않습니다.",
+      "새로운 AI 도구가 나오면 빠르게 실험해봅니다. 다만 AI를 더 많은 결과물을 찍어내는 수단으로 보기보다는, 반복되는 과정을 줄이고 더 중요한 판단에 집중할 수 있게 해주는 도구로 활용하려고 합니다.",
     ],
     paragraphsEn: [
-      "To me, AI isn't simply a tool that provides answers. It's a collaboration partner that helps rapidly structure vague ideas, reduce repetitive work, and free people to focus on what truly matters — judgment and decision-making.",
-      "I haven't just used AI tools like Claude, Codex, and Cursor — I've integrated them into my actual workflows and personal projects. From organizing test cases and summarizing QA changes to structuring documentation, refactoring code, improving my portfolio, and designing a RAG-based search assistant, I've made repetitive but important tasks faster and clearer with AI.",
-      "However, I don't blindly trust AI outputs. I follow three principles: First, I structure the problem before delegating to AI — defining the purpose, constraints, criteria, and expected outcomes rather than making vague requests. Second, I always verify AI results against official documentation, actual behavior, code flows, and user experience. The faster AI produces results, the more carefully I check for intent misalignment and risks. Third, I view AI as a way to improve how I work, not just to produce more output. I'm interested in building systems that reduce repetitive processes and enable better judgment.",
-      "I don't want to be someone who consumes AI as a trend. I want to build faster, verify more accurately, and experiment with better ways of working — together with AI.",
+      "I think AI is a powerful tool for quickly drafting, reducing repetitive work, and turning vague ideas into concrete plans. I use tools like Claude, Codex, and Cursor throughout my personal projects — from portfolio implementation and code refactoring to documentation structuring and RAG pipeline design. Working with AI lets me move faster than working alone.",
+      "But I don't use AI outputs as-is. Before delegating to AI, I define the problem first. After receiving results, I verify them against official documentation and actual behavior. The faster AI produces code, the more likely it might not match the intent — so I never skip the review and correction step.",
+      "When new AI tools come out, I experiment with them quickly. But rather than viewing AI as a way to produce more output, I try to use it as a tool that reduces repetitive processes and lets me focus on the decisions that actually matter.",
     ],
     detailLink: {
       label: "See How I Work with AI →",
@@ -122,52 +120,28 @@ export const keywordAnnotations: Record<string, { ko: string; en: string }> = {
     ko: "학부 과정에서 인공지능 관련 주제로 논문을 작성하며, 데이터 분석과 머신러닝에 대한 기초 역량을 갖추었습니다.",
     en: "Wrote an AI-related research paper during my undergraduate studies, building foundational skills in data analysis and machine learning.",
   },
-  "토스": {
-    ko: "비바리퍼블리카(토스)에서 QA Engineer로 근무하며, 빠른 배포 주기와 높은 품질 기준을 경험했습니다.",
-    en: "Worked as a QA Engineer at Viva Republica (Toss), experiencing rapid deployment cycles and high quality standards.",
-  },
   "애자일 환경": {
     ko: "스프린트 단위의 빠른 반복 개발과 배포, 데일리 스크럼, 회고 등 애자일 방법론 기반의 업무 프로세스를 직접 경험했습니다.",
     en: "Experienced agile development processes firsthand — sprint-based iterations, daily scrums, retrospectives, and rapid deployments.",
-  },
-  "QA Engineer": {
-    ko: "소프트웨어 품질 보증 엔지니어로서, 기능 테스트, 회귀 테스트, 이슈 트래킹 등을 통해 제품의 안정성을 검증하는 역할을 수행했습니다.",
-    en: "As a software QA Engineer, I verified product stability through functional testing, regression testing, and issue tracking.",
-  },
-  "이슈 트래킹": {
-    ko: "Jira, Linear 등의 도구를 활용해 버그와 개선사항을 체계적으로 기록하고 추적하며, 개발팀과 효율적으로 커뮤니케이션했습니다.",
-    en: "Used tools like Jira and Linear to systematically track bugs and improvements while communicating efficiently with the development team.",
   },
   "이커머스 백엔드 부트캠프": {
     ko: "주말마다 자비로 수강한 부트캠프에서 Spring Boot 기반의 이커머스 백엔드 시스템을 구축하며 서버 개발 역량을 키웠습니다.",
     en: "Self-funded weekend bootcamp where I built an e-commerce backend system with Spring Boot, developing server-side development skills.",
   },
-  "Regression Test": {
-    ko: "매주 배포 전 기존 기능의 정상 동작을 확인하는 회귀 테스트를 수행하여, 새로운 변경사항이 기존 기능에 영향을 주지 않는지 검증했습니다.",
-    en: "Performed weekly regression tests before deployments to verify that new changes didn't break existing functionality.",
-  },
-  "Tossion": {
-    ko: "토스 내부에서 사용하는 TestRail 기반의 자체 테스트 케이스 관리 도구입니다.",
-    en: "An internal TestRail-based test case management tool used at Toss.",
-  },
-  "TC API": {
-    ko: "테스트 케이스(Test Case)를 프로그래밍 방식으로 조회, 수정, 생성할 수 있는 API 인터페이스입니다.",
-    en: "An API interface for programmatically querying, modifying, and creating test cases.",
-  },
   "Claude, Codex, Cursor": {
-    ko: "Anthropic의 Claude, OpenAI의 Codex, Cursor 등 AI 도구를 활용하여 테스트 케이스 정리, QA 변경 사항 요약, 코드 리팩터링, RAG 기반 검색 Assistant 설계 등에 적용해왔습니다.",
-    en: "Used AI tools like Anthropic's Claude, OpenAI's Codex, and Cursor for test case organization, QA change summaries, code refactoring, and RAG-based search assistant design.",
+    ko: "Anthropic의 Claude, OpenAI의 Codex, Cursor 등 AI 도구를 활용하여 코드 리팩터링, 문서 구조화, RAG 기반 검색 Assistant 설계 등에 적용해왔습니다.",
+    en: "Used AI tools like Anthropic's Claude, OpenAI's Codex, and Cursor for code refactoring, documentation structuring, and RAG-based search assistant design.",
   },
   "AI": {
     ko: "반복 업무를 줄이고 사고 과정을 확장하기 위해 사용하는 협업 도구입니다. 결과를 그대로 믿기보다 검증 가능한 방식으로 활용하는 것을 중요하게 생각합니다.",
     en: "A collaboration tool I use to reduce repetitive work and expand my thinking process. I value using AI in verifiable ways rather than blindly trusting its output.",
   },
-  "업무보고": {
-    ko: "매일 금주 배포사항, 금일 배포사항, 발생 이슈, 확인 내용을 체계적으로 기록하고 팀에 공유하는 루틴을 유지했습니다.",
-    en: "Maintained a daily routine of systematically documenting and sharing weekly deployments, daily deployments, issues, and verified findings with the team.",
+  "이슈 트래킹": {
+    ko: "Jira, Linear 등의 도구를 활용해 버그와 개선사항을 체계적으로 기록하고 추적하며, 개발팀과 효율적으로 커뮤니케이션했습니다.",
+    en: "Used tools like Jira and Linear to systematically track bugs and improvements while communicating efficiently with the development team.",
   },
   "피드백": {
-    ko: "업무 중 느낀 불편함이나 개선 아이디어를 메모한 뒤 정리하여, 동료들에게 의견을 구하고 함께 더 나은 방향을 찾는 과정을 중요하게 생각합니다.",
-    en: "I value the process of noting down pain points and improvement ideas during work, organizing them, and proactively seeking colleagues' opinions to find better solutions together.",
+    ko: "프로젝트를 진행하며 부족한 부분이나 개선 아이디어를 기록하고, 반복적으로 수정하며 결과물의 완성도를 높이는 과정을 중요하게 생각합니다.",
+    en: "I value the process of documenting shortcomings and improvement ideas during projects, iteratively refining them to improve the quality of results.",
   },
 };
