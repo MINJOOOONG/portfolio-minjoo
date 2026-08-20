@@ -172,7 +172,8 @@ function DustLayer({ cfg, zooming }: { cfg: DustConfig; zooming: boolean }) {
   const mouse = useRef({ x: 0, y: 0 });
   const zoomProg = useRef(0);
 
-  const { pos, vel, sc, rot } = useMemo(() => {
+  const particlesRef = useRef<{ pos: Float32Array; vel: Float32Array; sc: Float32Array; rot: Float32Array } | null>(null);
+  if (particlesRef.current == null) {
     const rand = seededRandom(count * 31 + spreadX * 17);
     const p = new Float32Array(count * 3);
     const v = new Float32Array(count * 3);
@@ -189,8 +190,9 @@ function DustLayer({ cfg, zooming }: { cfg: DustConfig; zooming: boolean }) {
       r[i * 2] = rand() * Math.PI * 2;
       r[i * 2 + 1] = (rand() - 0.5) * 0.006 * speed;
     }
-    return { pos: p, vel: v, sc: s, rot: r };
-  }, [count, spreadX, spreadY, zMin, zMax, sMin, sMax, speed]);
+    particlesRef.current = { pos: p, vel: v, sc: s, rot: r };
+  }
+  const { pos, vel, sc, rot } = particlesRef.current;
 
   const geo = useMemo(() => new THREE.PlaneGeometry(1, 1), []);
   const tmp = useMemo(() => new THREE.Object3D(), []);
