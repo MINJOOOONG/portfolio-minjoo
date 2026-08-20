@@ -28,6 +28,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = localStorage.getItem("portfolio-lang") as Lang | null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR hydration: localStorage unavailable on server, must sync in effect
     if (stored === "en" || stored === "ko") setLangState(stored);
   }, []);
 

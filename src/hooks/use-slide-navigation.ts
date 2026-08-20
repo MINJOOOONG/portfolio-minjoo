@@ -6,20 +6,6 @@ interface UseSlideNavigationOptions {
   sectionIds: string[];
 }
 
-function scrollCardIntoView(card: HTMLElement) {
-  const topMargin = Math.min(190, Math.max(96, window.innerHeight * 0.14));
-  const bottomMargin = Math.min(48, Math.max(24, window.innerHeight * 0.04));
-  const rect = card.getBoundingClientRect();
-  const cardTop = rect.top + window.scrollY;
-  const availableHeight = window.innerHeight - topMargin - bottomMargin;
-  const top =
-    rect.height < availableHeight
-      ? cardTop - topMargin + (availableHeight - rect.height) / 2
-      : cardTop - topMargin;
-
-  window.scrollTo({ top, behavior: "smooth" });
-}
-
 /** Interactive elements that should NOT trigger section navigation */
 const INTERACTIVE_SELECTOR = [
   "a",
