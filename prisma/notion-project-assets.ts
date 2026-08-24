@@ -1060,6 +1060,16 @@ export const notionProjectAssets = {
   },
 
   istqbStudy: {
+    media: {
+      type: "image",
+      url: "/images/projects/istqb/01-cover.png",
+    },
+    gallery: [
+      { type: "image", title: "문제 풀이 화면", url: "/images/projects/istqb/03-practice.png" },
+      { type: "image", title: "챕터별 요약", url: "/images/projects/istqb/04-summary.png" },
+      { type: "image", title: "오답 노트", url: "/images/projects/istqb/05-wrong.png" },
+    ],
+    attachments: [],
     contentBlocks: [
       // ── 섹션 1: 프로젝트 배경 ──
       { type: "section-heading", title: "01 — 프로젝트 배경" },
@@ -1072,6 +1082,7 @@ export const notionProjectAssets = {
         "▸ 기준 — 40문제 모의고사와 65% 합격 기준을 반영해 실제 시험 대비 흐름 구성",
         "▸ 확장 — 웹 앱 외에도 Swift 기반 iOS 앱 구조를 함께 관리할 수 있도록 repo 구성",
       ] },
+      { type: "image", url: "/images/projects/istqb/02-home.png", caption: "ISTQB Quick Study 메인 화면" },
 
       // ── 섹션 2: 주요 기능 ──
       { type: "section-heading", title: "02 — 주요 기능" },
@@ -1079,14 +1090,17 @@ export const notionProjectAssets = {
         "빠른 10문제, 챕터별 문제, 전체 문제 셔플, Sample Exam A/B/C/D 선택 모드를 제공했습니다. 모의고사는 실제 시험과 유사하게 40문제를 풀고 65% 합격 기준으로 결과를 확인할 수 있도록 구성했습니다.",
         "일반 퀴즈 모드에서는 문제마다 정답과 해설을 바로 확인하고, 시험 모드에서는 문제 간 이동과 최종 제출 후 리뷰 흐름을 분리했습니다.",
       ] },
+      { type: "image", url: "/images/projects/istqb/03-practice.png", caption: "문제 풀기 — 빠른 10문제, 모의고사(A/B/C/D), 챕터별 문제 선택" },
       { type: "text", heading: "오답 노트와 이어풀기", body: [
         "틀린 문제는 LocalStorage에 자동 기록하고, 오답 횟수와 재풀이 결과를 함께 추적했습니다. 전체/미해결/챕터별 필터와 최근 틀린 순, 자주 틀린 순, 챕터 순 정렬을 제공해 약점 영역을 빠르게 찾을 수 있게 했습니다.",
         "챕터별 퀴즈 진행 상태를 저장해 페이지를 벗어나도 이어서 풀 수 있도록 만들었습니다.",
       ] },
+      { type: "image", url: "/images/projects/istqb/05-wrong.png", caption: "오답 노트 — 틀린 문제 필터링, 정렬, 재풀이 추적" },
       { type: "text", heading: "요약 학습과 PDF 뷰어", body: [
         "ISTQB CTFL v4.0 실라버스 기반 챕터별 요약을 제공하고, 각 요약에 학습 목표, 키워드, 시험 포인트, 중요도를 함께 담았습니다.",
         "react-pdf와 pdfjs-dist를 사용해 실라버스 PDF와 샘플 시험 PDF를 앱 안에서 바로 열람할 수 있게 했고, 문제 상세에서 원본 보기 흐름을 연결했습니다.",
       ] },
+      { type: "image", url: "/images/projects/istqb/04-summary.png", caption: "챕터별 요약 — 섹션별 중요도 표시와 학습 포인트 정리" },
 
       // ── 섹션 3: 데이터 구조 ──
       { type: "section-heading", title: "03 — 데이터 구조" },
@@ -1114,6 +1128,68 @@ export const notionProjectAssets = {
       { type: "text", body: [
         "단순히 시험 내용을 암기하는 대신, 테스트 기초, SDLC와 테스팅, 정적 테스팅, 테스트 기법, 테스트 관리, 도구 지원을 앱 데이터와 풀이 흐름으로 구조화했습니다.",
         "QA 실무에서 테스트 케이스를 설명할 때 필요한 공통 용어와 기준을 정리하고, 오답 데이터를 기반으로 약점 영역을 반복 확인하는 학습 루프를 만들었습니다.",
+      ] },
+    ],
+  },
+
+  reviewForge: {
+    media: {
+      type: "image",
+      url: "/images/projects/reviewforge/01-cover.png",
+    },
+    gallery: [
+      { type: "image", title: "Apply 신청 폼", url: "/images/projects/reviewforge/03-features.png" },
+      { type: "image", title: "Write Review 폼", url: "/images/projects/reviewforge/06-review-form.png" },
+      { type: "image", title: "에이전트 파이프라인", url: "/images/projects/reviewforge/07-pipeline.png" },
+    ],
+    attachments: [],
+    contentBlocks: [
+      // ── 섹션 1: 프로젝트를 시작한 이유 ──
+      { type: "section-heading", title: "01 — 프로젝트를 시작한 이유" },
+      { type: "text", body: [
+        "저는 맛집, 카페, 다양한 장소를 블로거 체험단을 통해 방문하는 것을 즐기는 파워 블로거입니다. 체험 자체는 즐겁지만, 그 주변의 반복적인 작업은 그렇지 않았습니다.",
+        "매번 신청할 때마다 맞춤 메시지를 작성해야 하고, 선정 후 방문을 마치면 사진을 정리하고, 메모를 정리하고, 캠페인 브리프를 다시 읽고, 키워드를 세고, 모든 미션을 확인해야 합니다. 이 반복 작업을 자동화하되, 실제 체험 내용을 왜곡하지 않는 도구를 만들고 싶었습니다.",
+      ] },
+      { type: "text", body: [
+        "▸ 실체험 기반 — AI가 경험을 지어내지 않고, 실제 방문 사진과 메모를 바탕으로 초안을 생성합니다.",
+        "▸ 캠페인 규정 준수 — 사진/영상 수, 키워드, 해시태그, 링크 등 미션 조건을 코드로 검증합니다.",
+        "▸ AgentForge Seoul 해커톤 — Bright Data, Qwen Cloud, Nosana, Daytona 스폰서 통합을 활용한 프로젝트입니다.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/02-hero.png", caption: "ReviewForge 메인 화면 — 누구나 인플루언서로" },
+
+      // ── 섹션 2: 주요 기능 ──
+      { type: "section-heading", title: "02 — 주요 기능" },
+      { type: "text", heading: "Apply — 체험단 신청", body: [
+        "캠페인 URL과 신청자 정보를 입력하면, Bright Data로 캠페인 페이지를 크롤링하고 Qwen Cloud로 캠페인을 분석해 3가지 맞춤 신청 메시지를 생성합니다.",
+        "나이, 지역, 관심사, 콘텐츠 강점 같은 개인 정보는 제공할 때만 활용됩니다.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/03-features.png", caption: "Apply 신청 폼 — 캠페인 URL 입력과 나의 강점 설정" },
+      { type: "image", url: "/images/projects/reviewforge/04-section.png", caption: "Apply 파이프라인 — Bright Data → Qwen Cloud로 신청 문구 자동 생성" },
+      { type: "text", heading: "Write Review — 리뷰 작성 & 미션 검증", body: [
+        "캠페인 URL, 방문 사진, 개인 메모를 입력하면 미디어 분석 → 초안 생성 → 미션 준수 QA 순서로 처리됩니다.",
+        "초안은 캠페인 요구사항, 업로드한 방문 미디어, 작성자의 실제 메모를 기반으로 생성됩니다. 결정론적 검증기가 사진/영상 수, 글 길이, 키워드, 해시태그, 링크, 조건부 미션을 코드로 확인합니다.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/06-review-form.png", caption: "Write Review — 캠페인 URL, 사진 업로드, 방문 메모 입력 폼" },
+
+      // ── 섹션 3: 스폰서 통합 아키텍처 ──
+      { type: "section-heading", title: "03 — 스폰서 통합 아키텍처" },
+      { type: "tech-grid", items: [
+        { name: "Bright Data", reason: "캠페인 페이지를 크롤링하여 요구사항 추출을 위한 소스 콘텐츠 제공" },
+        { name: "Qwen Cloud", reason: "캠페인 분석, 신청 메시지, 제목, 사진 순서, 리뷰 초안 생성" },
+        { name: "Nosana", reason: "업로드된 방문 미디어에 대한 GPU 추론 실행" },
+        { name: "Daytona", reason: "격리된 샌드박스에서 결정론적 미션 준수 검사 실행" },
+      ] },
+      { type: "text", body: [
+        "Apply 흐름: Bright Data → Qwen Cloud",
+        "Write Review 흐름: Bright Data → Nosana → Qwen Cloud → Daytona",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/07-pipeline.png", caption: "Write Review 에이전트 파이프라인 — URL → MEDIA → DRAFT → QA 4단계 처리" },
+
+      // ── 섹션 4: 기술 구현 ──
+      { type: "section-heading", title: "04 — 기술 구현" },
+      { type: "text", body: [
+        "Next.js와 TypeScript 기반으로 프론트엔드와 API 라우트를 구현하고, 각 스폰서 API를 통합했습니다.",
+        "Demo Mode를 제공하여 API 키 없이도 Apply와 Write Review 전체 흐름을 체험할 수 있도록 설계했습니다.",
       ] },
     ],
   },

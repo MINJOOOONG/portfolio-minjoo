@@ -873,19 +873,23 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
         "▸ Exam Flow — Reflect 40-question mock exams and the 65% passing threshold",
         "▸ Expansion — Keep a repo structure that includes both the web app and a Swift iOS app experiment",
       ] },
+      { type: "image", url: "/images/projects/istqb/02-home.png", caption: "ISTQB Quick Study main screen" },
       { type: "section-heading", title: "02 — Key Features" },
       { type: "text", heading: "Practice and Mock Exams", body: [
         "Provided quick 10-question practice, chapter-based practice, full shuffled practice, and Sample Exam A/B/C/D selection. Mock exams use 40 questions and show results against the 65% passing threshold.",
         "Normal quiz mode gives immediate answers and explanations after each question, while exam mode separates navigation, final submission, and post-exam review.",
       ] },
+      { type: "image", url: "/images/projects/istqb/03-practice.png", caption: "Practice — Quick 10, mock exams (A/B/C/D), chapter-based questions" },
       { type: "text", heading: "Wrong Notes and Continue Later", body: [
         "Incorrect answers are saved automatically in LocalStorage, tracking wrong counts and reattempt results. Filters and sorting help users identify weak chapters quickly.",
         "Chapter quiz progress is stored so users can leave the page and continue later.",
       ] },
+      { type: "image", url: "/images/projects/istqb/05-wrong.png", caption: "Wrong notes — Filter, sort, and track reattempted questions" },
       { type: "text", heading: "Summaries and PDF Viewers", body: [
         "Added CTFL v4.0 chapter summaries with learning objectives, keywords, exam points, and importance levels.",
         "Used react-pdf and pdfjs-dist to view syllabus and sample exam PDFs directly in the app, with source links from question details.",
       ] },
+      { type: "image", url: "/images/projects/istqb/04-summary.png", caption: "Chapter summaries — Section-level importance and study points" },
       { type: "section-heading", title: "03 — Data Structure" },
       { type: "text", heading: "Question / WrongNote / Summary Models", body: [
         "Question data includes exam set, question number, chapter, learning objective, K-level, options, correct answers, explanation, option-level explanations, tags, key concepts, and syllabus references.",
@@ -907,6 +911,65 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       { type: "text", body: [
         "Instead of only memorizing exam content, I structured testing fundamentals, testing in SDLC, static testing, test techniques, test management, and tool support through app data and solving flows.",
         "The app organizes common terminology and testing standards needed in QA practice, while wrong-answer data creates a repeatable loop for reviewing weak areas.",
+      ] },
+    ],
+  },
+
+  "ReviewForge": {
+    titleEn: "ReviewForge",
+    summaryEn:
+      "An AI creator agent that automates local experience campaign applications, review writing, and mission compliance verification.",
+    descriptionEn: [
+      "Crawls campaign pages via Bright Data and analyzes requirements with Qwen Cloud to auto-generate 3 personalized application messages",
+      "Analyzes uploaded visit photos via Nosana GPU inference and combines campaign requirements, photos, and personal notes to generate a grounded review draft",
+      "Implements Mission Compliance QA in a Daytona sandbox, deterministically verifying photo/video counts, post length, keywords, hashtags, links, and conditional missions",
+      "Designed a sponsor integration pipeline: Bright Data → Qwen Cloud (Apply), Bright Data → Nosana → Qwen Cloud → Daytona (Write Review)",
+      "Provides Demo Mode for exploring both end-to-end flows without API credentials, enabling judges and users to test immediately",
+    ],
+    teamSizeEn: "Solo / Hackathon",
+    roleEn: "Planning, Full-stack Implementation, Sponsor API Integration",
+    achievementEn: "AgentForge Seoul hackathon submission, integrated 4 sponsor API pipeline",
+    periodEn: "2026.08",
+    contentBlocksEn: [
+      { type: "section-heading", title: "01 — Why I Built It" },
+      { type: "text", body: [
+        "I am a power blogger who loves discovering great restaurants, cafés, and places through blogger experience campaigns. The experiences are exciting; the repetitive work around them is not.",
+        "Every application asks for another carefully tailored message. After getting selected and completing the visit, I still have to organize photos, turn scattered notes into a full blog post, reread the campaign brief, count keywords, and check every mission before publishing. I built ReviewForge to automate that repetitive work without inventing the experience.",
+      ] },
+      { type: "text", body: [
+        "▸ Grounded in Real Visits — AI never fabricates experiences; drafts are based on actual visit photos and personal notes.",
+        "▸ Campaign Compliance — Photo/video counts, keywords, hashtags, links, and conditional missions are verified in code.",
+        "▸ AgentForge Seoul Hackathon — Built with Bright Data, Qwen Cloud, Nosana, and Daytona sponsor integrations.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/02-hero.png", caption: "ReviewForge landing — Anyone can be an influencer" },
+      { type: "section-heading", title: "02 — Key Features" },
+      { type: "text", heading: "Apply — Campaign Application", body: [
+        "Enter a campaign URL and applicant highlights. Bright Data crawls the campaign page, and Qwen Cloud analyzes the campaign to generate 3 personalized application messages.",
+        "Personal details like age, location, interests, or content strengths are only used when the creator provides them.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/03-features.png", caption: "Apply form — Campaign URL input and personal highlights" },
+      { type: "image", url: "/images/projects/reviewforge/04-section.png", caption: "Apply pipeline — Bright Data → Qwen Cloud auto-generates application messages" },
+      { type: "text", heading: "Write Review — Review Writing & Mission QA", body: [
+        "Enter a campaign URL, visit photos, and personal notes. The pipeline runs: media analysis → grounded draft generation → mission compliance QA.",
+        "The draft is grounded in the campaign requirements, uploaded visit media, and the creator's firsthand notes. A deterministic verifier checks photo and video counts, length, keywords, hashtags, links, and conditional missions.",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/06-review-form.png", caption: "Write Review — Campaign URL, photo upload, and visit memo form" },
+      { type: "section-heading", title: "03 — Sponsor Integration Architecture" },
+      { type: "tech-grid", items: [
+        { name: "Bright Data", reason: "Captures the public campaign page and provides source content for requirement extraction" },
+        { name: "Qwen Cloud", reason: "Understands the campaign and generates application messages, titles, photo order, and review drafts" },
+        { name: "Nosana", reason: "Runs GPU inference on uploaded visit media" },
+        { name: "Daytona", reason: "Executes deterministic compliance checks in an isolated sandbox" },
+      ] },
+      { type: "text", body: [
+        "Apply flow: Bright Data → Qwen Cloud",
+        "Write Review flow: Bright Data → Nosana → Qwen Cloud → Daytona",
+      ] },
+      { type: "image", url: "/images/projects/reviewforge/07-pipeline.png", caption: "Write Review agent pipeline — URL → MEDIA → DRAFT → QA" },
+      { type: "section-heading", title: "04 — Technical Implementation" },
+      { type: "text", body: [
+        "Built with Next.js and TypeScript for the frontend and API routes, integrating each sponsor API.",
+        "Demo Mode allows exploring both end-to-end flows without API credentials, so judges and users can test immediately.",
       ] },
     ],
   },

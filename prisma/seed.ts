@@ -279,6 +279,25 @@ async function main() {
       liveUrl: "https://istqb-web.vercel.app",
       ...notionProjectAssets.istqbStudy,
     },
+    {
+      title: "ReviewForge",
+      teamSize: "개인 / 해커톤",
+      period: "2026.08",
+      summary: "블로거 체험단 신청부터 리뷰 작성, 미션 준수 검증까지 자동화하는 AI 크리에이터 에이전트입니다.",
+      description: [
+        "캠페인 URL을 입력하면 Bright Data로 페이지를 크롤링하고 Qwen Cloud로 캠페인 요구사항을 분석해 3가지 맞춤 신청 메시지를 자동 생성",
+        "방문 사진과 개인 메모를 업로드하면 Nosana GPU 추론으로 미디어를 분석하고, 캠페인 요구사항·사진·메모를 결합해 실체험 기반 리뷰 초안을 생성",
+        "Daytona 샌드박스에서 사진/영상 수, 글 길이, 키워드, 해시태그, 링크, 조건부 미션을 결정론적으로 검증하는 Mission Compliance QA 구현",
+        "Bright Data → Qwen Cloud(Apply), Bright Data → Nosana → Qwen Cloud → Daytona(Write Review) 순서의 스폰서 통합 파이프라인 설계",
+        "API 키 없이도 전체 흐름을 체험할 수 있는 Demo Mode를 제공해 심사위원과 사용자가 바로 테스트 가능하도록 구현",
+      ],
+      techStack: ["Next.js", "TypeScript", "Bright Data", "Qwen Cloud", "Nosana", "Daytona", "Python", "CSS"],
+      achievement: "AgentForge Seoul 해커톤 출품, 4개 스폰서 API 통합 파이프라인 구현",
+      role: "기획, 풀스택 구현, 스폰서 API 통합",
+      githubUrl: "https://github.com/MINJOOOONG/reviewforge-agentforge-seoul",
+      liveUrl: "https://reviewforge-agentforge-seoul.vercel.app",
+      ...notionProjectAssets.reviewForge,
+    },
   ];
 
   const skillsData = {
