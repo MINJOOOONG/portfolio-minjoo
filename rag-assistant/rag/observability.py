@@ -72,6 +72,19 @@ class Metrics:
                 for key, value in counters.items()
                 if key.startswith("llm_error_type:")
             },
+            # Agent 메트릭
+            "agent_request_count": counters.get("agent_request_total", 0),
+            "agent_error_count": counters.get("agent_error_total", 0),
+            "agent_tool_usage": {
+                key[len("agent_tool:"):]: value
+                for key, value in counters.items()
+                if key.startswith("agent_tool:")
+            },
+            "agent_verification": {
+                "total": counters.get("agent_verification_total", 0),
+                "accurate": counters.get("agent_verification_accurate", 0),
+                "inaccurate": counters.get("agent_verification_inaccurate", 0),
+            },
         }
 
 

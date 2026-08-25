@@ -5,19 +5,36 @@ import Link from "next/link";
 import {
   AlertTriangle,
   ArrowLeft,
+  CheckCircle,
   FileText,
   Loader2,
   Send,
   Sparkles,
+  Wrench,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
 import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 
-interface AskResponse {
+interface ToolUsed {
+  name: string;
+  input: Record<string, unknown>;
+}
+
+interface Verification {
+  is_accurate: boolean;
+  confidence: number;
+  issues: string[];
+  summary: string;
+}
+
+interface AgentResponse {
   answer: string;
   sources: string[];
+  tools_used?: ToolUsed[];
+  verification?: Verification | null;
   error?: string;
 }
 
@@ -26,7 +43,16 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   sources?: string[];
+  tools_used?: ToolUsed[];
+  verification?: Verification | null;
 }
+
+const TOOL_LABELS: Record<string, { ko: string; en: string }> = {
+  search_portfolio: { ko: "포트폴리오 검색", en: "Portfolio Search" },
+  get_project_details: { ko: "프로젝트 상세", en: "Project Details" },
+  compare_skills: { ko: "스킬 비교", en: "Skill Compare" },
+  get_contact_info: { ko: "연락처 조회", en: "Contact Info" },
+};
 
 export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
   const { lang } = useLanguage();
@@ -35,6 +61,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [today, setToday] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setToday(
@@ -48,6 +75,11 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         .replace(/\.$/, "")
     );
   }, [lang]);
+
+  // 새 메시지 추가 시 자동 스크롤
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   const submitQuestion = useCallback(
     async (question: string) => {
@@ -65,12 +97,18 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
       setLoading(true);
 
       try {
+        // 대화 히스토리 구성
+        const history = messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
+
         const res = await fetch("/api/portfolio-assistant", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: trimmed }),
+          body: JSON.stringify({ question: trimmed, history }),
         });
-        const data: AskResponse = await res.json();
+        const data: AgentResponse = await res.json();
 
         setMessages((current) => [
           ...current,
@@ -79,6 +117,8 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
             role: "assistant",
             content: res.ok ? data.answer : data.error || locale["ask.error"][lang],
             sources: res.ok ? data.sources : [],
+            tools_used: res.ok ? data.tools_used : [],
+            verification: res.ok ? data.verification : null,
           },
         ]);
       } catch {
@@ -96,7 +136,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
         requestAnimationFrame(() => inputRef.current?.focus());
       }
     },
-    [loading, lang]
+    [loading, lang, messages]
   );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -162,8 +202,48 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
               ) : (
                 <p className="whitespace-pre-wrap">{message.content}</p>
               )}
-              {message.sources && message.sources.length > 0 && (
+
+              {/* 도구 사용 표시 */}
+              {message.tools_used && message.tools_used.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--notion-hairline)] pt-3">
+                  <span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                    <Wrench className="h-3 w-3" />
+                    {locale["assistant.toolsUsed"][lang]}:
+                  </span>
+                  {message.tools_used.map((tool, i) => (
+                    <span
+                      key={`${tool.name}-${i}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] text-blue-700"
+                    >
+                      {TOOL_LABELS[tool.name]?.[lang] || tool.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* 검증 배지 */}
+              {message.verification && (
+                <div className="mt-2 flex items-center gap-1.5">
+                  {message.verification.is_accurate ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[11px] text-green-700">
+                      <CheckCircle className="h-3 w-3" />
+                      {locale["assistant.verified"][lang]}
+                      <span className="text-green-500">
+                        {Math.round(message.verification.confidence * 100)}%
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[11px] text-red-700">
+                      <XCircle className="h-3 w-3" />
+                      {locale["assistant.unverified"][lang]}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* 소스 표시 */}
+              {message.sources && message.sources.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1.5 border-t border-[var(--notion-hairline)] pt-2">
                   {message.sources.map((source) => (
                     <span
                       key={source}
@@ -181,9 +261,11 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           {loading && (
             <div className="mr-auto inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm text-muted-foreground shadow-sm">
               <Loader2 className="h-4 w-4 animate-spin" />
-              {locale["assistant.preparing"][lang]}
+              {locale["assistant.analyzing"][lang]}
             </div>
           )}
+
+          <div ref={scrollRef} />
         </div>
       </section>
 

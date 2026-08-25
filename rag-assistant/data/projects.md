@@ -77,3 +77,11 @@
 - 기술: Python, FastAPI, httpx, Groq API, pytest
 - 설명: 포트폴리오 데이터를 기반으로 질문에 답변하는 RAG AI 어시스턴트. 순수 Python TF-IDF 기반 검색과 Groq LLM을 조합해 비용 0원으로 운영
 - 신뢰성 장치: 검색 점수 임계값 미만이면 LLM을 호출하지 않는 no-evidence 라우팅, 평가 데이터셋 기반 회귀 테스트, GitHub Actions 자동 실행
+
+## 13. Claude Tool-use Agent (RAG 확장)
+
+- 기술: Python, Claude API (anthropic SDK), FastAPI, Next.js, TypeScript
+- 설명: 기존 RAG 시스템을 Claude API Tool-use Agent로 확장. Agent가 질문을 분석해 4개 도구(search_portfolio, get_project_details, compare_skills, get_contact_info) 중 적절한 도구를 선택·실행하고, 별도 Claude 호출로 Hallucination을 검증하는 구조
+- 핵심 구현: Agent 루프(tool_use ↔ end_turn 반복), 멀티턴 대화(Stateless history 전달), Hallucination 검증(별도 Claude 호출), 도구 선택 정확도·응답 품질·Hallucination 비율을 측정하는 평가 시스템
+- 프론트엔드: 도구 사용 내역(파란 배지), 검증 결과(초록/빨간 배지) 실시간 표시
+- 설계 결정: 기존 /ask 유지 + 새 /agent/chat 추가 (레거시 호환), Agent 실패 시 /ask 자동 폴백

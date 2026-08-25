@@ -20,6 +20,10 @@ DEFAULT_TOP_K = 6
 DEFAULT_SCORE_THRESHOLD = 0.40
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 
+# ── Claude Agent 기본값 ──
+DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-20250514"
+DEFAULT_MAX_AGENT_TURNS = 6
+
 # 프로젝트 루트(= rag-assistant/) 기준 데이터 디렉터리
 _PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATA_DIR = str(_PACKAGE_ROOT / "data")
@@ -62,6 +66,10 @@ class RagSettings:
     write_timeout: float = 10.0
     pool_timeout: float = 5.0
 
+    # Claude Agent 설정
+    claude_model: str = DEFAULT_CLAUDE_MODEL
+    max_agent_turns: int = DEFAULT_MAX_AGENT_TURNS
+
     def as_dict(self) -> dict:
         return {
             "chunk_size": self.chunk_size,
@@ -69,6 +77,8 @@ class RagSettings:
             "top_k": self.top_k,
             "score_threshold": self.score_threshold,
             "model": self.model,
+            "claude_model": self.claude_model,
+            "max_agent_turns": self.max_agent_turns,
         }
 
 
@@ -84,6 +94,8 @@ def get_settings() -> RagSettings:
         top_k=_env_int("RAG_TOP_K", DEFAULT_TOP_K),
         score_threshold=_env_float("RAG_SCORE_THRESHOLD", DEFAULT_SCORE_THRESHOLD),
         model=os.getenv("GROQ_MODEL", DEFAULT_MODEL),
+        claude_model=os.getenv("CLAUDE_MODEL", DEFAULT_CLAUDE_MODEL),
+        max_agent_turns=_env_int("MAX_AGENT_TURNS", DEFAULT_MAX_AGENT_TURNS),
         connect_timeout=_env_float("RAG_LLM_CONNECT_TIMEOUT", 5.0),
         read_timeout=_env_float("RAG_LLM_READ_TIMEOUT", 30.0),
         write_timeout=_env_float("RAG_LLM_WRITE_TIMEOUT", 10.0),

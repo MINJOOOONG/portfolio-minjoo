@@ -78,6 +78,10 @@ const locale = {
   },
   "assistant.placeholder": { ko: "메시지를 입력해 주세요", en: "Type your message" },
   "assistant.send": { ko: "메시지 보내기", en: "Send message" },
+  "assistant.toolsUsed": { ko: "사용된 도구", en: "Tools Used" },
+  "assistant.verified": { ko: "검증 완료", en: "Verified" },
+  "assistant.unverified": { ko: "검증 실패", en: "Unverified" },
+  "assistant.analyzing": { ko: "도구를 사용하여 분석 중입니다", en: "Analyzing with tools" },
 
   // ── ai-lab.tsx ──
   "aiLab.filterAll": { ko: "전체", en: "All" },

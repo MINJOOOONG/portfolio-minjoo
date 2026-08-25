@@ -36,6 +36,13 @@
 | TestRail / Tossion | TC 관리 도구 |
 | Jira / Linear | 이슈 트래킹 |
 
+## AI/LLM API
+
+| 기술 | 설명 |
+|------|------|
+| Claude API | Tool-use Agent 구현, Hallucination 검증, anthropic SDK |
+| Groq API | RAG 답변 생성 (Llama 3.1-8b-instant) |
+
 ## AI 도구 활용
 
 서민주는 13가지 이상의 AI 도구를 실무에서 활용한 경험이 있습니다.

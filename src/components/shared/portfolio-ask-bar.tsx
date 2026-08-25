@@ -10,6 +10,8 @@ import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 interface AskResponse {
   answer: string;
   sources: string[];
+  tools_used?: { name: string; input: Record<string, unknown> }[];
+  verification?: { is_accurate: boolean; confidence: number } | null;
   error?: string;
 }
 

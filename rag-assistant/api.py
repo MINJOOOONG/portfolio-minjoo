@@ -22,6 +22,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from agent.agent import run_agent
 from rag.chain import (
     PROMPT_VERSION,
     LLMError,
@@ -112,6 +113,39 @@ class AskRequest(BaseModel):
 class AskResponse(BaseModel):
     answer: str
     sources: list[str]
+
+
+# ── Agent 요청/응답 스키마 ──
+class ChatMessage(BaseModel):
+    role: str = Field(pattern=r"^(user|assistant)$")
+    content: str
+
+
+class AgentChatRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=2_000)
+    history: list[ChatMessage] = Field(default_factory=list)
+    conversation_id: Optional[str] = None
+
+
+class VerificationResult(BaseModel):
+    is_accurate: bool
+    confidence: float
+    issues: list[str]
+    summary: str
+
+
+class ToolUsed(BaseModel):
+    name: str
+    input: dict
+
+
+class AgentChatResponse(BaseModel):
+    answer: str
+    sources: list[str]
+    tools_used: list[ToolUsed]
+    verification: VerificationResult
+    language: str
+    agent_turns: int
 
 
 # ── 엔드포인트 ──
@@ -213,6 +247,101 @@ async def ask(req: AskRequest):
     )
 
     return AskResponse(answer=answer, sources=sources)
+
+
+@app.post("/agent/chat", response_model=AgentChatResponse)
+async def agent_chat(req: AgentChatRequest):
+    """Claude Tool-use Agent로 질문에 답변합니다."""
+    request_id = uuid.uuid4().hex[:12]
+    started = time.perf_counter()
+
+    metrics.increment("agent_request_total")
+
+    base_log = {
+        "request_id": request_id,
+        "endpoint": "agent_chat",
+        "question_length": len(req.question),
+        "question_hash": question_fingerprint(req.question),
+        "history_length": len(req.history),
+        "conversation_id": req.conversation_id,
+    }
+
+    if search_index is None:
+        metrics.increment("index_not_ready_total")
+        log_event("agent_chat_failed", status="index_not_ready", **base_log)
+        return AgentChatResponse(
+            answer="검색 인덱스가 아직 준비되지 않았습니다.",
+            sources=[],
+            tools_used=[],
+            verification=VerificationResult(
+                is_accurate=True, confidence=0.0,
+                issues=["인덱스 미준비"], summary="인덱스 미준비",
+            ),
+            language="ko",
+            agent_turns=0,
+        )
+
+    try:
+        history_dicts = [{"role": m.role, "content": m.content} for m in req.history]
+        result = await run_agent(req.question, history_dicts, search_index)
+    except Exception as exc:
+        metrics.increment("agent_error_total")
+        total_ms = _elapsed_ms(started)
+        metrics.observe_latency(total_ms)
+        log_event(
+            "agent_chat_failed",
+            status="agent_error",
+            error=str(exc),
+            total_ms=total_ms,
+            **base_log,
+        )
+        return AgentChatResponse(
+            answer="AI 어시스턴트에 일시적인 문제가 발생했습니다.",
+            sources=[],
+            tools_used=[],
+            verification=VerificationResult(
+                is_accurate=True, confidence=0.0,
+                issues=[str(exc)], summary="오류 발생",
+            ),
+            language="ko",
+            agent_turns=0,
+        )
+
+    total_ms = _elapsed_ms(started)
+    metrics.observe_latency(total_ms)
+
+    # 도구 사용 메트릭 기록
+    for tool in result.get("tools_used", []):
+        metrics.increment(f"agent_tool:{tool['name']}")
+
+    # 검증 메트릭 기록
+    verification = result.get("verification", {})
+    metrics.increment("agent_verification_total")
+    if verification.get("is_accurate"):
+        metrics.increment("agent_verification_accurate")
+    else:
+        metrics.increment("agent_verification_inaccurate")
+
+    log_event(
+        "agent_chat_completed",
+        status="ok",
+        agent_turns=result.get("agent_turns", 0),
+        tools_count=len(result.get("tools_used", [])),
+        source_count=len(result.get("sources", [])),
+        verification_accurate=verification.get("is_accurate"),
+        verification_confidence=verification.get("confidence"),
+        total_ms=total_ms,
+        **base_log,
+    )
+
+    return AgentChatResponse(
+        answer=result["answer"],
+        sources=result["sources"],
+        tools_used=[ToolUsed(**t) for t in result["tools_used"]],
+        verification=VerificationResult(**result["verification"]),
+        language=result["language"],
+        agent_turns=result["agent_turns"],
+    )
 
 
 @app.get("/health")

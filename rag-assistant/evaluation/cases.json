@@ -1,5 +1,5 @@
 {
-  "description": "Portfolio RAG evaluation set. Every answerable case is grounded in rag-assistant/data/*.md. Unanswerable and false-premise cases intentionally reference facts that do not appear in any document.",
+  "description": "Portfolio RAG evaluation set. Every answerable case is grounded in rag-assistant/data/*.md. Unanswerable and false-premise cases intentionally reference facts that do not appear in any document. The expected_tools field indicates which Agent tools should be selected for each case.",
   "cases": [
     {
       "id": "ko-answerable-001",
@@ -13,6 +13,9 @@
       "expected_keywords": [
         "TF-IDF",
         "Python"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -29,6 +32,9 @@
       "expected_keywords": [
         "QA"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -44,6 +50,9 @@
         "TC",
         "Tossion"
       ],
+      "expected_tools": [
+        "get_project_details"
+      ],
       "should_refuse": false
     },
     {
@@ -56,6 +65,9 @@
       ],
       "expected_keywords": [
         "Kafka"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -72,6 +84,9 @@
         "FSM",
         "Behavior Tree"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -85,6 +100,9 @@
       "expected_keywords": [
         "1등",
         "강화학습"
+      ],
+      "expected_tools": [
+        "search_portfolio"
       ],
       "should_refuse": false
     },
@@ -102,6 +120,9 @@
         "PostgreSQL",
         "Prisma"
       ],
+      "expected_tools": [
+        "get_project_details"
+      ],
       "should_refuse": false
     },
     {
@@ -114,6 +135,9 @@
       ],
       "expected_keywords": [
         "50건"
+      ],
+      "expected_tools": [
+        "search_portfolio"
       ],
       "should_refuse": false
     },
@@ -128,6 +152,9 @@
       "expected_keywords": [
         "1,000만"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -141,6 +168,9 @@
       "expected_keywords": [
         "편입",
         "소프트웨어"
+      ],
+      "expected_tools": [
+        "search_portfolio"
       ],
       "should_refuse": false
     },
@@ -159,6 +189,9 @@
         "QA",
         "개발"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -171,6 +204,9 @@
       ],
       "expected_keywords": [
         "TipTap"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -185,6 +221,9 @@
       "expected_keywords": [
         "Unreal Engine 5"
       ],
+      "expected_tools": [
+        "get_project_details"
+      ],
       "should_refuse": false
     },
     {
@@ -197,6 +236,9 @@
       ],
       "expected_keywords": [
         "Azure OpenAI"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -213,6 +255,9 @@
       "expected_keywords": [
         "QA"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -226,6 +271,9 @@
       "expected_keywords": [
         "Kafka",
         "비동기"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -241,6 +289,9 @@
       "expected_keywords": [
         "TC"
       ],
+      "expected_tools": [
+        "get_project_details"
+      ],
       "should_refuse": false
     },
     {
@@ -255,6 +306,9 @@
       "expected_keywords": [
         "FSM",
         "Behavior Tree"
+      ],
+      "expected_tools": [
+        "search_portfolio"
       ],
       "should_refuse": false
     },
@@ -273,6 +327,9 @@
         "이커머스",
         "백엔드"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -288,6 +345,9 @@
       "expected_keywords": [
         "Three.js"
       ],
+      "expected_tools": [
+        "compare_skills"
+      ],
       "should_refuse": false
     },
     {
@@ -300,6 +360,9 @@
       ],
       "expected_keywords": [
         "이슈"
+      ],
+      "expected_tools": [
+        "search_portfolio"
       ],
       "should_refuse": false
     },
@@ -314,6 +377,9 @@
       ],
       "expected_keywords": [
         "Groq"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -330,6 +396,9 @@
       "expected_keywords": [
         "QA"
       ],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": false
     },
     {
@@ -342,6 +411,9 @@
       ],
       "expected_keywords": [
         "Kafka"
+      ],
+      "expected_tools": [
+        "get_project_details"
       ],
       "should_refuse": false
     },
@@ -358,6 +430,9 @@
       "expected_keywords": [
         "Next.js"
       ],
+      "expected_tools": [
+        "compare_skills"
+      ],
       "should_refuse": false
     },
     {
@@ -367,6 +442,9 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": true
     },
     {
@@ -376,6 +454,9 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
+      "expected_tools": [
+        "search_portfolio"
+      ],
       "should_refuse": true
     },
     {
@@ -385,7 +466,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-003",
@@ -394,7 +478,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-004",
@@ -403,7 +490,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-005",
@@ -412,7 +502,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-006",
@@ -421,7 +514,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-007",
@@ -430,7 +526,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-unanswerable-008",
@@ -439,7 +538,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-falsepremise-001",
@@ -448,7 +550,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-falsepremise-002",
@@ -457,7 +562,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-falsepremise-003",
@@ -466,7 +574,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "en-falsepremise-001",
@@ -475,7 +586,10 @@
       "retrieval_expectation": "empty",
       "expected_sources": [],
       "expected_keywords": [],
-      "should_refuse": true
+      "should_refuse": true,
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-crossproject-001",
@@ -485,7 +599,10 @@
       "expected_sources": [],
       "expected_keywords": [],
       "should_refuse": true,
-      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-crossproject-002",
@@ -495,7 +612,10 @@
       "expected_sources": [],
       "expected_keywords": [],
       "should_refuse": true,
-      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-crossproject-003",
@@ -505,7 +625,10 @@
       "expected_sources": [],
       "expected_keywords": [],
       "should_refuse": true,
-      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-crossproject-004",
@@ -515,7 +638,10 @@
       "expected_sources": [],
       "expected_keywords": [],
       "should_refuse": true,
-      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다."
+      "note": "어휘 검색은 질문 속 두 프로젝트의 근거를 각각 찾아오므로 검색 단계에서 막을 수 없습니다. 프로젝트 혼동 방지는 프롬프트 규칙(서로 다른 프로젝트의 사실을 섞지 말 것)이 담당하며 run_llm_eval 에서 검증합니다.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-partial-001",
@@ -530,7 +656,10 @@
         "Kafka"
       ],
       "should_refuse": false,
-      "note": "Kafka 사용 사실은 문서에 있지만 처리량 수치는 없음. 검색은 성공해야 하고, LLM은 수치가 없다고 밝혀야 함."
+      "note": "Kafka 사용 사실은 문서에 있지만 처리량 수치는 없음. 검색은 성공해야 하고, LLM은 수치가 없다고 밝혀야 함.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-partial-002",
@@ -546,7 +675,10 @@
         "Regression"
       ],
       "should_refuse": false,
-      "note": "Regression Test 수행 사실은 문서에 있지만 케이스 수는 없음."
+      "note": "Regression Test 수행 사실은 문서에 있지만 케이스 수는 없음.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     },
     {
       "id": "ko-partial-003",
@@ -561,7 +693,10 @@
         "RAG"
       ],
       "should_refuse": false,
-      "note": "RAG 서버 구성은 문서에 있지만 지연 시간 수치는 없음."
+      "note": "RAG 서버 구성은 문서에 있지만 지연 시간 수치는 없음.",
+      "expected_tools": [
+        "search_portfolio"
+      ]
     }
   ],
   "schema": {

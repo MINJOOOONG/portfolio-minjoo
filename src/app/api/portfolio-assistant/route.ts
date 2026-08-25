@@ -4,9 +4,18 @@ const RAG_API_URL =
   process.env.RAG_API_URL?.replace(/\/$/, "") ||
   (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
 
+interface HistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { question } = await request.json();
+    const body = await request.json();
+    const { question, history } = body as {
+      question?: string;
+      history?: HistoryMessage[];
+    };
 
     if (!question || typeof question !== "string") {
       return NextResponse.json(
@@ -25,18 +34,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const res = await fetch(`${RAG_API_URL}/ask`, {
+    // Agent 엔드포인트로 요청 (history 포함)
+    const res = await fetch(`${RAG_API_URL}/agent/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
-      signal: AbortSignal.timeout(30_000),
+      body: JSON.stringify({
+        question,
+        history: Array.isArray(history) ? history : [],
+      }),
+      signal: AbortSignal.timeout(60_000),
     });
 
     if (!res.ok) {
-      return NextResponse.json(
-        { error: "RAG 서버 응답 오류가 발생했습니다." },
-        { status: 502 },
-      );
+      // Agent 실패 시 레거시 /ask로 폴백
+      const fallbackRes = await fetch(`${RAG_API_URL}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+        signal: AbortSignal.timeout(30_000),
+      });
+
+      if (!fallbackRes.ok) {
+        return NextResponse.json(
+          { error: "RAG 서버 응답 오류가 발생했습니다." },
+          { status: 502 },
+        );
+      }
+
+      const fallbackData = await fallbackRes.json();
+      return NextResponse.json({
+        ...fallbackData,
+        tools_used: [],
+        verification: null,
+      });
     }
 
     const data = await res.json();
