@@ -52,7 +52,7 @@ export function ProjectModal({
   const modalTeamSize = t(lang, project.teamSize, project.teamSizeEn);
 
   const techStackList = normalizeTechStack(project.techStack);
-  const projectPath = `/projects/${projectSlug(project.title)}`;
+  const projectPath = `/projects/${projectSlug(project)}`;
 
   const copyProjectLink = async () => {
     const origin = window.location.origin;

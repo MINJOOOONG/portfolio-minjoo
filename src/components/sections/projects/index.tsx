@@ -19,7 +19,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     source: "project" | "activity";
     index: number;
   } | null>(null);
-  const [displayItems] = useState(items);
+  const displayItems = items;
   const viewItems = useMemo(
     () => displayItems.filter((item) => !isArticleProject(item)),
     [displayItems]
@@ -39,9 +39,9 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     function openFromHash() {
       const hash = decodeURIComponent(window.location.hash.replace(/^#/, ""));
       if (!hash) return;
-      const pi = projectItems.findIndex((item) => projectSlug(item.title) === hash);
+      const pi = projectItems.findIndex((item) => decodeURIComponent(projectSlug(item)) === hash);
       if (pi !== -1) { setSelectedModal({ source: "project", index: pi }); return; }
-      const ai = activityItems.findIndex((item) => projectSlug(item.title) === hash);
+      const ai = activityItems.findIndex((item) => decodeURIComponent(projectSlug(item)) === hash);
       if (ai !== -1) { setSelectedModal({ source: "activity", index: ai }); return; }
     }
     openFromHash();
@@ -54,7 +54,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
     if (selectedModal) {
       const list = selectedModal.source === "activity" ? activityItems : projectItems;
       const item = list[selectedModal.index];
-      if (item) window.history.replaceState(null, "", `#${projectSlug(item.title)}`);
+      if (item) window.history.replaceState(null, "", `#${projectSlug(item)}`);
     } else if (window.location.hash) {
       window.history.replaceState(null, "", window.location.pathname);
     }
@@ -73,7 +73,7 @@ export const Projects = memo(function Projects({ items }: ProjectsProps) {
       if (!item) return;
 
       if (window.matchMedia("(max-width: 767px)").matches) {
-        router.push(`/projects/${projectSlug(item.title)}`);
+        router.push(`/projects/${projectSlug(item)}`);
         return;
       }
 

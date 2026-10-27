@@ -123,7 +123,7 @@ export function ProjectCard({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              const url = `${window.location.origin}/projects/${projectSlug(item.title)}`;
+              const url = `${window.location.origin}/projects/${projectSlug(item)}`;
               navigator.clipboard.writeText(url).then(() => {
                 const btn = e.currentTarget;
                 const orig = btn.textContent;

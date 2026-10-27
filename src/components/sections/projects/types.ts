@@ -32,6 +32,11 @@ export type ContentBlock =
   | { type: "rag-pipeline"; diagram: { steps: string[] }; description: string[]; troubleshooting?: string };
 
 export interface ProjectItem {
+  id?: string;
+  slug?: string;
+  published?: boolean;
+  featured?: boolean;
+  order?: number;
   title: string;
   teamSize: string;
   period: string;
