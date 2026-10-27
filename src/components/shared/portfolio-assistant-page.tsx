@@ -24,7 +24,8 @@ interface ToolUsed {
 }
 
 interface Verification {
-  is_accurate: boolean;
+  status?: "verified" | "unverified" | "unavailable";
+  is_accurate: boolean | null;
   confidence: number;
   issues: string[];
   summary: string;
@@ -98,9 +99,9 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
 
       try {
         // 대화 히스토리 구성
-        const history = messages.map((m) => ({
+        const history = messages.slice(-12).map((m) => ({
           role: m.role,
-          content: m.content,
+          content: m.content.slice(0, 4000),
         }));
 
         const res = await fetch("/api/portfolio-assistant", {
@@ -224,7 +225,12 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
               {/* 검증 배지 */}
               {message.verification && (
                 <div className="mt-2 flex items-center gap-1.5">
-                  {message.verification.is_accurate ? (
+                  {message.verification.status === "unavailable" || !message.verification.status ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                      <AlertTriangle className="h-3 w-3" />
+                      {lang === "ko" ? "검증 미완료" : "Verification unavailable"}
+                    </span>
+                  ) : message.verification.status === "verified" && message.verification.is_accurate === true ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[11px] text-green-700">
                       <CheckCircle className="h-3 w-3" />
                       {locale["assistant.verified"][lang]}
@@ -277,6 +283,7 @@ export const PortfolioAssistantPage = memo(function PortfolioAssistantPage() {
           </div>
           <form onSubmit={handleSubmit} className="flex items-center gap-3">
             <input
+              maxLength={2000}
               ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
