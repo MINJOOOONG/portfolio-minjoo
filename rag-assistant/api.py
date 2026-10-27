@@ -10,19 +10,21 @@ POST /ask 엔드포인트로 질문을 받아 키워드 검색 + LLM 답변을 �
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
 import uuid
 from contextlib import asynccontextmanager
-from typing import Optional
+from typing import Literal, Optional
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from agent.agent import run_agent
+from agent.agent import AgentError, run_agent
+from rag.access import protect_ai_routes
 from rag.chain import (
     PROMPT_VERSION,
     LLMError,
@@ -91,6 +93,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Portfolio RAG API", lifespan=lifespan)
+app.middleware("http")(protect_ai_routes)
 
 # ── CORS 설정 ──
 app.add_middleware(
@@ -109,6 +112,13 @@ app.add_middleware(
 class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2_000)
 
+    @field_validator("question")
+    @classmethod
+    def non_blank_question(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("question must not be blank")
+        return value.strip()
+
 
 class AskResponse(BaseModel):
     answer: str
@@ -118,18 +128,19 @@ class AskResponse(BaseModel):
 # ── Agent 요청/응답 스키마 ──
 class ChatMessage(BaseModel):
     role: str = Field(pattern=r"^(user|assistant)$")
-    content: str
+    content: str = Field(min_length=1, max_length=4_000)
 
 
-class AgentChatRequest(BaseModel):
+class AgentChatRequest(AskRequest):
     question: str = Field(min_length=1, max_length=2_000)
-    history: list[ChatMessage] = Field(default_factory=list)
-    conversation_id: Optional[str] = None
+    history: list[ChatMessage] = Field(default_factory=list, max_length=12)
+    conversation_id: Optional[str] = Field(default=None, max_length=100)
 
 
 class VerificationResult(BaseModel):
-    is_accurate: bool
-    confidence: float
+    status: Literal["verified", "unverified", "unavailable"]
+    is_accurate: Optional[bool]
+    confidence: float = Field(ge=0.0, le=1.0)
     issues: list[str]
     summary: str
 
@@ -269,44 +280,22 @@ async def agent_chat(req: AgentChatRequest):
     if search_index is None:
         metrics.increment("index_not_ready_total")
         log_event("agent_chat_failed", status="index_not_ready", **base_log)
-        return AgentChatResponse(
-            answer="검색 인덱스가 아직 준비되지 않았습니다.",
-            sources=[],
-            tools_used=[],
-            verification=VerificationResult(
-                is_accurate=True, confidence=0.0,
-                issues=["인덱스 미준비"], summary="인덱스 미준비",
-            ),
-            language="ko",
-            agent_turns=0,
-        )
+        raise HTTPException(status_code=503, detail="AI 서비스를 준비하고 있습니다.")
 
     try:
         history_dicts = [{"role": m.role, "content": m.content} for m in req.history]
-        result = await run_agent(req.question, history_dicts, search_index)
+        # Bound the whole agent loop, including verification, not only each SDK call.
+        result = await asyncio.wait_for(
+            run_agent(req.question, history_dicts, search_index), timeout=40.0,
+        )
     except Exception as exc:
         metrics.increment("agent_error_total")
-        total_ms = _elapsed_ms(started)
-        metrics.observe_latency(total_ms)
         log_event(
-            "agent_chat_failed",
-            status="agent_error",
-            error=str(exc),
-            total_ms=total_ms,
-            **base_log,
+            "agent_chat_failed", status="agent_error",
+            error_type=exc.code if isinstance(exc, AgentError) else type(exc).__name__,
+            total_ms=_elapsed_ms(started), **base_log,
         )
-        return AgentChatResponse(
-            answer="AI 어시스턴트에 일시적인 문제가 발생했습니다.",
-            sources=[],
-            tools_used=[],
-            verification=VerificationResult(
-                is_accurate=True, confidence=0.0,
-                issues=[str(exc)], summary="오류 발생",
-            ),
-            language="ko",
-            agent_turns=0,
-        )
-
+        raise HTTPException(status_code=503, detail="AI 서비스를 일시적으로 사용할 수 없습니다.") from None
     total_ms = _elapsed_ms(started)
     metrics.observe_latency(total_ms)
 
@@ -317,7 +306,9 @@ async def agent_chat(req: AgentChatRequest):
     # 검증 메트릭 기록
     verification = result.get("verification", {})
     metrics.increment("agent_verification_total")
-    if verification.get("is_accurate"):
+    if verification.get("status") == "unavailable":
+        metrics.increment("agent_verification_unavailable")
+    elif verification.get("is_accurate"):
         metrics.increment("agent_verification_accurate")
     else:
         metrics.increment("agent_verification_inaccurate")

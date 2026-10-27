@@ -22,12 +22,20 @@ import anthropic
 
 from agent.prompts import AGENT_SYSTEM_PROMPT
 from agent.tools import TOOL_DEFINITIONS, execute_tool
-from agent.verification import check_answer_accuracy
+from agent.verification import check_answer_accuracy, unavailable_verification
+from rag.chain import no_evidence_answer
 from rag.config import get_settings
 from rag.embedder import KeywordIndex
 from rag.language import detect_language
 
 logger = logging.getLogger("agent")
+
+
+class AgentError(Exception):
+    """A safe error code, translated into a non-success HTTP response by the API."""
+    def __init__(self, code: str):
+        super().__init__(code)
+        self.code = code
 
 
 async def run_agent(
@@ -54,11 +62,11 @@ async def run_agent(
     """
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        return _error_response("ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다.")
+        raise AgentError("not_configured")
 
     settings = get_settings()
     language = detect_language(question)
-    client = anthropic.AsyncAnthropic(api_key=api_key)
+    client = anthropic.AsyncAnthropic(api_key=api_key, timeout=get_settings().read_timeout, max_retries=0)
 
     # 대화 히스토리 구성
     messages = _build_messages(history, question)
@@ -80,6 +88,7 @@ async def run_agent(
                 system=AGENT_SYSTEM_PROMPT,
                 tools=TOOL_DEFINITIONS,
                 messages=messages,
+                tool_choice={"type": "any"} if turns == 1 else {"type": "auto"},
             )
 
             # 응답에서 tool_use와 text 블록 분리
@@ -106,7 +115,7 @@ async def run_agent(
 
                 result = execute_tool(tool_name, tool_input, index)
                 all_sources.extend(result.get("sources", []))
-                if result.get("content"):
+                if result.get("sources") and result.get("content"):
                     all_evidence.append(result["content"])
 
                 tool_results.append({
@@ -122,13 +131,15 @@ async def run_agent(
             if not answer:
                 answer = "최대 처리 횟수에 도달했습니다. 질문을 더 구체적으로 해주세요."
 
-    except anthropic.AuthenticationError:
-        return _error_response("API 인증에 실패했습니다.")
-    except anthropic.RateLimitError:
-        return _error_response("API 호출 한도에 도달했습니다. 잠시 후 다시 시도해주세요.")
+    except anthropic.AuthenticationError as exc:
+        raise AgentError("authentication_failed") from exc
+    except anthropic.RateLimitError as exc:
+        raise AgentError("upstream_rate_limited") from exc
     except anthropic.APIError as exc:
-        logger.error("claude_api_error: %s", str(exc))
-        return _error_response("AI 서비스에 일시적인 문제가 발생했습니다.")
+        logger.warning("claude_api_error type=%s", type(exc).__name__)
+        raise AgentError("upstream_error") from exc
+    finally:
+        await client.close()
 
     elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
 
@@ -137,7 +148,12 @@ async def run_agent(
 
     # Hallucination 검증
     evidence_text = "\n\n---\n\n".join(all_evidence) if all_evidence else ""
-    verification = await check_answer_accuracy(question, answer, evidence_text)
+    if not unique_sources or not evidence_text.strip():
+        # Tool use is a protocol rule, not just a prompt instruction.
+        answer = no_evidence_answer(question)
+        verification = unavailable_verification("답변할 근거를 찾지 못했습니다.")
+    else:
+        verification = await check_answer_accuracy(question, answer, evidence_text)
 
     logger.info(
         "agent_completed turns=%d tools=%d sources=%d elapsed_ms=%.2f accurate=%s",
@@ -200,20 +216,3 @@ def _deduplicate(items: list[str]) -> list[str]:
             seen.add(item)
             result.append(item)
     return result
-
-
-def _error_response(message: str) -> dict:
-    """오류 발생 시 기본 응답."""
-    return {
-        "answer": message,
-        "sources": [],
-        "tools_used": [],
-        "verification": {
-            "is_accurate": True,
-            "confidence": 0.0,
-            "issues": ["오류로 인해 검증 불가"],
-            "summary": message,
-        },
-        "language": "ko",
-        "agent_turns": 0,
-    }
