@@ -9,13 +9,13 @@ import { AboutSectionRow } from "@/components/sections/about-section-row";
 import { AboutDetailPanel } from "@/components/sections/about-detail-panel";
 import { useLanguage } from "@/lib/i18n/language-context";
 import locale from "@/lib/i18n/locale";
+import { MarkdownRenderer } from "@/components/shared/markdown-renderer";
 
 interface AboutProps {
   content: string;
 }
 
 export const About = memo(function About({ content }: AboutProps) {
-  void content;
 
   const headingRef = useScrollReveal<HTMLDivElement>({ y: 30, duration: 0.8 });
   const [activeId, setActiveId] = useState<string>("01");
@@ -49,6 +49,8 @@ export const About = memo(function About({ content }: AboutProps) {
         <div ref={headingRef} className="mb-4 sm:mb-16">
           <SlideHeading label="About" title="About Me" />
         </div>
+
+        {content.trim() ? <MarkdownRenderer content={content} className="mb-8" /> : null}
 
         {/* ── Desktop: Master-detail layout ── */}
         <div className="hidden md:flex md:flex-row">

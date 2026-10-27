@@ -82,29 +82,6 @@ export const aboutSections: AboutSection[] = [
       "Rather than waiting until everything is perfectly prepared, I find it works better for me to start building and iteratively fix what's lacking. You can only see what's missing once it's actually running, and that's when I learn the fastest.",
     ],
   },
-  {
-    number: "05",
-    koreanTitle: "AI 활용력",
-    englishTitle: "AI-Loving Builder",
-    sentence:
-      "저는 AI를 적극적으로 활용합니다. 다만 결과를 그대로 믿지는 않고, 문제 정의는 사람이 해야 한다고 생각합니다.",
-    sentenceEn:
-      "I actively use AI, but I don't trust outputs blindly — defining the problem is the human's job.",
-    paragraphs: [
-      "AI는 빠르게 초안을 만들고, 반복 작업을 줄이고, 아이디어를 구체화하는 데 강력한 도구라고 생각합니다. 저는 Claude, Codex, Cursor 같은 도구를 개인 프로젝트 전반에서 활용하고 있습니다. 포트폴리오 구현, 코드 리팩터링, 문서 구조화, RAG 파이프라인 설계까지 — AI와 함께 작업하면 혼자일 때보다 더 빠르게 움직일 수 있었습니다.",
-      "하지만 AI가 만든 결과를 그대로 사용하지는 않습니다. AI에게 맡기기 전에 문제를 먼저 정의하고, 결과는 공식 문서와 실제 동작을 기준으로 검증합니다. AI가 빠르게 만들어낸 코드일수록 의도와 다르게 동작할 가능성이 있기 때문에, 결과를 받은 뒤에 확인하고 수정하는 과정을 빠뜨리지 않습니다.",
-      "새로운 AI 도구가 나오면 빠르게 실험해봅니다. 다만 AI를 더 많은 결과물을 찍어내는 수단으로 보기보다는, 반복되는 과정을 줄이고 더 중요한 판단에 집중할 수 있게 해주는 도구로 활용하려고 합니다.",
-    ],
-    paragraphsEn: [
-      "I think AI is a powerful tool for quickly drafting, reducing repetitive work, and turning vague ideas into concrete plans. I use tools like Claude, Codex, and Cursor throughout my personal projects — from portfolio implementation and code refactoring to documentation structuring and RAG pipeline design. Working with AI lets me move faster than working alone.",
-      "But I don't use AI outputs as-is. Before delegating to AI, I define the problem first. After receiving results, I verify them against official documentation and actual behavior. The faster AI produces code, the more likely it might not match the intent — so I never skip the review and correction step.",
-      "When new AI tools come out, I experiment with them quickly. But rather than viewing AI as a way to produce more output, I try to use it as a tool that reduces repetitive processes and lets me focus on the decisions that actually matter.",
-    ],
-    detailLink: {
-      label: "See How I Work with AI →",
-      targetId: "ai-lab",
-    },
-  },
 ];
 
 export const keywordAnnotations: Record<string, { ko: string; en: string }> = {
