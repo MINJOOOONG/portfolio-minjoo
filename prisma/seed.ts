@@ -17,23 +17,23 @@ async function main() {
     {
       company: "Viva Republica (Toss)",
       role: "Toss Core Commerce QA Assistant",
-      period: "2025.11 - Present",
-      status: "재직 중",
+      period: "2025.11 - 2026.06",
+      status: "",
       companyIconUrl: "https://favicon.im/toss.im?larger=true",
       companyIconFallback: "T",
-      summary: "현재 Toss Core의 Commerce 팀에서 QA Assistant로 근무하며, 주 단위 버전 업데이트와 잦은 배포가 이루어지는 애자일한 모바일 커머스 서비스의 품질 검증을 담당하고 있습니다.",
-      summaryEn: "I currently work as a QA Assistant on Toss Core's Commerce team, responsible for quality verification of an agile mobile commerce service with weekly version updates and frequent releases.",
+      summary: "Toss Core의 Commerce 팀에서 QA Assistant로 근무하며, 주 단위 버전 업데이트와 잦은 배포가 이루어지는 애자일한 모바일 커머스 서비스의 품질 검증을 담당했습니다.",
+      summaryEn: "Worked as a QA Assistant on Toss Core's Commerce team, responsible for quality verification of an agile mobile commerce service with weekly version updates and frequent releases.",
       achievements: [
-        "주요 업무로는 Web, iOS, Android 환경에서 회귀 테스트와 탐색 테스트를 수행하고 있습니다. Toss 내부 Figma 기반 디자인 시스템인 Deus와 Notion에 정리된 기획서 및 디자인 사양을 확인하며, 신규 기능과 UI/UX 변경 사항이 제품 요구사항, 정책 및 컴플라이언스 기준, 기능 품질 기준에 맞게 동작하는지 검증합니다.",
-        "또한 웹에서 등록되거나 변경된 상품 정보가 iOS와 Android 앱에서 정상적으로 노출되고 동작하는지 확인하는 등 커머스 서비스의 end-to-end 흐름을 검증합니다. 새로운 프로젝트가 진행될 때마다 테스트 케이스를 작성하고 수정하며, 예외 케이스를 식별하고 사용자 및 품질 관점에서 의견을 제시합니다.",
-        "이슈 발생 시 재현 절차, 기대 결과, 실제 결과, 영향 범위, 발생 조건을 명확히 정리하고, Jira와 Slack을 통해 PM, 디자이너, 엔지니어와 협업하며 이슈를 추적합니다.",
-        "또한 업무 과정에서 Claude와 Codex 등 AI Agent를 적극적으로 활용하여 생산성과 문제 해결 효율을 높이고 있습니다. 반복적인 QA 업무의 수작업 부담을 줄이기 위해 간단한 자동화 스크립트나 구조화된 업무 흐름을 만들며, 테스트 효율성과 일관성, 프로세스 품질을 개선하고 있습니다.",
+        "주요 업무로는 Web, iOS, Android 환경에서 회귀 테스트와 탐색 테스트를 수행했습니다. Toss 내부 Figma 기반 디자인 시스템인 Deus와 Notion에 정리된 기획서 및 디자인 사양을 확인하며, 신규 기능과 UI/UX 변경 사항이 제품 요구사항, 정책 및 컴플라이언스 기준, 기능 품질 기준에 맞게 동작하는지 검증했습니다.",
+        "또한 웹에서 등록되거나 변경된 상품 정보가 iOS와 Android 앱에서 정상적으로 노출되고 동작하는지 확인하는 등 커머스 서비스의 end-to-end 흐름을 검증했습니다. 새로운 프로젝트가 진행될 때마다 테스트 케이스를 작성하고 수정하며, 예외 케이스를 식별하고 사용자 및 품질 관점에서 의견을 제시했습니다.",
+        "이슈 발생 시 재현 절차, 기대 결과, 실제 결과, 영향 범위, 발생 조건을 명확히 정리하고, Jira와 Slack을 통해 PM, 디자이너, 엔지니어와 협업하며 이슈를 추적했습니다.",
+        "또한 업무 과정에서 Claude와 Codex 등 AI Agent를 적극적으로 활용하여 생산성과 문제 해결 효율을 높였습니다. 반복적인 QA 업무의 수작업 부담을 줄이기 위해 간단한 자동화 스크립트나 구조화된 업무 흐름을 만들며, 테스트 효율성과 일관성, 프로세스 품질을 개선했습니다.",
       ],
       achievementsEn: [
-        "My main work includes regression and exploratory testing across Web, iOS, and Android. I review Deus, Toss's internal Figma-based design system, along with specs and design requirements documented in Notion, verifying that new features and UI/UX changes meet product requirements, policy and compliance standards, and functional quality criteria.",
-        "I verify the end-to-end commerce flow, including whether product information registered or changed on the web is displayed and works correctly in the iOS and Android apps. For each new project, I write and update test cases, identify edge cases, and provide feedback from user and quality perspectives.",
-        "When issues occur, I clearly document reproduction steps, expected results, actual results, impact scope, and occurrence conditions, then track issues by collaborating with PMs, designers, and engineers through Jira and Slack.",
-        "I also actively use AI Agents such as Claude and Codex to improve productivity and problem-solving efficiency. To reduce manual burden in repetitive QA work, I create simple automation scripts and structured workflows, improving test efficiency, consistency, and process quality.",
+        "My main work included regression and exploratory testing across Web, iOS, and Android. I reviewed Deus, Toss's internal Figma-based design system, along with specs and design requirements documented in Notion, verifying that new features and UI/UX changes met product requirements, policy and compliance standards, and functional quality criteria.",
+        "I verified the end-to-end commerce flow, including whether product information registered or changed on the web was displayed and worked correctly in the iOS and Android apps. For each new project, I wrote and updated test cases, identified edge cases, and provided feedback from user and quality perspectives.",
+        "When issues occurred, I clearly documented reproduction steps, expected results, actual results, impact scope, and occurrence conditions, then tracked issues by collaborating with PMs, designers, and engineers through Jira and Slack.",
+        "I also actively used AI Agents such as Claude and Codex to improve productivity and problem-solving efficiency. To reduce manual burden in repetitive QA work, I created simple automation scripts and structured workflows, improving test efficiency, consistency, and process quality.",
       ],
       techStack: ["Web", "iOS", "Android", "Deus", "Notion", "Jira", "Slack", "Claude", "Codex"],
     },
@@ -58,7 +58,7 @@ async function main() {
     {
       title: "포트폴리오 웹사이트",
       teamSize: "개인 / 1인 개발",
-      period: "2026.05 - 진행중",
+      period: "2026.05 - 2026.10",
       summary: "AI Agent와 RAG 검색을 적용한 인터랙티브 포트폴리오 웹사이트입니다.",
       description: [
         "Next.js App Router와 React Server Component 기반으로 SSR과 클라이언트 인터랙션을 분리해 초기 로딩 성능과 사용자 경험을 동시에 확보",
@@ -77,7 +77,7 @@ async function main() {
     {
       title: "개인 기술 블로그 joodev",
       teamSize: "개인",
-      period: "2025.04 - 진행중",
+      period: "2025.04 - 2026.10",
       summary: "기술 글 작성과 관리를 직접 운영하는 CMS형 개인 블로그입니다.",
       description: [
         "Next.js App Router와 TypeScript 기반으로 SSR과 React Server Component를 적용해 페이지별 데이터 흐름을 분리하고 불필요한 클라이언트 상태를 축소",
@@ -246,7 +246,7 @@ async function main() {
     {
       title: "QA Minjoo Helper",
       teamSize: "개인",
-      period: "2025.05 - 진행중",
+      period: "2025.05 - 2026.06",
       summary: "QA 중 TC 수정 요청을 기록하고 요약하는 AI 업무 보조 도구입니다.",
       description: [
         "QA 실무에서 테스트 중 발생하는 수정/추가/삭제 요청을 실시간으로 기록하고 관리하는 도구를 직접 설계하고 개발",
@@ -263,7 +263,7 @@ async function main() {
     {
       title: "ISTQB CTFL Quick Study",
       teamSize: "개인",
-      period: "2026.06 - 진행중",
+      period: "2026.06 - 2026.09",
       summary: "ISTQB CTFL v4.0 한국어 시험 대비를 위해 문제 풀이, 모의고사, 오답 관리, 챕터별 요약을 제공하는 웹 학습 앱입니다.",
       description: [
         "ISTQB 공식 샘플 시험 A/B/C/D 세트를 기반으로 빠른 10문제, 챕터별 문제, 전체 문제, 40문제 모의고사 풀이 흐름 구현",
@@ -372,7 +372,7 @@ async function main() {
     },
     {
       key: "about_timeline",
-      value: `- **2025.11~현재** - Viva Republica (Toss) Test/Commerce QA Assistant
+      value: `- **2025.11~2026.06** - Viva Republica (Toss) Test/Commerce QA Assistant
 - **2025.06~09** - Riwonsoft QA Intern
 - **2024** - UNIST 해상물류 창업 오디션 최종 선발, K-HTML 해커톤, AWS DeepRacer 1등
 - **2021.03~2026.02** - 한국외국어대학교 재학`,
@@ -453,55 +453,6 @@ Next.js App Router를 사용한 개인 포트폴리오 웹사이트입니다.
       liveUrl: null,
       featured: true,
       order: 1,
-      published: true,
-    },
-    {
-      title: "테스트 자동화 프레임워크",
-      slug: "test-automation-framework",
-      summary: "Selenium + TestNG 기반 E2E 테스트 자동화 프레임워크.",
-      description: `## 프로젝트 소개
-
-QA 엔지니어 시절 구축한 E2E 테스트 자동화 프레임워크입니다.
-
-### 주요 기능
-- Page Object Model 패턴 적용
-- 데이터 기반 테스트 (Data-Driven Testing)
-- CI/CD 파이프라인 연동
-- 테스트 결과 리포트 자동 생성
-
-### 성과
-- 회귀 테스트 시간 70% 단축
-- 릴리스 전 자동 검증 프로세스 확립`,
-      techStack: ["Java", "Selenium", "TestNG", "Jenkins", "Allure Report"],
-      githubUrl: null,
-      liveUrl: null,
-      featured: true,
-      order: 2,
-      published: true,
-    },
-    {
-      title: "API 모니터링 대시보드",
-      slug: "api-monitoring-dashboard",
-      summary: "REST API 상태 모니터링 및 응답 시간 추적 대시보드.",
-      description: `## 프로젝트 소개
-
-API 엔드포인트의 상태와 응답 시간을 실시간으로 모니터링하는 대시보드입니다.
-
-### 주요 기능
-- 주기적 헬스체크
-- 응답 시간 히스토리 차트
-- 장애 알림 (Slack, Email)
-- 가동률 통계
-
-### 기술 스택 선택 이유
-- Spring Boot: 안정적인 스케줄링과 API 개발
-- PostgreSQL: 시계열 데이터 저장에 적합
-- React: 인터랙티브한 대시보드 UI`,
-      techStack: ["Spring Boot", "React", "PostgreSQL", "Docker"],
-      githubUrl: null,
-      liveUrl: null,
-      featured: true,
-      order: 3,
       published: true,
     },
   ];
