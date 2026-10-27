@@ -54,6 +54,8 @@ def test_settings_snapshot_shape():
         "top_k",
         "score_threshold",
         "model",
+        "claude_model",
+        "max_agent_turns",
     }
 
 

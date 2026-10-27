@@ -233,3 +233,23 @@ def test_score_summary_shape(sample_index):
 
     empty = summarize_scores([])
     assert empty == {"count": 0, "max": None, "min": None, "mean": None}
+
+
+@pytest.mark.parametrize("query", [
+    "민주가 Flutter로 만든 서비스가 있나요?",
+    "서민주는 Rust 프로젝트를 개발했나요?",
+    "Minjoo Suh Kubernetes production deployment",
+    "서민주의 블록체인 개발 경험은?",
+])
+def test_owner_name_cannot_supply_evidence_for_absent_technology(portfolio_index, query):
+    assert retrieve_documents(portfolio_index, query) == []
+
+
+def test_english_infix_is_not_a_technology_match():
+    index = build_index([{"source": "a.md", "page_content": "A trustworthy open source project"}])
+    assert index.score("Rust", 0) == 0
+
+
+def test_bilingual_message_query_finds_backend(portfolio_index):
+    docs = retrieve_documents(portfolio_index, "Loopers message processing")
+    assert "loopers-backend.md" in _sources(docs)

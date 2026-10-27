@@ -53,6 +53,8 @@ _QUERY_STOPWORDS = {
     # 점수를 끌어내리던 단어들입니다. (예: "졸업논문 **주제**는 무엇인가요")
     "주제", "진로", "이유", "내용", "방식", "부분", "경우", "정도", "수준",
     "목적", "결과", "과정", "상황", "방법", "기준", "사례", "특징", "장점",
+    "as", "by", "from", "call", "calls", "called", "provider", "providers",
+    "powers", "powered", "powering", "맡았던", "맡은", "맡았", "일이", "했던",
     "단점", "경험", "활동", "업무", "이름", "종류", "가지", "이야기", "생각",
     "의미", "역할", "기간", "시절", "당시",
     # 영어 기능어
@@ -65,6 +67,15 @@ _QUERY_STOPWORDS = {
     "me", "explain", "describe", "any", "some", "does", "did", "into",
     "project", "projects", "experience", "work", "use", "used", "using",
     "make", "made", "thing", "things", "kind", "name", "time", "year", "years",
+}
+
+
+# Small bilingual vocabulary for the Korean corpus; aliases are used only when
+# the target actually occurs in the index, never as invented evidence.
+_QUERY_ALIASES = {
+    "message": "메시지", "messages": "메시지",
+    "retrieval": "검색", "retrieve": "검색",
+    "리원소프트": "riwonsoft",
 }
 
 
@@ -205,6 +216,9 @@ class KeywordIndex:
             if any(form in _QUERY_STOPWORDS for form in forms):
                 continue
             term = self.canonical_term(token)
+            alias = _QUERY_ALIASES.get(term)
+            if alias in self.df:
+                term = alias
             if term not in terms:
                 terms.append(term)
         return terms
@@ -222,12 +236,16 @@ class KeywordIndex:
         어간의 IDF를 씁니다. 그렇지 않으면 활용형이 전부 미등장 토큰으로
         취급되어 IDF 상한 가중치를 받는 왜곡이 생깁니다.
         """
+        # The owner identifies the corpus, not evidence for a specific claim.
+        # A name match must not outweigh an absent technology or employer.
+        if term in {"서민주", "민주", "minjoo", "suh"}:
+            return 1.0
         if term in self.idf:
             return self.idf[term] ** 2
 
         # "민주"처럼 어휘 토큰("서민주")의 일부인 경우, 미등장 토큰이 아니라
         # 그 어휘 토큰만큼 흔한 것으로 봅니다. (가장 흔한 = 가장 낮은 IDF)
-        if len(term) >= 2:
+        if len(term) >= 2 and re.fullmatch(r"[가-힣]+", term):
             containing = [
                 self.idf[token] for token in self.idf if term in token
             ]
@@ -238,7 +256,9 @@ class KeywordIndex:
             if variant in self.idf:
                 return self.idf[variant] ** 2
 
-        return self.default_idf ** 2
+        # Unknown content words need a modest penalty so generic job/project
+        # vocabulary cannot supply evidence for an absent employer or technology.
+        return self.default_idf ** 2 * 1.25
 
     def _term_strength(self, term: str, doc_index: int) -> float:
         """질의 토큰 하나가 특정 청크에서 얼마나 강하게 매칭되는지."""
@@ -252,7 +272,7 @@ class KeywordIndex:
         if any(v in token_set for v in variants):
             return _STEM
 
-        if len(term) >= 2 and term in doc_text:
+        if len(term) >= 2 and re.fullmatch(r"[가-힣]+", term) and term in doc_text:
             return _SUBSTRING
 
         if any(len(v) >= 2 and v in doc_text for v in variants):

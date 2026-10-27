@@ -15,6 +15,8 @@ from rag.loader import load_documents
 @pytest.fixture(autouse=True)
 def isolated_env(monkeypatch):
     """실행 환경의 RAG_* / GROQ_* 설정이 테스트에 새어 들어오지 않게 합니다."""
+    from rag.access import peer_limiter
+    peer_limiter.buckets.clear()
     for name in (
         "RAG_DATA_DIR",
         "RAG_CHUNK_SIZE",
@@ -23,6 +25,10 @@ def isolated_env(monkeypatch):
         "RAG_SCORE_THRESHOLD",
         "GROQ_API_KEY",
         "GROQ_MODEL",
+        "ANTHROPIC_API_KEY",
+        "CLAUDE_MODEL",
+        "MAX_AGENT_TURNS",
+        "RAG_API_TOKEN",
     ):
         monkeypatch.delenv(name, raising=False)
 

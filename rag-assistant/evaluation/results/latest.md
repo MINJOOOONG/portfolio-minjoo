@@ -11,9 +11,11 @@
 | `chunk_overlap` | `150` |
 | `top_k` | `6` |
 | `score_threshold` | `0.4` |
-| `model` | `llama-3.1-8b-instant` |
+| `model` | `openai/gpt-oss-20b` |
+| `claude_model` | `claude-sonnet-4-20250514` |
+| `max_agent_turns` | `6` |
 | `documents` | `9` |
-| `chunks` | `88` |
+| `chunks` | `90` |
 
 ## Metrics
 
@@ -21,11 +23,11 @@
 | --- | --- |
 | total cases | 45 |
 | retrieval-asserted cases | 41 |
-| passed cases | 34 / 41 |
-| answerable source hit rate | 82.1% (28 cases) |
-| non-empty retrieval on answerable | 82.1% |
-| no-evidence routing accuracy | 84.6% (13 cases) |
-| false-premise routing accuracy | 75.0% |
+| passed cases | 38 / 41 |
+| answerable source hit rate | 89.3% (28 cases) |
+| non-empty retrieval on answerable | 89.3% |
+| no-evidence routing accuracy | 100.0% (13 cases) |
+| false-premise routing accuracy | 100.0% |
 | cross-project cases retrieving evidence | 4 / 4 |
 
 ## By category
@@ -35,19 +37,15 @@
 | answerable | 14 | 14 | 14 | 100.0% |
 | cross_project_confusion | 0 | 0 | 4 | n/a |
 | english | 5 | 5 | 5 | 100.0% |
-| false_premise | 3 | 4 | 4 | 75.0% |
-| korean_paraphrase | 5 | 7 | 7 | 71.4% |
+| false_premise | 4 | 4 | 4 | 100.0% |
+| korean_paraphrase | 7 | 7 | 7 | 100.0% |
 | partial_evidence | 0 | 3 | 3 | 0.0% |
-| unanswerable | 7 | 8 | 8 | 87.5% |
+| unanswerable | 8 | 8 | 8 | 100.0% |
 
 ## Failed cases
 
 | id | category | reason |
 | --- | --- | --- |
-| `ko-paraphrase-001` | korean_paraphrase | 검색 결과가 비어 있음 (expected: experience.md, resume.md, about.md) |
-| `ko-paraphrase-007` | korean_paraphrase | 검색 결과가 비어 있음 (expected: experience.md) |
-| `ko-unanswerable-001` | unanswerable | 근거 없음이어야 하는데 ['about.md'] 를 반환 |
-| `ko-falsepremise-001` | false_premise | 근거 없음이어야 하는데 ['resume.md'] 를 반환 |
 | `ko-partial-001` | partial_evidence | 검색 결과가 비어 있음 (expected: loopers-backend.md, projects.md) |
 | `ko-partial-002` | partial_evidence | 검색 결과가 비어 있음 (expected: experience.md, about.md, skills.md) |
 | `ko-partial-003` | partial_evidence | 검색 결과가 비어 있음 (expected: portfolio-site.md, projects.md) |

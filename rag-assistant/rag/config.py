@@ -95,7 +95,7 @@ def get_settings() -> RagSettings:
         score_threshold=_env_float("RAG_SCORE_THRESHOLD", DEFAULT_SCORE_THRESHOLD),
         model=os.getenv("GROQ_MODEL", DEFAULT_MODEL),
         claude_model=os.getenv("CLAUDE_MODEL", DEFAULT_CLAUDE_MODEL),
-        max_agent_turns=_env_int("MAX_AGENT_TURNS", DEFAULT_MAX_AGENT_TURNS),
+        max_agent_turns=max(1, min(6, _env_int("MAX_AGENT_TURNS", DEFAULT_MAX_AGENT_TURNS))),
         connect_timeout=_env_float("RAG_LLM_CONNECT_TIMEOUT", 5.0),
         read_timeout=_env_float("RAG_LLM_READ_TIMEOUT", 30.0),
         write_timeout=_env_float("RAG_LLM_WRITE_TIMEOUT", 10.0),
