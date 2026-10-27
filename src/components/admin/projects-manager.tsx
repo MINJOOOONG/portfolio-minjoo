@@ -43,6 +43,7 @@ export function ProjectsManager() {
   const [editing, setEditing] = useState<string | null>(null);
   const [form, setForm] = useState(emptyProject);
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   const fetchProjects = async () => {
@@ -87,6 +88,7 @@ export function ProjectsManager() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     const body = {
       ...form,
       techStack: form.techStack
@@ -111,6 +113,9 @@ export function ProjectsManager() {
       setEditing(null);
       setForm(emptyProject);
       fetchProjects();
+    } else {
+      const data = await res.json();
+      setError(data.error || "저장하지 못했습니다.");
     }
   };
 
@@ -134,6 +139,8 @@ export function ProjectsManager() {
           {showForm ? "취소" : "새 프로젝트"}
         </Button>
       </div>
+
+      {error && <p role="alert" className="mb-4 text-sm text-destructive">{error}</p>}
 
       {showForm && (
         <Card className="mb-8">

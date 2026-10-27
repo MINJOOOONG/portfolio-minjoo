@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPassword, createSession, SESSION_COOKIE_NAME } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
+import { isRecord, readJson, RequestError } from "@/lib/request-validation";
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    const limited = await rateLimit(request, { scope: "login", limit: 5, windowMs: 60_000 });
+    if (limited) return limited;
+    const body = await readJson(request, 8000);
+    const password = isRecord(body) ? body.password : undefined;
 
-    if (!password || typeof password !== "string") {
+    if (!password || typeof password !== "string" || password.length > 1024) {
       return NextResponse.json(
         { error: "비밀번호를 입력해주세요." },
         { status: 400 }
@@ -32,6 +37,9 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
+    if (error instanceof RequestError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Login error:", error);
     return NextResponse.json(
       { error: "서버 오류가 발생했습니다." },

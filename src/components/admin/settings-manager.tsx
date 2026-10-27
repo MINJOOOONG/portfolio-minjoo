@@ -25,6 +25,7 @@ const settingFields = [
 
 export function SettingsManager() {
   const [settings, setSettings] = useState<Record<string, string>>({});
+  const [original, setOriginal] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -34,6 +35,7 @@ export function SettingsManager() {
       .then((r) => r.json())
       .then((data) => {
         setSettings(data);
+        setOriginal(data);
         setLoading(false);
       });
   }, []);
@@ -45,13 +47,15 @@ export function SettingsManager() {
     const res = await fetch("/api/admin/settings", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
+      body: JSON.stringify(Object.fromEntries(Object.entries(settings).filter(([key, value]) => value !== original[key]))),
     });
 
     if (res.ok) {
+      setOriginal(settings);
       setMessage("저장되었습니다.");
     } else {
-      setMessage("저장에 실패했습니다.");
+      const data = await res.json();
+      setMessage(data.error || "저장에 실패했습니다.");
     }
     setSaving(false);
   };
