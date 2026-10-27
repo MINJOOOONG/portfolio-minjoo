@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 
 export async function getSettings(): Promise<Record<string, string>> {
-  const settings = await prisma.siteSetting.findMany();
+  const settings = await prisma.siteSetting.findMany({ where: { NOT: { key: { startsWith: "\\_" } } } });
   const map: Record<string, string> = {};
   settings.forEach((s) => {
     map[s.key] = s.value;
