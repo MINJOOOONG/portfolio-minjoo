@@ -39,7 +39,7 @@ import { FaAws, FaJava } from "react-icons/fa";
 import { SlideHeading } from "@/components/sections/about";
 
 /* ── Types ── */
-type SkillCategory = "Frontend" | "Backend" | "Library" | "QA" | "Environment & Deploy" | "Design";
+type SkillCategory = string;
 
 interface SkillItem {
   name: string;
@@ -50,16 +50,6 @@ interface SkillItem {
   label?: string;
   labelColor?: string;
 }
-
-/* ── Categories ── */
-const SKILL_CATEGORIES: SkillCategory[] = [
-  "Frontend",
-  "Backend",
-  "Library",
-  "QA",
-  "Environment & Deploy",
-  "Design",
-];
 
 /* ── Skill data ── */
 const SKILLS: SkillItem[] = [
@@ -150,13 +140,14 @@ function SkillTile({ item }: { item: SkillItem }) {
 }
 
 /* ── Main component ── */
-export const Skills = memo(function Skills({}: SkillsProps) {
+export const Skills = memo(function Skills({ data }: SkillsProps) {
   const [activeCategory, setActiveCategory] = useState<SkillCategory | null>(null);
-
-  const visibleSkills = useMemo(
-    () => (activeCategory ? SKILLS.filter((s) => s.category === activeCategory) : SKILLS),
-    [activeCategory]
-  );
+  const skills = useMemo(() => Object.entries(data).flatMap(([category, names]) =>
+    names.map((name) => ({ ...SKILLS.find((item) => item.name.toLowerCase() === name.toLowerCase()), name, category }))
+  ), [data]);
+  const categories = Object.keys(data);
+  const selectedCategory = activeCategory && categories.includes(activeCategory) ? activeCategory : null;
+  const visibleSkills = selectedCategory ? skills.filter((s) => s.category === selectedCategory) : skills;
 
   const handleCategory = useCallback((category: SkillCategory) => {
     setActiveCategory((cur) => (cur === category ? null : category));
@@ -181,20 +172,20 @@ export const Skills = memo(function Skills({}: SkillsProps) {
           boxSizing: "border-box",
         }}
       >
-        {/* Heading — same pattern as About, Experience, AI Lab */}
+        {/* Heading — same pattern as About, Experience */}
         <div className="mb-3 sm:mb-8">
           <SlideHeading label="Skills" title="Skills" />
         </div>
 
         {/* Category tabs — carousel scroll on mobile */}
         <div className="flex flex-nowrap overflow-x-auto scrollbar-hide snap-x snap-mandatory sm:flex-wrap sm:overflow-x-visible gap-2 mb-4 sm:mb-10 border-b border-[var(--notion-hairline)] pb-2 sm:pb-5 -mx-1 px-1" data-no-section-nav>
-          {SKILL_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <button
               key={category}
               type="button"
               onClick={() => handleCategory(category)}
               className={`snap-start shrink-0 px-3.5 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
-                activeCategory === category
+                selectedCategory === category
                   ? "bg-[var(--notion-ink)] text-white"
                   : "text-[var(--notion-stone)] hover:text-[var(--notion-ink)] hover:bg-[var(--notion-surface)]"
               }`}
@@ -207,7 +198,7 @@ export const Skills = memo(function Skills({}: SkillsProps) {
         {/* Icon grid */}
         <div className="skills-icon-grid" key={activeCategory ?? "all"}>
           {visibleSkills.map((item) => (
-            <SkillTile key={item.name} item={item} />
+            <SkillTile key={`${item.category}:${item.name}`} item={item} />
           ))}
         </div>
       </div>
