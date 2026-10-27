@@ -48,14 +48,14 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
         { url: "/images/projects/portfolio-website/05-skills.png", title: "Skills Section" },
       ], rules: [
         { title: "Define overall design standards in design.md first", body: "Before writing code, I documented the portfolio's colors, spacing, typography, buttons, cards, and motion rules in design.md. When collaborating with Claude Code, this document served as the reference for aligning modification scope, reducing inconsistency across sections." },
-        { title: "Separate design documents per section", body: "Sections with different characteristics like About, Experience, Projects, AI Lab, Articles, Skills, and Contact have separate md files defining their purpose and layout. This ensures About focuses on self-introduction, Projects on achievements and implementation, and AI Lab on experiments and records." },
+        { title: "Separate design documents per section", body: "Sections with different characteristics like About, Experience, Projects, Articles, Skills, and Contact have separate md files defining their purpose and layout. This ensures About focuses on self-introduction, Projects on achievements and implementation, and each section on its specific purpose." },
         { title: "Maintain common components but vary presentation per section", body: "Basic UI elements like buttons, badges, titles, dividers, and modals maintain consistent styles, but placement and emphasis vary by section purpose. Even within the same design system, screens are adjusted to not look identical." },
         { title: "Expand interactions only within design document rules", body: "Custom cursor, PPT-style section navigation, hover effects, and modal transitions are defined as navigation-aiding features, not mere decoration. New interactions are controlled to avoid excess based on design.md's motion intensity, speed, and usage conditions." },
         { title: "Iterate based on standards, not intuition", body: "Instead of impulsively fixing parts that don't look right, I categorized and fixed issues based on design documents and section-specific md files. For example, I separated and iteratively improved issues like text spacing, heading hierarchy, badge alignment, internal scrolling, and modal layout." },
       ] },
       { type: "section-heading", title: "03 — Design Goals & Architecture" },
       { type: "text", heading: "Design Goals", body: [
-        "The goal was to make the portfolio not a simple introduction page, but an explorable interactive technical document. Sections move as PPT-style screen units, and content-heavy sections like Projects and AI Lab are separated with internal scrolling to provide sufficient information without breaking the flow.",
+        "The goal was to make the portfolio not a simple introduction page, but an explorable interactive technical document. Sections move as PPT-style screen units, and content-heavy sections like Projects are separated with internal scrolling to provide sufficient information without breaking the flow.",
       ] },
       { type: "image", url: "/images/projects/portfolio-website/architecture-diagram.svg", caption: "3-Layer Architecture: Frontend → Data/CMS → AI/RAG" },
       { type: "text", heading: "Frontend — Next.js App Router", body: [
@@ -78,8 +78,8 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       { type: "code", title: "RAG Pipeline Structure", language: "python", code: "# 1. Load docs → chunk → embed → FAISS store\ndocs = load_documents('data')          # 7 markdown files\nchunks = split_documents(docs)          # 500 char units, 100 overlap\nvectorstore = build_vectorstore(chunks)  # multilingual embedding\n\n# 2. Question → search → LLM answer\nresults = vectorstore.similarity_search(query, k=6)\ncontext = format_context(results)\nanswer = generate_answer(context, question)  # Groq LLM" },
       { type: "section-heading", title: "04 — Key Feature Implementation" },
       { type: "text", heading: "Section-based Navigation", body: [
-        "7 sections (About, Experience, Projects, AI Lab, Articles, Skills, Contact) are organized as independent screen units. Top menu, left/right buttons, and slide indicators clearly show and allow navigation to the current position.",
-        "Content-heavy sections like Projects and AI Lab are separated into internal scroll areas, controlling Lenis scroll and event propagation so section navigation and content scrolling don't conflict.",
+        "6 sections (About, Experience, Projects, Articles, Skills, Contact) are organized as independent screen units. Top menu, left/right buttons, and slide indicators clearly show and allow navigation to the current position.",
+        "Content-heavy sections like Projects are separated into internal scroll areas, controlling scroll and event propagation so section navigation and content scrolling don't conflict.",
       ] },
       { type: "code", title: "Section Navigation Event Handling", language: "typescript", code: "// CustomEvent triggers section transitions\nwindow.dispatchEvent(\n  new CustomEvent('slide-nav-goto', { detail: { index: sectionIndex } })\n);" },
       { type: "text", heading: "Project Detail Modal (contentBlocks-based)", body: [
@@ -97,9 +97,6 @@ export const projectTranslations: Record<string, ProjectTranslation> = {
       ] },
       { type: "text", heading: "About Keyword Interaction", body: [
         "Key sentences and keywords are shown first, with supplementary descriptions appearing on hover/click/focus, layering information hierarchically. Tooltips auto-adjust direction based on viewport position, and Enter/Space/Escape keyboard controls are supported.",
-      ] },
-      { type: "text", heading: "AI Lab", body: [
-        "Designed as a research notebook for learning records and interpretations, not just a list of AI tools. Categorized into 5 tabs: Principles, Practices, Prompting, AI Tools, and Media Notes, with purpose, strengths, limitations, and application experience shown for each item to reveal context.",
       ] },
       { type: "section-heading", title: "05 — RAG AI Assistant" },
       { type: "rag-pipeline",
