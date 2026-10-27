@@ -195,7 +195,7 @@ interface ExperienceItem {
 
 | 회사 | 직무 | 기간 | 상태 |
 |------|------|------|------|
-| Viva Republica (Toss) | Toss Commerce QA Assistant | 2025.11 - Present | 재직 중 |
+| Viva Republica (Toss) | Toss Commerce QA Assistant | 2025.11 - 2026.06 | - |
 | Riwonsoft | QA Intern | 2025.06 - 2025.09 | - |
 
 #### Toss techStack

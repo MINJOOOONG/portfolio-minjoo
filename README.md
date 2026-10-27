@@ -3,6 +3,8 @@
 > **QA 엔지니어 경험과 백엔드 개발 역량을 갖춘 풀스택 개발자 서민주(Minjoo Suh)의 포트폴리오 웹사이트.**
 > 단순 정적 페이지가 아니라, **자체 CMS · 경량 RAG AI 어시스턴트 · 3D 인터랙션 · 보안 인증**을 직접 설계·구현한 풀스택 프로덕트입니다.
 
+> 현재 CMS 데이터 흐름, Claude Agent 오류 전환, 요청 제한과 회귀 검증은 [운영 문서](docs/maintenance.md)에 정리되어 있습니다.
+
 🔗 **Live**: [portfolio-minjoo.vercel.app](https://portfolio-minjoo.vercel.app)
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
@@ -81,7 +83,8 @@
 
 ### 1. 자체 콘텐츠 관리 시스템(CMS) — 재배포 없는 콘텐츠 운영
 - `/admin` 대시보드에서 **프로젝트 · 블로그 · 연락 메시지 · 사이트 설정**을 CRUD.
-- 모든 콘텐츠를 코드가 아닌 **Postgres에 저장** → 글을 고치거나 프로젝트를 추가해도 **빌드/배포가 필요 없음.**
+- 프로젝트 편집과 공개 화면은 `SiteSetting.project_data`를 공통으로 사용합니다. 이미지·첨부파일·상세 블록을 보존하며 공개 여부와 정렬도 반영합니다.
+- About 소개, Skills 목록, 경력은 DB 수정이 반영됩니다. About 상세 섹션 등 일부 콘텐츠는 정적 데이터로 유지합니다.
 - API Route(`/api/admin/*`)는 모두 서버에서 세션을 검증한 뒤에만 동작.
 
 ### 2. 문서 근거 기반 RAG 어시스턴트 (`rag-assistant/`)
@@ -145,7 +148,7 @@ POST /ask  { question }
 
 #### 2.3 Retrieval 방식과 선택 이유
 
-벡터 DB 대신 **순수 Python TF-IDF 인덱스**를 직접 구현했습니다. 문서 9개 · 청크 88개 규모에서는 임베딩 모델의 메모리(Render 무료 티어 512MB)가 정확도 이득보다 큰 비용이었고, 외부 임베딩 API 의존성도 없애고 싶었기 때문입니다.
+벡터 DB 대신 **순수 Python TF-IDF 인덱스**를 직접 구현했습니다. 문서 9개 · 청크 90개 규모에서는 임베딩 모델의 메모리(Render 무료 티어 512MB)가 정확도 이득보다 큰 비용이었고, 외부 임베딩 API 의존성도 없애고 싶었기 때문입니다.
 
 점수는 **IDF² 가중 질의 커버리지**입니다.
 
@@ -186,7 +189,7 @@ score = Σ(질의 토큰 weight × 매칭 강도) / Σ(질의 토큰 weight)    
 
 응답 스키마(`{answer, sources}`)는 그대로라 기존 Next.js 프론트엔드가 그대로 동작합니다.
 
-threshold 는 임의로 정한 값이 아니라 아래 평가 세트 위에서 스윕해 고른 값입니다. 실제 곡선(45개 케이스 기준):
+threshold 는 임의로 정한 값이 아니라 아래 평가 세트 위에서 스윕해 고른 값입니다. 초기 검색 구현에서 측정한 곡선(45개 케이스 기준, 현재 구현 수치는 아래 2.9 참조):
 
 | threshold | answerable source hit | no-evidence routing |
 | --- | --- | --- |
@@ -196,7 +199,7 @@ threshold 는 임의로 정한 값이 아니라 아래 평가 세트 위에서 �
 | 0.43 | 75.0% | 100.0% |
 | 0.50 | 67.9% | 100.0% |
 
-두 기준(각 80%)을 동시에 만족하는 구간은 `0.40 ~ 0.41` 뿐이라, 반올림한 값 `0.40` 을 채택했습니다.
+초기 구현에서는 두 기준(각 80%)을 동시에 만족하는 구간 `0.40 ~ 0.41`에서 `0.40`을 채택했습니다. 현재도 기준을 낮추지 않고 같은 threshold를 유지합니다.
 
 #### 2.6 async LLM API 호출 구조
 
@@ -249,19 +252,18 @@ threshold 는 임의로 정한 값이 아니라 아래 평가 세트 위에서 �
 
 #### 2.9 실제 실행 결과
 
-아래는 `python -m evaluation.run_retrieval_eval` 을 실제로 실행한 결과입니다 (`prompt_version=grounded-v1`, `score_threshold=0.40`, 문서 9개 → 청크 88개). 전체 리포트는 [`evaluation/results/latest.md`](rag-assistant/evaluation/results/latest.md) 에 커밋되어 있습니다.
+아래는 `python -m evaluation.run_retrieval_eval` 을 실제로 실행한 결과입니다 (`prompt_version=grounded-v1`, `score_threshold=0.40`, 문서 9개 → 청크 90개). 전체 리포트는 [`evaluation/results/latest.md`](rag-assistant/evaluation/results/latest.md) 에 커밋되어 있습니다.
 
 | 지표 | 값 | 기준 |
 | --- | --- | --- |
-| answerable source hit rate | **82.1%** (23/28) | ≥ 80% ✅ |
-| no-evidence routing accuracy | **84.6%** (11/13) | ≥ 80% ✅ |
-| false-premise routing accuracy | 75.0% (3/4) | — |
-| 전체 통과 | 34 / 41 (검색 판정 대상) | — |
-| 검색 지연시간 | p50 ≈2.6ms · p95 ≈4.7ms (실행마다 변동) | — |
+| answerable source hit rate | **89.3%** (25/28) | ≥ 80% ✅ |
+| no-evidence routing accuracy | **100.0%** (13/13) | ≥ 80% ✅ |
+| false-premise routing accuracy | 100.0% (4/4) | — |
+| 전체 통과 | 38 / 41 (검색 판정 대상) | — |
 
-카테고리별: `answerable` 14/14 (100%), `english` 5/5 (100%), `unanswerable` 7/8 (87.5%), `false_premise` 3/4 (75%), `korean_paraphrase` 5/7 (71.4%), `partial_evidence` 0/3 (0%).
+카테고리별: `answerable` 14/14, `english` 5/5, `unanswerable` 8/8, `false_premise` 4/4, `korean_paraphrase` 7/7, `partial_evidence` 0/3.
 
-테스트: `pytest` **157개 전부 통과**, 외부 API 호출 0건 (`respx` 로 Groq 호출을 가로챕니다).
+테스트: Python **185개**, 웹·DB **22개** 통과. 외부 LLM API 호출 없이 검사합니다. 웹 테스트는 격리된 PostgreSQL(PGlite)로 CMS 저장·공개 반영과 요청 제한의 동시성·만료를 확인합니다.
 
 #### 2.10 테스트 및 평가 실행 방법
 
@@ -270,7 +272,7 @@ cd rag-assistant
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
-pytest                                    # 157 tests, 외부 API 호출 없음
+pytest                                    # 외부 API 호출 없음
 python -m evaluation.run_retrieval_eval   # 기준 미달 시 종료 코드 1
 
 # 선택: 실제 Groq 호출 (키 없으면 skip)
@@ -285,37 +287,27 @@ python -m evaluation.run_llm_eval
 
 #### 2.11 GitHub Actions
 
+- [`.github/workflows/web-quality.yml`](.github/workflows/web-quality.yml) — 웹 코드 변경 시 린트·웹/DB 회귀 테스트·Next.js 빌드를 실행합니다.
+
 - [`.github/workflows/rag-quality.yml`](.github/workflows/rag-quality.yml) — PR 과 `main` push 에서 `pytest` + 검색 평가를 실행합니다. **Groq API key 없이 동작**하며, 테스트 실패나 평가 기준 미달이면 워크플로가 실패합니다. pip 캐시를 쓰고 `rag-assistant/` 변경 시에만 돌아가며, Node 빌드는 하지 않습니다. 커밋된 평가 결과가 코드와 어긋나면 그것도 실패로 잡습니다.
 - [`.github/workflows/rag-llm-eval.yml`](.github/workflows/rag-llm-eval.yml) — 실제 Groq 를 호출하는 end-to-end 평가. `workflow_dispatch` 로만 수동 실행되고, `GROQ_API_KEY` secret 이 없으면 건너뜁니다.
 
 #### 2.12 알려진 한계와 향후 개선점
 
-평가에서 **실제로 실패한 7건**과 그 원인입니다. 숨기지 않고 기록합니다.
+현재 실패한 사례는 `ko-partial-001/002/003` 3개입니다. 문서에 없는 처리량·응답 지연·주당 케이스 수를 묻는 질문에서 관련 근거까지 반환하지 못합니다. 주제 검색과 수치 확인을 분리하는 개선이 필요합니다.
 
-| 케이스 | 증상 | 원인 |
-| --- | --- | --- |
-| `ko-paraphrase-007` | "리원소프트 인턴…" 검색 실패 | 문서에는 `Riwonsoft` 로 적혀 있음. **한글 음차 ↔ 라틴 표기**를 어휘 검색이 잇지 못함 |
-| `ko-paraphrase-001` | "민주가 토스에서 맡았던 일…" 검색 실패 | "맡았던" 같은 구어체 활용형이 접미사 사전에 없어 미등장 토큰으로 처리됨 |
-| `ko-unanswerable-001` | "블록체인 경험" 에 `about.md` 반환 | 미등장 고유명사 1개 + 매칭되는 일반 토큰 여러 개 → 커버리지가 threshold 를 넘음 |
-| `ko-falsepremise-001` | "네이버에서 백엔드 개발자로…" 에 `resume.md` 반환 | 위와 동일한 패턴 (`네이버`만 미등장, 나머지는 매칭) |
-| `ko-partial-001/002/003` | 부분 근거 질문 3건 모두 빈 결과 | 질문에 없는 수치 토큰(`초당`, `처리량`, `밀리초`)이 커버리지를 떨어뜨림. 안전한 쪽으로 실패하지만, 이상적으로는 관련 문서를 찾고 LLM이 "수치는 문서에 없다"고 답해야 함 |
-
-구조적 한계:
-
-- **어휘 검색의 한계.** 동의어·음차·교차 언어(영어 질문 ↔ 한국어 문서) 매칭이 안 됩니다. 임베딩 기반 하이브리드 검색이 정공법이지만 메모리 예산과 상충합니다.
-- **정밀도와 재현율의 교환.** threshold 를 올리면 근거 없는 질문을 더 잘 막는 대신 답변 가능한 질문을 놓칩니다. 두 기준을 동시에 만족하는 구간이 좁습니다(0.40~0.41).
-- **프로젝트 혼동 방어는 검색이 아니라 프롬프트에 의존합니다.** 코드로 강제되지 않으므로 모델 교체 시 재검증이 필요합니다.
-- **LLM 평가는 휴리스틱입니다.** 근거 없는 주장을 자동으로 판정하지 못하고 후보만 표시합니다.
-- `/metrics` 는 프로세스 인메모리 카운터를 JSON 으로 노출하는 최소 구현이며 **Prometheus 가 아닙니다.** 재시작하면 초기화되고 인스턴스 간 집계도 되지 않습니다.
-
-다음 단계 후보: 음차 사전 추가, 임베딩 기반 재순위(re-ranking) 실험, 부분 근거 질문을 위한 2단계 검색(주제 검색 → 수치 확인), 평가 케이스 확대.
+- 영어 단어의 내부 문자열 일치를 제거해 `Rust`와 `trust` 같은 오탐을 막습니다.
+- 소유자 이름의 가중치를 낮추고 미등장 내용어의 페널티를 적용해, 이름 일치가 기술·경력 근거를 대신하지 않도록 합니다.
+- 일반적인 질문 표현을 불용어로 처리하고, 실제 코퍼스에 존재하는 소수의 한·영 별칭을 연결합니다. 임의의 동의어·복합 질문을 모두 해결하지는 않습니다.
+- Agent는 문서 근거가 없으면 답변을 교체합니다. 근거가 있어도 다른 프로젝트의 사실을 혼합할 가능성은 남으므로 실제 모델 평가가 필요합니다.
+- LLM 검증 점수는 모델의 평가이며 사실 정확도 보증이 아닙니다. `/metrics`는 프로세스 메모리 집계입니다.
 
 ### 3. 보안 중심 관리자 인증
 - **DB 세션 토큰**: 로그인 시 `crypto.randomBytes(32)`로 토큰 발급, `AdminSession` 테이블에 저장, **24시간 만료** + 만료 세션 자동 정리.
 - **httpOnly 쿠키**로 토큰 관리 → JS 접근 차단으로 XSS 토큰 탈취 방지.
 - **Timing-safe 비밀번호 비교**(`crypto.timingSafeEqual`)로 타이밍 공격 차단.
-- **미들웨어 레벨 보호**: `middleware.ts`에서 `/admin/*` 경로를 가로채 미인증 시 로그인 페이지로 리다이렉트.
-- 비밀번호는 전부 환경변수로만 관리 (하드코딩 0).
+- **미들웨어 레벨 보호**: `src/proxy.ts`에서 `/admin/*` 경로를 가로채 미인증 시 로그인 페이지로 리다이렉트.
+- 비밀번호는 환경변수로 관리하며 로그인은 IP 기준 5회/분으로 제한합니다. AI 요청은 10회/분·100회/일이며 PostgreSQL 카운터를 공유합니다.
 
 ### 4. 연락 폼 — In-memory IP Rate Limiting
 - `POST /api/contact`에 **IP 기준 분당 3회** 제한을 직접 구현해 스팸/어뷰징 방어.
@@ -340,10 +332,10 @@ python -m evaluation.run_llm_eval
 
 | 모델 | 역할 |
 | --- | --- |
-| `Project` | 프로젝트(제목·요약·설명·tech stack 배열·featured·정렬·게시 여부) |
+| `Project` | `project_data`가 없는 기존 설치의 호환용 데이터 |
 | `BlogPost` | 마크다운 블로그 글(태그 배열·게시 여부) |
 | `ContactMessage` | 연락 폼 수신 메시지(읽음 처리) |
-| `SiteSetting` | 사이트 전역 설정 key-value |
+| `SiteSetting` | 프로젝트 원본(`project_data`)·사이트 설정·내부 요청 제한 카운터 |
 | `AdminSession` | 관리자 세션 토큰 · 만료 시각 |
 
 > `tech_stack`, `tags`는 Postgres 배열 타입을 활용, 모든 모델은 `@@map`으로 snake_case 테이블명에 매핑.
@@ -435,11 +427,11 @@ python -m evaluation.run_retrieval_eval
 
 ### Next.js 앱 (Vercel)
 1. GitHub에 push → Vercel에서 프로젝트 import
-2. 환경변수(`DATABASE_URL` · `ADMIN_PASSWORD` · `RAG_API_URL`) 설정 후 배포
+2. 환경변수(`DATABASE_URL` · `ADMIN_PASSWORD` · `RAG_API_URL` · `RAG_API_TOKEN`) 설정 후 배포
 
 ### RAG API (Render / Railway / Fly.io)
 1. `rag-assistant/`를 별도 배포 (Dockerfile · render.yaml 포함)
-2. 환경변수 `GROQ_API_KEY`, `GROQ_MODEL=llama-3.1-8b-instant` 설정
+2. `GROQ_API_KEY`, `GROQ_MODEL=openai/gpt-oss-20b` 설정. Claude Agent를 사용하려면 `ANTHROPIC_API_KEY` 추가. `RAG_API_TOKEN`은 Next.js와 동일한 값으로 설정
 3. 배포된 주소를 Vercel의 `RAG_API_URL`에 등록
 
 ---

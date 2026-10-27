@@ -1,6 +1,6 @@
 # Claude Code 가이드
 
-이 프로젝트에서 Claude Code를 사용할 때 참고할 규칙과 컨텍스트.
+이 프로젝트에서 Claude Code를 사용할 때 참고할 규칙과 컨텍스트. 최신 CMS·AI 운영 흐름과 검증 방법은 [maintenance.md](maintenance.md)를 참조한다.
 
 ---
 
@@ -149,7 +149,7 @@ Experience 섹션은 인라인 편집 모드를 지원한다:
 3. **PDF 내보내기** — `@react-pdf/renderer`는 Tailwind 클래스 불가. `src/lib/pdf/` 내 별도 스타일 사용
 4. **Admin 기능** — 편집 모드, 인증 등 Admin 관련 로직은 변경 시 반드시 동작 확인
 5. **Lenis 스크롤** — `SmoothScrollProvider`가 스크롤을 제어. `window.scrollTo` 대신 Lenis API 고려
-6. **Skills 데이터 이중 관리** — DB(`skills_data`)와 하드코딩(`skills.tsx SKILLS[]`) 모두 존재. 현재 UI는 하드코딩 데이터를 사용
+6. **Skills 데이터 이중 관리** — DB(`skills_data`)와 하드코딩(`skills.tsx SKILLS[]`) 모두 존재. 현재 UI의 항목·카테고리는 DB 값을 사용하고 하드코딩 목록은 아이콘 꾸밈에만 사용
 7. **Articles 필터링** — `projectData`에서 `isArticleProject()` 필터로 논문/연구 항목을 분리하여 Articles 섹션에 표시
 
 ---
