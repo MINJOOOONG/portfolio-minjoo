@@ -17,7 +17,6 @@ const SECTION_IDS = [
   "about",
   "experience",
   "projects",
-  "ai-lab",
   "articles",
   "skills",
   "contact",
@@ -41,7 +40,7 @@ export function SceneLayout({ sections }: SceneLayoutProps) {
               id={SECTION_IDS[i]}
               className={[
                 "scene-section",
-                SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab"
+                SECTION_IDS[i] === "projects"
                   ? "scene-section--full"
                   : "",
                 SECTION_IDS[i] === "contact" ? "scene-section--top" : "",
@@ -49,7 +48,7 @@ export function SceneLayout({ sections }: SceneLayoutProps) {
                 .filter(Boolean)
                 .join(" ")}
             >
-              {SECTION_IDS[i] === "projects" || SECTION_IDS[i] === "ai-lab" ? (
+              {SECTION_IDS[i] === "projects" ? (
                 content
               ) : (
                 <div className="w-full max-w-[960px] mx-auto">

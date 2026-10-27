@@ -265,9 +265,7 @@
     padding-bottom: 56px !important;
   }
 
-  .ai-lab-section [data-scroller] {
-    padding-top: 0 !important;
-  }
+
 }
 
 @media (max-width: 768px) {
@@ -315,13 +313,7 @@
     overflow: visible;
   }
 
-  .ai-lab-section > div:first-child {
-    padding-top: 76px !important;
-  }
 
-  .ai-lab-section nav[data-no-section-nav] {
-    margin-top: 8px;
-  }
 }
 
 /* Hero grid background */

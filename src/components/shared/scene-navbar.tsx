@@ -7,13 +7,12 @@ import { cn } from "@/lib/utils";
 import { PortfolioAskBar } from "@/components/shared/portfolio-ask-bar";
 import { LanguageToggle } from "@/components/shared/language-toggle";
 
-const SECTION_IDS = ["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"];
+const SECTION_IDS = ["about", "experience", "projects", "articles", "skills", "contact"];
 
 const navItems = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
-  { id: "ai-lab", label: "AI Lab" },
   { id: "articles", label: "Articles" },
   { id: "skills", label: "Skills" },
   { id: "contact", label: "Contact" },

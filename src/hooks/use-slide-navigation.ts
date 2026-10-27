@@ -25,7 +25,7 @@ const INTERACTIVE_SELECTOR = [
 ].join(", ");
 
 /** Sections whose content scrolls internally instead of PPT-style navigation */
-const SCROLLABLE_SECTIONS = new Set(["about", "experience", "projects", "ai-lab", "articles", "skills", "contact"]);
+const SCROLLABLE_SECTIONS = new Set(["about", "experience", "projects", "articles", "skills", "contact"]);
 const MOBILE_NAV_QUERY = "(max-width: 768px), (pointer: coarse)";
 
 export function useSlideNavigation({ sectionIds }: UseSlideNavigationOptions) {
